@@ -224,16 +224,16 @@ public class SearchQueryParser {
 			}
 		},
         TAG('#') {
-            @Override
-            public boolean matches(@Nullable Level level, @Nullable Player player, String key, ItemStack stack) {
-                return stack.getTags().anyMatch(tag -> tag.location().toString().toLowerCase(Locale.ROOT).contains(key));
-            }
-        },
+			@Override
+			public boolean matches(@Nullable Level level, @Nullable Player player, String key, ItemStack stack) {
+				return stack.getTags().anyMatch(tag -> tag.location().toString().toLowerCase(Locale.ROOT).contains(key));
+			}
+		},
 		IDENTIFIER('&') {
 			@Override
 			public boolean matches(@Nullable Level level, @Nullable Player player, String key, ItemStack stack) {
-                ResourceLocation stackIdentifier = BuiltInRegistries.ITEM.getKey(stack.getItem());
-                return stackIdentifier.toString().toLowerCase(Locale.ROOT).contains(key);
+				ResourceLocation stackIdentifier = BuiltInRegistries.ITEM.getKey(stack.getItem());
+				return stackIdentifier.toString().toLowerCase(Locale.ROOT).contains(key);
 			}
 		};
 
