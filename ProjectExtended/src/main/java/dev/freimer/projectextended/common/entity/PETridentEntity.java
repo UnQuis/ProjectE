@@ -92,6 +92,18 @@ public class PETridentEntity extends ThrownTrident {
             noReturn = true;
             entityData.set(ID_LOYALTY, (byte) 0);
         }
+        // #11 - The red matter trident returns from the void instead of being destroyed.
+        // Vanilla only lets loyal tridents return after dealing damage or hitting the ground,
+        // so a trident thrown into the void never comes back. Once it is past the bottom of the
+        // world, recall it above the owner and let the vanilla loyalty logic fly it back to hand.
+        if (!level().isClientSide && getMatterTier() > 0 && getY() < level().getMinBuildHeight() - 32
+              && getOwner() != null && entityData.get(ID_LOYALTY) > 0) {
+            Entity owner = getOwner();
+            moveTo(owner.getX(), owner.getBoundingBox().maxY + 2.0, owner.getZ(), owner.getYRot(), owner.getXRot());
+            setDeltaMovement(Vec3.ZERO);
+            //isNoPhysics() lets a loyal trident return without gravity and without hitting blocks/entities
+            setNoPhysics(true);
+        }
         super.tick();
     }
 
