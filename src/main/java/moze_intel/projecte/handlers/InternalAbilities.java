@@ -34,7 +34,7 @@ public class InternalAbilities {
 		boolean hasEvertide = false;
 		boolean hasVolcanite = false;
 		boolean hasArcana = false;
-		ItemStack swrgStack = ItemStack.EMPTY;
+		boolean hasSwrgWithEmc = false;
 		for (int i = 0; i < Inventory.getSelectionSize(); i++) {
 			ItemStack stack = player.getInventory().getItem(i);
 			if (stack.isEmpty()) {
@@ -46,8 +46,8 @@ public class InternalAbilities {
 				hasVolcanite = true;
 			} else if (stack.is(PEItems.ARCANA_RING)) {
 				hasArcana = true;
-			} else if (swrgStack.isEmpty() && stack.is(PEItems.SWIFTWOLF_RENDING_GALE)) {
-				swrgStack = stack;
+			} else if (!hasSwrgWithEmc && stack.is(PEItems.SWIFTWOLF_RENDING_GALE)) {
+				hasSwrgWithEmc = ItemPE.hasEmc(player, stack, 64, true);
 			}
 		}
 		ItemStack offhand = player.getOffhandItem();
@@ -56,8 +56,8 @@ public class InternalAbilities {
 				hasEvertide = true;
 			} else if (offhand.is(PEItems.VOLCANITE_AMULET)) {
 				hasVolcanite = true;
-			} else if (swrgStack.isEmpty() && offhand.is(PEItems.SWIFTWOLF_RENDING_GALE)) {
-				swrgStack = offhand;
+			} else if (!hasSwrgWithEmc && offhand.is(PEItems.SWIFTWOLF_RENDING_GALE)) {
+				hasSwrgWithEmc = ItemPE.hasEmc(player, offhand, 64, true);
 			}
 		}
 		//Single curios capability query for the whole tick (cached instead of re-querying per check)
@@ -72,8 +72,8 @@ public class InternalAbilities {
 					hasEvertide = true;
 				} else if (stack.is(PEItems.VOLCANITE_AMULET)) {
 					hasVolcanite = true;
-				} else if (swrgStack.isEmpty() && stack.is(PEItems.SWIFTWOLF_RENDING_GALE)) {
-					swrgStack = stack;
+				} else if (!hasSwrgWithEmc && stack.is(PEItems.SWIFTWOLF_RENDING_GALE)) {
+					hasSwrgWithEmc = ItemPE.hasEmc(player, stack, 64, true);
 				}
 			}
 		}
@@ -112,7 +112,7 @@ public class InternalAbilities {
 			updateAttribute(player, Attributes.MOVEMENT_SPEED, LAVA_SPEED_BOOST, applyLavaSpeed);
 			//Note: Curios, and the offhand are handled by the attribute on the arcana ring. We want it to provide flight in other slots on the hotbar as well
 			// so we have to do it here. We do this rather than only doing a hotbar curios check with no attribute, so that the tooltip shows it provides flight
-			boolean shouldFly = (!swrgStack.isEmpty() && ItemPE.hasEmc(player, swrgStack, 64, true)) || hasArcana;
+			boolean shouldFly = hasSwrgWithEmc || hasArcana;
 			updateAttribute(player, NeoForgeMod.CREATIVE_FLIGHT, FLIGHT, shouldFly ? Predicates.alwaysTrue() : Predicates.alwaysFalse());
 		}
 	}
