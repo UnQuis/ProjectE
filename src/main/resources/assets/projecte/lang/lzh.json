@@ -262,7 +262,7 @@
     "tooltip.projecte.time_watch.1": "任制光陰",
     "tooltip.projecte.time_watch.2": "右擊更式",
     "pedestal.projecte.time_watch.1": "%d倍速近塊方之速",
-    "pedestal.projecte.time_watch.2": "%.3f倍緩近生靈之速",
+    "pedestal.projecte.time_watch.2": "%s倍速近生靈之速",
 
     "tooltip.projecte.tome": "入化案以得全化物經綸",
 
