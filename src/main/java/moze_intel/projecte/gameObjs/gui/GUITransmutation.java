@@ -41,6 +41,7 @@ public class GUITransmutation extends PEContainerScreen<TransmutationContainer> 
 
 		this.textBoxFilter = addWidget(new EditBox(this.font, leftPos + 83, topPos + 8, 55, 10, Component.empty()));
 		this.textBoxFilter.setResponder(inv::updateFilter);
+		this.textBoxFilter.setFocused(true);
 
 		//Note: We don't have to change the filter when changing pages as the filter should already be set
 		previous = addRenderableWidget(Button.builder(Component.literal("<"), b -> inv.previousPage())
@@ -126,9 +127,10 @@ public class GUITransmutation extends PEContainerScreen<TransmutationContainer> 
 				textBoxFilter.setFocused(false);
 				return true;
 			}
-			//Otherwise have it handle the key press
-			//This is where key combos and deletion is handled, and where we bypass the inventory key closing the screen
-			return textBoxFilter.keyPressed(keyCode, scanCode, modifiers);
+			//Handle the key press in the filter, then always consume the event so that other keybinds
+			//(such as the inventory key) do not fire while the player is searching
+			textBoxFilter.keyPressed(keyCode, scanCode, modifiers);
+			return true;
 		}
 		return super.keyPressed(keyCode, scanCode, modifiers);
 	}
