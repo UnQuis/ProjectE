@@ -1,0 +1,285 @@
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+
+import java.util.function.Consumer
+
+plugins {
+    id('java')
+    id('eclipse')
+    id('idea')
+    id('maven-publish')
+    // https://projects.neoforged.net/neoforged/ModDevGradle
+    id('net.neoforged.moddev') version('2.0.78')
+}
+
+tasks.named('wrapper', Wrapper) {
+    //Define wrapper values here so as to not have to always do so when updating gradlew.properties
+    gradleVersion = '8.13'
+    distributionType = Wrapper.DistributionType.ALL
+}
+
+defaultTasks 'build'
+
+idea {
+    module {
+        //Exclude directories from being managed
+        for (String excludeDirName in ["run", "out", "logs", "gradle"]) {
+            excludeDirs.add(new File(projectDir, excludeDirName))
+        }
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs += 'src/datagen/generated'
+            //There is no need to pack the Data Generator cache into the build
+            exclude '.cache'
+        }
+    }
+    datagen {
+        java.srcDirs = ['src/datagen/java']
+        resources.srcDirs = ['src/datagen/resources']
+        compileClasspath += main.output
+    }
+
+    // These source-sets only exist for the sake of assembling a dependency graph
+    // for IntelliJ. Each of these will become an IntelliJ module when the project is imported,
+    // and will be set as the "main module" for the IntelliJ runs. A compile dependency
+    // on the other source sets is enough, since runtime classpath is managed by MDG anyway.
+    runMain {
+        runtimeClasspath += main.runtimeClasspath
+        compileClasspath += main.output
+    }
+    runData {
+        compileClasspath += runMain.compileClasspath + datagen.compileClasspath
+        runtimeClasspath += runMain.runtimeClasspath + datagen.runtimeClasspath
+    }
+}
+
+configurations {
+    //Let the datagen source set know about forge
+    datagenImplementation.extendsFrom(implementation)
+    datagenCompileOnly.extendsFrom(compileOnly)
+    datagenRuntimeOnly.extendsFrom(runtimeOnly)
+    sourceSets.main.runtimeClasspath += localRuntime
+}
+
+def replaceResources = tasks.register("replaceResources", Copy) {
+    def versionProperties = ["version"       : mod_version, "mc_version": minecraft_version_range, "neo_version": neo_version_range,
+                             "loader_version": loader_version_range, "projecte_version": projecte_version_range]
+    inputs.properties(versionProperties)
+    def modsToml = copySpec {
+        from(sourceSets.main.resources) {
+            include "META-INF/neoforge.mods.toml"
+            expand versionProperties
+        }
+    }
+    //Copy it into the build dir
+    it.with modsToml
+    it.into layout.buildDirectory.dir('resources/main/')
+    //If IntelliJ's output dir exists, copy it there as well
+    if (new File("$rootDir/out/production/").exists()) {
+        copy {
+            with modsToml
+            into "$rootDir/out/production/"
+        }
+    }
+    //If Eclipse's output dir exists, copy it there as well
+    if (new File("$rootDir/bin/main/").exists()) {
+        copy {
+            with modsToml
+            into "$rootDir/bin/main/"
+        }
+    }
+}
+
+group = 'dev.freimer.projectextended'
+version = "${mod_version}"
+project.base.archivesName = 'ProjectExtended'
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+        vendor.set(JvmVendorSpec.JETBRAINS)
+    }
+}
+
+neoForge {
+    version = neo_version
+    addModdingDependenciesTo(sourceSets.datagen)
+
+    accessTransformers.from(
+            file('src/main/resources/META-INF/accesstransformer.cfg'),
+            //Dev time only ATs so the file name doesn't have to match accesstransformer.cfg
+            //file('src/datagen/resources/META-INF/datagen_ats.cfg')
+    )
+
+    mods {
+        projectextended {
+            sourceSet(sourceSets.main)
+        }
+        projectextended_datagen {
+            sourceSet(sourceSets.main)
+            sourceSet(sourceSets.datagen)
+        }
+    }
+}
+
+neoForge.runs {
+    configureEach {
+        if (project.hasProperty('forge_force_ansi')) {
+            //Force ansi if declared as a gradle variable, as the auto detection doesn't detect IntelliJ properly
+            // or eclipse's plugin that adds support for ansi escape in console
+            systemProperties.put('terminal.ansi', (String) property('forge_force_ansi'))
+        }
+        systemProperties.put('projecte.skip_top', "true")
+
+        //if the selected toolchain is a JBR, enable DCEVM
+        if (javaToolchains.launcherFor(java.toolchain).map { it.metadata.vendor }.getOrElse('').contains('JetBrains')) {
+            jvmArguments.addAll('-XX:+IgnoreUnrecognizedVMOptions', '-XX:+AllowEnhancedClassRedefinition')
+        }
+
+        sourceSet = sourceSets.runMain
+    }
+    client {
+        client()
+        //Note: To enable logging into the client account, set the mc_devlogin property to true in your gradle user home
+        if (findProperty('mc_devlogin') ?: false) {
+            //If the property is present and set to true, enable dev login
+            devLogin = true
+        }
+    }
+    clientAlt {
+        client()
+        // Force a different username in case devlogin is not enabled for the main run
+        programArguments.addAll((String[]) ['--username', 'AltDev'])
+    }
+    server {
+        server()
+        programArgument('--nogui')
+    }
+    data {
+        data()
+        programArguments.addAll('--all', '--output', project.file('src/datagen/generated/').getAbsolutePath(),
+                '--mod', 'projectextended', '--existing', project.file('src/main/resources/').getAbsolutePath(),
+                '--existing-mod', 'projecte')
+
+        sourceSet = sourceSets.runData
+        loadedMods = [neoForge.mods.projectextended_datagen]
+    }
+}
+
+static void exclusiveRepo(RepositoryHandler handler, String url, String... groups) {
+    exclusiveRepo(handler, url, filter -> {
+        for (def group : groups) {
+            filter.includeGroup(group)
+        }
+    })
+}
+
+static void exclusiveRepo(RepositoryHandler handler, String url, Consumer<InclusiveRepositoryContentDescriptor> filterSetup) {
+    handler.exclusiveContent {
+        it.forRepositories(handler.maven {
+            setUrl(url)
+        })
+        it.filter { f -> filterSetup.accept(f) }
+    }
+}
+
+repositories { RepositoryHandler handler ->
+    exclusiveRepo(handler, 'https://maven.blamejared.com', filter -> {
+        filter.includeGroupAndSubgroups('com.blamejared')
+        filter.includeGroupAndSubgroups('net.darkhax')
+        filter.includeGroup('org.openzen.zencode')
+        filter.includeGroup('mezz.jei')
+    })
+    exclusiveRepo(handler, 'https://www.cursemaven.com', 'curse.maven')
+    exclusiveRepo(handler, 'https://maven.thiakil.com', 'moze_intel.projecte')
+    exclusiveRepo(handler, 'https://maven.parchmentmc.org/', 'org.parchmentmc.data')
+    flatDir {
+        dirs "libs"
+    }
+}
+
+dependencies {
+    if (project.hasProperty('projecte_local_version')) {
+        implementation("projecte:projecte:${projecte_local_version}")
+    } else if (project.hasProperty('projecte_version')) {
+        implementation("moze_intel.projecte:ProjectE:${projecte_version}")
+    } else {
+        implementation("curse.maven:projecte-226410:${projecte_fileid}")
+    }
+    //Include JEI in the dev environment
+    localRuntime("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
+
+    localRuntime("net.darkhax.bookshelf:bookshelf-neoforge-${minecraft_version}:${bookshelf_version}")
+    def gameStages = "net.darkhax.gamestages:GameStages-Forge-${previous_minor_minecraft_version}:${gamestages_version}"
+    compileOnly(gameStages)
+    //localRuntime(gameStages)
+}
+
+//Set the various variables/settings for the different process resources tasks
+tasks.named('processResources', ProcessResources) {
+    duplicatesStrategy = DuplicatesStrategy.FAIL
+    exclude('META-INF/neoforge.mods.toml')
+    finalizedBy(replaceResources)
+    from("${projectDir}") { include('logo.png') }
+    def files = fileTree(dir: outputs.files.asPath, includes: ['**/*.json', '**/*.mcmeta'])
+    doLast {
+        for (def file : files) {
+            file.text = JsonOutput.toJson(new JsonSlurper().parse(file))
+        }
+    }
+}
+
+//Make the various classes tasks depend on the corresponding replaceResources tasks in addition to the default processResources tasks they depend on
+tasks.named('classes') { dependsOn(replaceResources) }
+
+tasks.named('jar', Jar) {
+    duplicatesStrategy = DuplicatesStrategy.FAIL
+    manifest.attributes([
+            "Specification-Title"     : "ProjectExtended",
+            "Specification-Vendor"    : "pupnewfster",
+            "Specification-Version"   : "${mod_version}",
+            "Implementation-Title"    : "ProjectExtended",
+            "Implementation-Version"  : "${mod_version}",
+            "Implementation-Vendor"   : "pupnewfster",
+            "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
+            "Automatic-Module-Name"   : "projectextended"
+    ])
+}
+
+tasks.withType(JavaCompile).configureEach({
+    it.options.encoding = 'UTF-8'
+    it.options.compilerArgs << "-Xmaxerrs" << "100000"
+})
+
+publishing {
+    publications { PublicationContainer publicationContainer ->
+        publicationContainer.register('maven', MavenPublication) { MavenPublication publication ->
+            publication.from((SoftwareComponent) components.java)
+            publication.groupId = project.group
+            publication.version = project.version
+            publication.artifactId = 'ProjectExtended'
+            publication.artifacts = [jar]
+            publication.pom {
+                name.set('ProjectExtended')
+                packaging = 'jar'
+                scm {
+                    url.set('https://github.com/pupnewfster/ProjectExtended.git')
+                }
+                issueManagement {
+                    system.set('github')
+                    url.set('https://github.com/pupnewfster/ProjectExtended/issues')
+                }
+                licenses {
+                    license {
+                        name.set('MIT')
+                        distribution.set('repo')
+                    }
+                }
+            }
+        }
+    }
+}
