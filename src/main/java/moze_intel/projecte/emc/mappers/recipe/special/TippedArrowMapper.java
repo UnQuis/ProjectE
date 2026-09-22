@@ -14,7 +14,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.alchemy.Potion;
 import net.minecraft.world.item.alchemy.PotionContents;
@@ -23,8 +23,8 @@ import net.minecraft.world.item.crafting.TippedArrowRecipe;
 @RecipeTypeMapper
 public class TippedArrowMapper extends SpecialRecipeMapper<TippedArrowRecipe> {
 
-	private static final ResourceLocation TIPPED_ARROW = BuiltInRegistries.ITEM.getKey(Items.TIPPED_ARROW);
-	private static final ResourceLocation LINGERING_POTION = BuiltInRegistries.ITEM.getKey(Items.LINGERING_POTION);
+	private static final Identifier TIPPED_ARROW = BuiltInRegistries.ITEM.getKey(Items.TIPPED_ARROW);
+	private static final Identifier LINGERING_POTION = BuiltInRegistries.ITEM.getKey(Items.LINGERING_POTION);
 
 	@Override
 	protected Class<TippedArrowRecipe> getRecipeClass() {
@@ -47,7 +47,7 @@ public class TippedArrowMapper extends SpecialRecipeMapper<TippedArrowRecipe> {
 		return true;
 	}
 
-	private NSSItem createItem(ResourceLocation item, PotionContents contents) {
+	private NSSItem createItem(Identifier item, PotionContents contents) {
 		return NSSItem.createItem(item, DataComponentPatch.builder().set(DataComponents.POTION_CONTENTS, contents).build());
 	}
 

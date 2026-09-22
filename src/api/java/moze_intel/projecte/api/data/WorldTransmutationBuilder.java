@@ -10,7 +10,6 @@ import moze_intel.projecte.api.world_transmutation.IWorldTransmutation;
 import moze_intel.projecte.api.world_transmutation.SimpleWorldTransmutation;
 import moze_intel.projecte.api.world_transmutation.WorldTransmutation;
 import moze_intel.projecte.api.world_transmutation.WorldTransmutationFile;
-import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.Holder;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -18,7 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
 @ParametersAreNonnullByDefault
-@MethodsReturnNonnullByDefault
 public class WorldTransmutationBuilder extends BaseFileBuilder<WorldTransmutationBuilder> {
 
 	private static final Logger LOGGER = LogUtils.getLogger();

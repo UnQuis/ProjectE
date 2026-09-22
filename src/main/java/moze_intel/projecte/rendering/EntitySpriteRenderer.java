@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,10 +17,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public class EntitySpriteRenderer<ENTITY extends Entity> extends EntityRenderer<ENTITY> {
 
-	private final ResourceLocation texture;
+	private final Identifier texture;
 	private final RenderType renderType;
 
-	public EntitySpriteRenderer(EntityRendererProvider.Context context, ResourceLocation texture) {
+	public EntitySpriteRenderer(EntityRendererProvider.Context context, Identifier texture) {
 		super(context);
 		this.texture = texture;
 		this.renderType = PERenderType.SPRITE_RENDERER.apply(this.texture);
@@ -33,7 +33,7 @@ public class EntitySpriteRenderer<ENTITY extends Entity> extends EntityRenderer<
 
 	@NotNull
 	@Override
-	public ResourceLocation getTextureLocation(@NotNull ENTITY entity) {
+	public Identifier getTextureLocation(@NotNull ENTITY entity) {
 		return texture;
 	}
 

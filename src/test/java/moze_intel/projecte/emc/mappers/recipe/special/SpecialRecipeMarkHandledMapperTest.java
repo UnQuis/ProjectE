@@ -1,6 +1,6 @@
 package moze_intel.projecte.emc.mappers.recipe.special;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.crafting.ArmorDyeRecipe;
 import net.minecraft.world.item.crafting.BookCloningRecipe;
 import net.minecraft.world.item.crafting.CraftingBookCategory;
@@ -16,7 +16,7 @@ class SpecialRecipeMarkHandledMapperTest {
 	@DisplayName("Armor dye is an expected dynamic recipe skip")
 	void testArmorDyeIsExpectedUnhandled() {
 		SpecialRecipeMarkHandledMapper mapper = new SpecialRecipeMarkHandledMapper();
-		RecipeHolder<?> recipe = new RecipeHolder<>(ResourceLocation.fromNamespaceAndPath("projecte", "armor_dye_test"),
+		RecipeHolder<?> recipe = new RecipeHolder<>(Identifier.fromNamespaceAndPath("projecte", "armor_dye_test"),
 				new ArmorDyeRecipe(CraftingBookCategory.MISC));
 		Assertions.assertEquals(SpecialRecipeMarkHandledMapper.ARMOR_DYE_SKIP_REASON, mapper.getExpectedUnhandledReason(recipe, null));
 	}
@@ -25,7 +25,7 @@ class SpecialRecipeMarkHandledMapperTest {
 	@DisplayName("Other special recipes are not silently classified as expected skips")
 	void testOtherSpecialRecipesRemainUnclassified() {
 		SpecialRecipeMarkHandledMapper mapper = new SpecialRecipeMarkHandledMapper();
-		RecipeHolder<?> recipe = new RecipeHolder<>(ResourceLocation.fromNamespaceAndPath("projecte", "book_clone_test"),
+		RecipeHolder<?> recipe = new RecipeHolder<>(Identifier.fromNamespaceAndPath("projecte", "book_clone_test"),
 				new BookCloningRecipe(CraftingBookCategory.MISC));
 		Assertions.assertNull(mapper.getExpectedUnhandledReason(recipe, null));
 	}

@@ -7,7 +7,7 @@ import moze_intel.projecte.gameObjs.container.CollectorMK3Container;
 import moze_intel.projecte.utils.EMCHelper;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
@@ -17,7 +17,7 @@ public abstract class AbstractCollectorScreen<T extends CollectorMK1Container> e
 		super(container, invPlayer, title);
 	}
 
-	protected abstract ResourceLocation getTexture();
+	protected abstract Identifier getTexture();
 
 	protected int getBonusXShift() {
 		return 0;
@@ -64,7 +64,7 @@ public abstract class AbstractCollectorScreen<T extends CollectorMK1Container> e
 		}
 
 		@Override
-		protected ResourceLocation getTexture() {
+		protected Identifier getTexture() {
 			return PECore.rl("textures/gui/collector1.png");
 		}
 	}
@@ -78,7 +78,7 @@ public abstract class AbstractCollectorScreen<T extends CollectorMK1Container> e
 		}
 
 		@Override
-		protected ResourceLocation getTexture() {
+		protected Identifier getTexture() {
 			return PECore.rl("textures/gui/collector2.png");
 		}
 
@@ -102,7 +102,7 @@ public abstract class AbstractCollectorScreen<T extends CollectorMK1Container> e
 		}
 
 		@Override
-		protected ResourceLocation getTexture() {
+		protected Identifier getTexture() {
 			return PECore.rl("textures/gui/collector3.png");
 		}
 

@@ -29,7 +29,7 @@ import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
@@ -50,7 +50,7 @@ public class BlacklistManager extends SimplePreparableReloadListener<Map<@Nullab
 	 */
 	private static final BlacklistType[] BLACKLIST_TYPES = BlacklistType.values();
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
-	private static final ResourceLocation GLOBAL_FILE = PECore.rl("global_blacklist.json");
+	private static final Identifier GLOBAL_FILE = PECore.rl("global_blacklist.json");
 	private static final Codec<Map<String, List<NSSItem>>> BLACKLIST_CODEC = Codec.unboundedMap(
 			ExtraCodecs.NON_EMPTY_STRING,
 			ExtraCodecs.nonEmptyList(NSSItem.CODEC.codec().listOf())

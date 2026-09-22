@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -26,9 +26,9 @@ public class ChestRenderer implements BlockEntityRenderer<EmcChestBlockEntity> {
 	private final ModelPart lock;
 
 	private final BlockRegistryObject<?, ?> type;
-	private final ResourceLocation texture;
+	private final Identifier texture;
 
-	public ChestRenderer(BlockEntityRendererProvider.Context context, ResourceLocation texture, BlockRegistryObject<?, ?> type) {
+	public ChestRenderer(BlockEntityRendererProvider.Context context, Identifier texture, BlockRegistryObject<?, ?> type) {
 		this.texture = texture;
 		this.type = type;
 		ModelPart modelpart = context.bakeLayer(ModelLayers.CHEST);

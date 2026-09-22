@@ -11,7 +11,7 @@ import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.layers.RenderLayer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
@@ -20,8 +20,8 @@ public class LayerYue extends RenderLayer<AbstractClientPlayer, PlayerModel<Abst
 
 	private static final UUID SIN_UUID = UUID.fromString("5f86012c-ca4b-451a-989c-8fab167af647");
 	private static final UUID CLAR_UUID = UUID.fromString("e5c59746-9cf7-4940-a849-d09e1f1efc13");
-	private static final ResourceLocation HEART_LOC = PECore.rl("textures/models/heartcircle.png");
-	private static final ResourceLocation YUE_LOC = PECore.rl("textures/models/yuecircle.png");
+	private static final Identifier HEART_LOC = PECore.rl("textures/models/heartcircle.png");
+	private static final Identifier YUE_LOC = PECore.rl("textures/models/yuecircle.png");
 
 	public LayerYue(PlayerRenderer renderer) {
 		super(renderer);
@@ -57,7 +57,7 @@ public class LayerYue extends RenderLayer<AbstractClientPlayer, PlayerModel<Abst
 
 	@NotNull
 	@Override
-	protected ResourceLocation getTextureLocation(AbstractClientPlayer player) {
+	protected Identifier getTextureLocation(AbstractClientPlayer player) {
 		return CLAR_UUID.equals(player.getUUID()) ? HEART_LOC : YUE_LOC;
 	}
 }

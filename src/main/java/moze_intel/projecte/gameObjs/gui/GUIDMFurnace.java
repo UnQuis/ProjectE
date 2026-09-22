@@ -5,7 +5,7 @@ import moze_intel.projecte.gameObjs.block_entities.DMFurnaceBlockEntity;
 import moze_intel.projecte.gameObjs.container.DMFurnaceContainer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
@@ -13,19 +13,19 @@ import org.jetbrains.annotations.NotNull;
 public class GUIDMFurnace<CONTAINER extends DMFurnaceContainer> extends PEContainerScreen<CONTAINER> {
 
 	//FurnaceScreen.LIT_PROGRESS_SPRITE
-	private static final ResourceLocation LIT_PROGRESS_SPRITE = ResourceLocation.withDefaultNamespace("container/furnace/lit_progress");
+	private static final Identifier LIT_PROGRESS_SPRITE = Identifier.withDefaultNamespace("container/furnace/lit_progress");
 	private static final int LIT_SIZE = 14;
 
-	private static final ResourceLocation DM_FURNACE = PECore.rl("textures/gui/dmfurnace.png");
+	private static final Identifier DM_FURNACE = PECore.rl("textures/gui/dmfurnace.png");
 
 	private final DMFurnaceBlockEntity furnace;
-	protected final ResourceLocation texture;
+	protected final Identifier texture;
 
 	public GUIDMFurnace(CONTAINER container, Inventory invPlayer, Component title) {
 		this(container, invPlayer, title, DM_FURNACE, 178, 165, 57);
 	}
 
-	public GUIDMFurnace(CONTAINER container, Inventory invPlayer, Component title, ResourceLocation texture, int textureWidth, int textureHeight,
+	public GUIDMFurnace(CONTAINER container, Inventory invPlayer, Component title, Identifier texture, int textureWidth, int textureHeight,
 			int labelX) {
 		super(container, invPlayer, title);
 		this.texture = texture;

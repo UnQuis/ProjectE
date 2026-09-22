@@ -6,7 +6,7 @@ import moze_intel.projecte.gameObjs.registration.impl.BlockRegistryObject;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import net.minecraft.core.Direction;
 import net.minecraft.data.PackOutput;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -55,11 +55,11 @@ public class PEBlockStateProvider extends BlockStateProvider {
 
 	private void registerInterdictionLantern() {
 		BlockModelBuilder lantern = models().getBuilder(PEBlocks.INTERDICTION_LANTERN.getName())
-				.parent(models().getExistingFile(ResourceLocation.withDefaultNamespace("template_lantern")))
+				.parent(models().getExistingFile(Identifier.withDefaultNamespace("template_lantern")))
 				.texture("lantern", PECore.rl("block/interdiction_lantern"))
 				.renderType("cutout");
 		BlockModelBuilder hangingLantern = models().getBuilder(PEBlocks.INTERDICTION_LANTERN.getName() + "_hanging")
-				.parent(models().getExistingFile(ResourceLocation.withDefaultNamespace("template_hanging_lantern")))
+				.parent(models().getExistingFile(Identifier.withDefaultNamespace("template_hanging_lantern")))
 				.texture("lantern", PECore.rl("block/interdiction_lantern"))
 				.renderType("cutout");
 
@@ -115,7 +115,7 @@ public class PEBlockStateProvider extends BlockStateProvider {
 	}
 
 	private void registerPedestal() {
-		ResourceLocation dm = modLoc("block/dark_matter_block");
+		Identifier dm = modLoc("block/dark_matter_block");
 		BlockModelBuilder model = models()
 				.withExistingParent(PEBlocks.DARK_MATTER_PEDESTAL.getName(), "block/block")
 				.texture("pedestal", dm)
@@ -155,7 +155,7 @@ public class PEBlockStateProvider extends BlockStateProvider {
 	}
 
 	private void registerTransmutationTable() {
-		ResourceLocation top = modLoc("block/transmutation_stone/top");
+		Identifier top = modLoc("block/transmutation_stone/top");
 		BlockModelBuilder model = models()
 				.withExistingParent(PEBlocks.TRANSMUTATION_TABLE.getName(), "block/block")
 				.texture("bottom", modLoc("block/transmutation_stone/bottom"))
@@ -186,14 +186,14 @@ public class PEBlockStateProvider extends BlockStateProvider {
 
 	private void registerInterdictionTorch() {
 		simpleBlock(PEBlocks.INTERDICTION_TORCH.getBlock(), models().torch(PEBlocks.INTERDICTION_TORCH.getName(), modLoc("block/interdiction_torch"))
-				.renderType(ResourceLocation.withDefaultNamespace("cutout")));
+				.renderType(Identifier.withDefaultNamespace("cutout")));
 		horizontalBlock(PEBlocks.INTERDICTION_TORCH.getWallBlock(), models().torchWall(PEBlocks.INTERDICTION_TORCH.getWallName(),
-				modLoc("block/interdiction_torch")).renderType(ResourceLocation.withDefaultNamespace("cutout")), 90);
+				modLoc("block/interdiction_torch")).renderType(Identifier.withDefaultNamespace("cutout")), 90);
 	}
 
 	private void registerFurnace(BlockRegistryObject<?, ?> furnace, String prefix, String sideTexture) {
 		String name = furnace.getName();
-		ResourceLocation side = modLoc("block/" + sideTexture);
+		Identifier side = modLoc("block/" + sideTexture);
 		BlockModelBuilder offModel = models().orientable(name, side, modLoc("block/matter_furnace/" + prefix + "_off"), side);
 		BlockModelBuilder onModel = models().getBuilder(name + "_on")
 				.parent(offModel)
@@ -202,7 +202,7 @@ public class PEBlockStateProvider extends BlockStateProvider {
 	}
 
 	private void registerTieredOrientable(String type, BlockRegistryObject<?, ?> base, BlockRegistryObject<?, ?> mk2, BlockRegistryObject<?, ?> mk3) {
-		ResourceLocation side = modLoc("block/" + type + "/other");
+		Identifier side = modLoc("block/" + type + "/other");
 		BlockModelBuilder model = models().orientableWithBottom(base.getName(), side, modLoc("block/" + type + "/front"), side,
 				modLoc("block/" + type + "/top_1"));
 		horizontalBlock(base.getBlock(), model);

@@ -12,7 +12,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
@@ -20,7 +20,7 @@ import org.lwjgl.glfw.GLFW;
 public class GUITransmutation extends PEContainerScreen<TransmutationContainer> {
 
 	private static final BigInteger MAX_EXACT_TRANSMUTATION_DISPLAY = BigInteger.valueOf(1_000_000_000_000L);
-	private static final ResourceLocation texture = PECore.rl("textures/gui/transmute.png");
+	private static final Identifier texture = PECore.rl("textures/gui/transmute.png");
 
 	private final TransmutationInventory inv;
 	private EditBox textBoxFilter;

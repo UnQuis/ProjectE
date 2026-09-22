@@ -5,7 +5,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import java.util.List;
 import moze_intel.projecte.api.nss.NSSItem;
 import moze_intel.projecte.api.nss.NormalizedSimpleStack;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.junit.jupiter.api.Assertions;
@@ -104,7 +104,7 @@ class CraftingMapperTest {
 
 		Object2IntMap<NormalizedSimpleStack> normalizedMatches = new Object2IntOpenHashMap<>();
 		List<ItemStack> matches = BaseRecipeTypeMapper.getNormalizableMatches(new ItemStack[]{malformed, valid},
-				ResourceLocation.fromNamespaceAndPath("projecte", "malformed_alternative_test"), normalizedMatches, stack -> {
+				Identifier.fromNamespaceAndPath("projecte", "malformed_alternative_test"), normalizedMatches, stack -> {
 					if (stack.getItem() == Items.STONE) {
 						throw new IllegalArgumentException("simulated malformed alternative");
 					}
@@ -122,7 +122,7 @@ class CraftingMapperTest {
 		ItemStack malformed = new ItemStack(Items.STONE);
 
 		Assertions.assertNull(BaseRecipeTypeMapper.normalizeStack(malformed,
-				ResourceLocation.fromNamespaceAndPath("projecte", "malformed_stack_test"), "ingredient",
+				Identifier.fromNamespaceAndPath("projecte", "malformed_stack_test"), "ingredient",
 				stack -> {
 					throw new IllegalArgumentException("simulated malformed stack");
 				}));
@@ -134,7 +134,7 @@ class CraftingMapperTest {
 		ItemStack stack = new ItemStack(Items.STONE);
 
 		Assertions.assertThrows(IllegalStateException.class, () -> BaseRecipeTypeMapper.normalizeStack(stack,
-				ResourceLocation.fromNamespaceAndPath("projecte", "unexpected_normalizer_failure_test"), "ingredient",
+				Identifier.fromNamespaceAndPath("projecte", "unexpected_normalizer_failure_test"), "ingredient",
 				ignored -> {
 					throw new IllegalStateException("simulated programming failure");
 				}));

@@ -10,7 +10,7 @@ import moze_intel.projecte.api.world_transmutation.IWorldTransmutation;
 import moze_intel.projecte.api.world_transmutation.SimpleWorldTransmutation;
 import moze_intel.projecte.api.world_transmutation.WorldTransmutation;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
@@ -30,7 +30,7 @@ public record WorldTransmuteEntry(Either<ItemStack, FluidStack> input, Either<It
 			EITHER_CODEC.optionalFieldOf("alt_output").forGetter(entry -> Optional.ofNullable(entry.altOutput()))
 	).apply(instance, (input, output, altOutput) -> new WorldTransmuteEntry(input, output, altOutput.orElse(null))));
 
-	public ResourceLocation syntheticId() {
+	public Identifier syntheticId() {
 		String name = stripForSynthetic(input) + "/" + stripForSynthetic(output);
 		if (altOutput != null) {
 			name += "/" + stripForSynthetic(altOutput);

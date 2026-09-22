@@ -23,7 +23,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -105,7 +105,7 @@ public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider
 
 	protected final int ticksBeforeSmelt;
 	private final int efficiencyBonus;
-	private final Object2IntOpenHashMap<ResourceLocation> recipesUsed = new Object2IntOpenHashMap<>();
+	private final Object2IntOpenHashMap<Identifier> recipesUsed = new Object2IntOpenHashMap<>();
 	private final RecipeManager.CachedCheck<SingleRecipeInput, SmeltingRecipe> quickCheck;
 
 	@Nullable
@@ -431,7 +431,7 @@ public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider
 		//[VanillaCopy] AbstractFurnaceBlockEntity
 		CompoundTag usedRecipes = tag.getCompound("recipes_used");
 		for (String recipeId : usedRecipes.getAllKeys()) {
-			this.recipesUsed.put(ResourceLocation.parse(recipeId), usedRecipes.getInt(recipeId));
+			this.recipesUsed.put(Identifier.parse(recipeId), usedRecipes.getInt(recipeId));
 		}
 	}
 
@@ -446,8 +446,8 @@ public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider
 		tag.put("fuel", fuelInv.serializeNBT(registries));
 		//[VanillaCopy] AbstractFurnaceBlockEntity
 		CompoundTag usedRecipes = new CompoundTag();
-		for (Iterator<Object2IntMap.Entry<ResourceLocation>> iterator = Object2IntMaps.fastIterator(recipesUsed); iterator.hasNext(); ) {
-			Object2IntMap.Entry<ResourceLocation> entry = iterator.next();
+		for (Iterator<Object2IntMap.Entry<Identifier>> iterator = Object2IntMaps.fastIterator(recipesUsed); iterator.hasNext(); ) {
+			Object2IntMap.Entry<Identifier> entry = iterator.next();
 			usedRecipes.putInt(entry.getKey().toString(), entry.getIntValue());
 		}
 		tag.put("recipes_used", usedRecipes);
@@ -491,8 +491,8 @@ public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider
 	public List<RecipeHolder<?>> getRecipesToAwardAndPopExperience(ServerLevel level, Vec3 popVec) {
 		RecipeManager recipeManager = level.getRecipeManager();
 		List<RecipeHolder<?>> list = new ArrayList<>();
-		for (Iterator<Object2IntMap.Entry<ResourceLocation>> iterator = Object2IntMaps.fastIterator(recipesUsed); iterator.hasNext(); ) {
-			Object2IntMap.Entry<ResourceLocation> entry = iterator.next();
+		for (Iterator<Object2IntMap.Entry<Identifier>> iterator = Object2IntMaps.fastIterator(recipesUsed); iterator.hasNext(); ) {
+			Object2IntMap.Entry<Identifier> entry = iterator.next();
 			Optional<RecipeHolder<?>> optionalRecipe = recipeManager.byKey(entry.getKey());
 			if (optionalRecipe.isPresent()) {
 				RecipeHolder<?> recipeHolder = optionalRecipe.get();

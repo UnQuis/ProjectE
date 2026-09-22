@@ -8,7 +8,7 @@ import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -23,7 +23,7 @@ public final class NSSItem extends AbstractDataComponentHolderNSSTag<Item> {
 	private static final ResourceKey<Item> DEFAULT_KEY = ResourceKey.create(Registries.ITEM, BuiltInRegistries.ITEM.getDefaultKey());
 	public static final MapCodec<NSSItem> CODEC = createCodec(BuiltInRegistries.ITEM, false, NSSItem::new);
 
-	private NSSItem(@NotNull ResourceLocation resourceLocation, boolean isTag, @NotNull DataComponentPatch componentsPatch) {
+	private NSSItem(@NotNull Identifier resourceLocation, boolean isTag, @NotNull DataComponentPatch componentsPatch) {
 		super(resourceLocation, isTag, componentsPatch);
 	}
 
@@ -86,10 +86,10 @@ public final class NSSItem extends AbstractDataComponentHolderNSSTag<Item> {
 	}
 
 	/**
-	 * Helper method to create an {@link NSSItem} representing an item from a {@link ResourceLocation}
+	 * Helper method to create an {@link NSSItem} representing an item from a {@link Identifier}
 	 */
 	@NotNull
-	public static NSSItem createItem(@NotNull ResourceLocation itemID) {
+	public static NSSItem createItem(@NotNull Identifier itemID) {
 		return createItem(itemID, DataComponentPatch.EMPTY);
 	}
 
@@ -102,18 +102,18 @@ public final class NSSItem extends AbstractDataComponentHolderNSSTag<Item> {
 	}
 
 	/**
-	 * Helper method to create an {@link NSSItem} representing an item from a {@link ResourceLocation} and an optional {@link DataComponentPatch}
+	 * Helper method to create an {@link NSSItem} representing an item from a {@link Identifier} and an optional {@link DataComponentPatch}
 	 */
 	@NotNull
-	public static NSSItem createItem(@NotNull ResourceLocation itemID, @NotNull DataComponentPatch componentsPatch) {
+	public static NSSItem createItem(@NotNull Identifier itemID, @NotNull DataComponentPatch componentsPatch) {
 		return new NSSItem(itemID, false, componentsPatch);
 	}
 
 	/**
-	 * Helper method to create an {@link NSSItem} representing a tag from a {@link ResourceLocation}
+	 * Helper method to create an {@link NSSItem} representing a tag from a {@link Identifier}
 	 */
 	@NotNull
-	public static NSSItem createTag(@NotNull ResourceLocation tagId) {
+	public static NSSItem createTag(@NotNull Identifier tagId) {
 		return new NSSItem(tagId, true, DataComponentPatch.EMPTY);
 	}
 

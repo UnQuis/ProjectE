@@ -53,7 +53,7 @@ import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.Commands;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.api.distmarker.Dist;
@@ -76,10 +76,10 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 @Mod(value = PECore.MODID, dist = Dist.CLIENT)
 public class PEClient {
 
-	public static final ResourceLocation ACTIVE_OVERRIDE = PECore.rl("active");
-	public static final ResourceLocation MODE_OVERRIDE = PECore.rl("mode");
-	public static final ResourceLocation BLOCKING_OVERRIDE = PECore.rl("blocking");
-	public static final ResourceLocation THROWING_OVERRIDE = PECore.rl("throwing");
+	public static final Identifier ACTIVE_OVERRIDE = PECore.rl("active");
+	public static final Identifier MODE_OVERRIDE = PECore.rl("mode");
+	public static final Identifier BLOCKING_OVERRIDE = PECore.rl("blocking");
+	public static final Identifier THROWING_OVERRIDE = PECore.rl("throwing");
 
 	public PEClient(ModContainer container, IEventBus modEventBus) {
 		container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
@@ -242,7 +242,7 @@ public class PEClient {
 	}
 
 	@SuppressWarnings("deprecation")
-	private static void addPropertyOverrides(ResourceLocation override, ItemPropertyFunction propertyGetter, ItemLike... itemProviders) {
+	private static void addPropertyOverrides(Identifier override, ItemPropertyFunction propertyGetter, ItemLike... itemProviders) {
 		for (ItemLike itemProvider : itemProviders) {
 			ItemProperties.register(itemProvider.asItem(), override, propertyGetter);
 		}

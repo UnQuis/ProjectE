@@ -12,7 +12,7 @@ plugins {
     id('maven-publish')
     id('com.gradleup.shadow') version('8.3.6')
     // https://projects.neoforged.net/neoforged/ModDevGradle
-    id('net.neoforged.moddev') version('2.0.78')
+    id('net.neoforged.moddev') version('2.0.147')
 }
 
 tasks.named('wrapper', Wrapper) {
@@ -124,8 +124,8 @@ project.base.archivesName = "projecte"
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
-        vendor.set(JvmVendorSpec.JETBRAINS)
+        //Minecraft 26.x requires Java 25
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
     withSourcesJar()
 }
@@ -230,9 +230,10 @@ repositories { RepositoryHandler handler ->
     })
     exclusiveRepo(handler, 'https://repo.sleeping.town/', 'dev.emi')
     exclusiveRepo(handler, 'https://maven.theillusivec4.top/', 'top.theillusivec4.curios')
-    exclusiveRepo(handler, 'https://maven2.bai.lol', 'lol.bai', 'mcp.mobius.waila')//WTHIT
+    exclusiveRepo(handler, 'https://maven4.bai.lol', 'lol.bai', 'mcp.mobius.waila')//WTHIT
     exclusiveRepo(handler, 'https://modmaven.dev/', 'mcjty.theoneprobe')
     exclusiveRepo(handler, 'https://www.cursemaven.com', 'curse.maven')
+    exclusiveRepo(handler, 'https://api.modrinth.com/maven', 'maven.modrinth')
 }
 
 test {
@@ -251,18 +252,7 @@ dependencies {
         localRuntime("mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}")
     }
 
-    compileOnly("dev.emi:emi-neoforge:${emi_version}+${minecraft_version}:api")
-    def emi = "dev.emi:emi-neoforge:${emi_version}+${minecraft_version}"
-    //TODO: Re-evaluate (https://github.com/emilyploszaj/emi/issues/537) might allow us to not have to do this
-    //Compile against full emi in datagen
-    datagenCompileOnly(emi)
-    if (recipe_viewer == 'emi' || recipe_viewer == 'hybrid') {
-        localRuntime(emi)
-    } else {
-        //We still need it to load in datagen regardless of if we are using emi or a different viewer so that we can access EMI related objects
-        datagenRuntimeOnly(emi)
-    }
-
+    //Note: EMI has not been released for 26.x yet, so its recipe viewer integration is disabled on this branch
 
     compileOnly("top.theillusivec4.curios:curios-neoforge:${curios_version}:api")
     localRuntime("top.theillusivec4.curios:curios-neoforge:${curios_version}")
@@ -274,18 +264,20 @@ dependencies {
     localRuntime("mcjty.theoneprobe:theoneprobe:${top_version}") {
         transitive = false
     }
-    compileOnly("curse.maven:jade-api-324717:${jade_api_id}")
-    localRuntime("curse.maven:jade-324717:${jade_id}")
-    compileOnly("mcp.mobius.waila:wthit-api:forge-${wthit_version}")
+    //Jade is fetched from Modrinth as it does not publish its API as a separate tracked dependency version
+    compileOnly("maven.modrinth:jade:${jade_version}")
+    localRuntime("maven.modrinth:jade:${jade_version}")
+    compileOnly("mcp.mobius.waila:wthit-api:neo-${wthit_version}")
+
+    //Minecraft 26.x no longer pulls in the JSR-305 annotations transitively, but we still use them
+    compileOnly("com.google.code.findbugs:jsr305:3.0.2")
 
     //GameStages support is compile only and is properly guarded at runtime by GameStagesHelper
     compileOnly("net.darkhax.gamestages:GameStages-Forge-1.20.3:${gamestages_version}")
 
-    def crt = "com.blamejared.crafttweaker:CraftTweaker-neoforge-${minecraft_version}:${crafttweaker_version}"
-    compileOnly(crt)
-    localRuntime(crt)
+    //Note: CraftTweaker has not been released for 26.x yet, so its integration is disabled on this branch
 
-    additionalRuntimeClasspath(implementation(shadow(group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1')))
+    implementation(shadow(group: 'org.apache.commons', name: 'commons-math3', version: '3.6.1'))
 }
 
 //Set the various variables/settings for the different process resources tasks

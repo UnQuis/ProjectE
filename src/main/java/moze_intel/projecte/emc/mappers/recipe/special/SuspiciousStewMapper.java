@@ -19,7 +19,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -31,7 +31,7 @@ import org.jetbrains.annotations.Nullable;
 @RecipeTypeMapper
 public class SuspiciousStewMapper extends SpecialRecipeMapper<SuspiciousStewRecipe> {
 
-	private static final ResourceLocation SUSPICIOUS_STEW = BuiltInRegistries.ITEM.getKey(Items.SUSPICIOUS_STEW);
+	private static final Identifier SUSPICIOUS_STEW = BuiltInRegistries.ITEM.getKey(Items.SUSPICIOUS_STEW);
 
 	@Override
 	protected Class<SuspiciousStewRecipe> getRecipeClass() {

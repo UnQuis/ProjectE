@@ -26,7 +26,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -74,7 +74,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class ToolHelper {
 
-	private static final ResourceLocation CHARGE_MODIFIER_ID = PECore.rl("charge_modifier");
+	private static final Identifier CHARGE_MODIFIER_ID = PECore.rl("charge_modifier");
 
 	public static final ItemAbility HAMMER_DIG = ItemAbility.get("hammer_dig");
 	public static final ItemAbility KATAR_DIG = ItemAbility.get("katar_dig");

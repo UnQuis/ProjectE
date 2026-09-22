@@ -11,7 +11,7 @@ import net.minecraft.client.renderer.block.model.BlockModel.GuiLight;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.models.ItemModelGenerators;
 import net.minecraft.data.models.ItemModelGenerators.TrimModelData;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemDisplayContext;
@@ -247,7 +247,7 @@ public class PEItemModelProvider extends ItemModelProvider {
 		generateShieldModel(PEItems.RED_MATTER_SHIELD, PECore.rl("block/dark_matter_block"));
 	}
 
-	private void generateShieldModel(INamedEntry item, ResourceLocation particle) {
+	private void generateShieldModel(INamedEntry item, Identifier particle) {
 		String name = item.getName();
 		withExistingParent(name, "shield")
 				.texture("particle", particle)
@@ -265,7 +265,7 @@ public class PEItemModelProvider extends ItemModelProvider {
 
 	private void generateTridentModel(INamedEntry item) {
 		String name = item.getName();
-		ResourceLocation itemLoc = itemTexture(item);
+		Identifier itemLoc = itemTexture(item);
 		ItemModelBuilder guiModel = nested()
 				.parent(withExistingParent(name + "_gui", "item/generated")
 						.texture("layer0", itemLoc));
@@ -316,7 +316,7 @@ public class PEItemModelProvider extends ItemModelProvider {
 		}
 	}
 
-	protected ResourceLocation itemTexture(INamedEntry itemProvider) {
+	protected Identifier itemTexture(INamedEntry itemProvider) {
 		return modLoc("item/" + itemProvider.getName());
 	}
 
@@ -330,30 +330,30 @@ public class PEItemModelProvider extends ItemModelProvider {
 		return generated(itemProvider, itemTexture(itemProvider));
 	}
 
-	protected ItemModelBuilder generated(INamedEntry itemProvider, ResourceLocation texture) {
+	protected ItemModelBuilder generated(INamedEntry itemProvider, Identifier texture) {
 		return generated(itemProvider.getName(), texture);
 	}
 
-	protected ItemModelBuilder generated(String name, ResourceLocation texture) {
+	protected ItemModelBuilder generated(String name, Identifier texture) {
 		return withExistingParent(name, "item/generated").texture("layer0", texture);
 	}
 
-	protected ItemModelBuilder handheld(INamedEntry itemProvider, ResourceLocation texture) {
+	protected ItemModelBuilder handheld(INamedEntry itemProvider, Identifier texture) {
 		return handheld(itemProvider.getName(), texture);
 	}
 
-	protected ItemModelBuilder handheld(String name, ResourceLocation texture) {
+	protected ItemModelBuilder handheld(String name, Identifier texture) {
 		return withExistingParent(name, "item/handheld").texture("layer0", texture);
 	}
 
-	protected <PROVIDER extends ItemLike & INamedEntry> ItemModelBuilder armorWithTrim(PROVIDER itemProvider, ResourceLocation texture) {
+	protected <PROVIDER extends ItemLike & INamedEntry> ItemModelBuilder armorWithTrim(PROVIDER itemProvider, Identifier texture) {
 		ItemModelBuilder builder = generated(itemProvider, texture);
 		ArmorItem.Type type = ((ArmorItem) itemProvider.asItem()).getType();
 		for (TrimModelData trimModelData : ItemModelGenerators.GENERATED_TRIM_MODELS) {
 			String trimId = trimModelData.name();
 			ItemModelBuilder override = withExistingParent(builder.getLocation().withSuffix("_" + trimId + "_trim").getPath(), "item/generated")
 					.texture("layer0", texture)
-					.texture("layer1", ResourceLocation.withDefaultNamespace("trims/items/" + type.getName() + "_trim_" + trimId));
+					.texture("layer1", Identifier.withDefaultNamespace("trims/items/" + type.getName() + "_trim_" + trimId));
 			builder.override()
 					.predicate(ItemModelGenerators.TRIM_TYPE_PREDICATE_ID, trimModelData.itemModelIndex())
 					.model(override);

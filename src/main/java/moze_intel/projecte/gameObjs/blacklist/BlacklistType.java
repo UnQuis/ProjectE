@@ -14,7 +14,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.world.entity.player.Player;
@@ -30,7 +30,7 @@ public enum BlacklistType {
 	public static final IntFunction<BlacklistType> BY_ID = ByIdMap.continuous(BlacklistType::ordinal, values(), ByIdMap.OutOfBoundsStrategy.WRAP);
 	public static final StreamCodec<ByteBuf, BlacklistType> STREAM_CODEC = ByteBufCodecs.idMapper(BY_ID, BlacklistType::ordinal);
 
-	private final ResourceLocation blacklistFile;
+	private final Identifier blacklistFile;
 	private final TagKey<Item> blacklist;
 	private final ILangEntry warning, gameStageWarning;
 	private final String name;
@@ -43,7 +43,7 @@ public enum BlacklistType {
 		this.gameStageWarning = gameStageWarning;
 	}
 
-	public ResourceLocation getBlacklistFile() {
+	public Identifier getBlacklistFile() {
 		return blacklistFile;
 	}
 

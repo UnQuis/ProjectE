@@ -4,13 +4,13 @@ import moze_intel.projecte.PECore;
 import moze_intel.projecte.gameObjs.container.MercurialEyeContainer;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 public class GUIMercurialEye extends PEContainerScreen<MercurialEyeContainer> {
 
-	private static final ResourceLocation texture = PECore.rl("textures/gui/mercurial_eye.png");
+	private static final Identifier texture = PECore.rl("textures/gui/mercurial_eye.png");
 	public GUIMercurialEye(MercurialEyeContainer container, Inventory invPlayer, Component title) {
 		super(container, invPlayer, title);
 		this.imageWidth = 171;

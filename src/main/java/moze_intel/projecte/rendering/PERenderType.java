@@ -4,11 +4,11 @@ import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat.Mode;
 import java.util.function.Function;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public class PERenderType extends RenderType {
 
@@ -21,7 +21,7 @@ public class PERenderType extends RenderType {
 			GameRenderer::getPositionTexColorShader
 	);
 
-	public static final Function<ResourceLocation, RenderType> SPRITE_RENDERER = Util.memoize(resourceLocation -> {
+	public static final Function<Identifier, RenderType> SPRITE_RENDERER = Util.memoize(resourceLocation -> {
 		RenderType.CompositeState state = RenderType.CompositeState.builder()
 				.setShaderState(RenderStateShard.POSITION_TEX_SHADER)
 				.setTextureState(new RenderStateShard.TextureStateShard(resourceLocation, false, false))
@@ -29,7 +29,7 @@ public class PERenderType extends RenderType {
 		return create("projecte_sprite_renderer", DefaultVertexFormat.POSITION_TEX, Mode.QUADS, 256, true, false, state);
 	});
 
-	public static final Function<ResourceLocation, RenderType> YEU_RENDERER = Util.memoize(resourceLocation -> {
+	public static final Function<Identifier, RenderType> YEU_RENDERER = Util.memoize(resourceLocation -> {
 		RenderType.CompositeState state = RenderType.CompositeState.builder()
 				.setShaderState(POSITION_TEX_COLOR_SHADER)
 				.setTextureState(new RenderStateShard.TextureStateShard(resourceLocation, false, false))

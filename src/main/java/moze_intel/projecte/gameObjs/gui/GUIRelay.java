@@ -8,13 +8,13 @@ import moze_intel.projecte.gameObjs.container.RelayMK3Container;
 import moze_intel.projecte.utils.EMCHelper;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
 public class GUIRelay<CONTAINER extends RelayMK1Container> extends PEContainerScreen<CONTAINER> {
 
-	private final ResourceLocation texture;
+	private final Identifier texture;
 	private final int emcX;
 	private final int emcY;
 	private final int vOffset;
@@ -22,7 +22,7 @@ public class GUIRelay<CONTAINER extends RelayMK1Container> extends PEContainerSc
 	private final int shiftX;
 	private final int shiftY;
 
-	protected GUIRelay(CONTAINER container, Inventory invPlayer, Component title, ResourceLocation texture, int emcX, int emcY, int vOffset,
+	protected GUIRelay(CONTAINER container, Inventory invPlayer, Component title, Identifier texture, int emcX, int emcY, int vOffset,
 			int emcBarShift, int shiftX, int shiftY) {
 		super(container, invPlayer, title);
 		this.texture = texture;
@@ -60,7 +60,7 @@ public class GUIRelay<CONTAINER extends RelayMK1Container> extends PEContainerSc
 
 	public static class GUIRelayMK1 extends GUIRelay<RelayMK1Container> {
 
-		private static final ResourceLocation MK1_TEXTURE = PECore.rl("textures/gui/relay1.png");
+		private static final Identifier MK1_TEXTURE = PECore.rl("textures/gui/relay1.png");
 
 		public GUIRelayMK1(RelayMK1Container container, Inventory invPlayer, Component title) {
 			super(container, invPlayer, title, MK1_TEXTURE, 88, 24, 177, 64, 0, 0);
@@ -72,7 +72,7 @@ public class GUIRelay<CONTAINER extends RelayMK1Container> extends PEContainerSc
 
 	public static class GUIRelayMK2 extends GUIRelay<RelayMK2Container> {
 
-		private static final ResourceLocation MK2_TEXTURE = PECore.rl("textures/gui/relay2.png");
+		private static final Identifier MK2_TEXTURE = PECore.rl("textures/gui/relay2.png");
 
 		public GUIRelayMK2(RelayMK2Container container, Inventory invPlayer, Component title) {
 			super(container, invPlayer, title, MK2_TEXTURE, 107, 25, 183, 86, 17, 1);
@@ -84,7 +84,7 @@ public class GUIRelay<CONTAINER extends RelayMK1Container> extends PEContainerSc
 
 	public static class GUIRelayMK3 extends GUIRelay<RelayMK3Container> {
 
-		private static final ResourceLocation MK3_TEXTURE = PECore.rl("textures/gui/relay3.png");
+		private static final Identifier MK3_TEXTURE = PECore.rl("textures/gui/relay3.png");
 
 		public GUIRelayMK3(RelayMK3Container container, Inventory invPlayer, Component title) {
 			super(container, invPlayer, title, MK3_TEXTURE, 125, 39, 195, 105, 37, 15);

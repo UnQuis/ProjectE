@@ -25,7 +25,7 @@ import moze_intel.projecte.api.world_transmutation.WorldTransmutation;
 import moze_intel.projecte.api.world_transmutation.WorldTransmutationFile;
 import moze_intel.projecte.network.packets.to_client.SyncWorldTransmutations;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
 import net.minecraft.util.profiling.ProfilerFiller;
@@ -63,14 +63,14 @@ public class WorldTransmutationManager extends SimpleJsonResourceReloadListener 
 	}
 
 	@Override
-	protected void apply(@NotNull Map<ResourceLocation, JsonElement> object, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profiler) {
+	protected void apply(@NotNull Map<Identifier, JsonElement> object, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profiler) {
 		//Ensure we are interacting with the condition context
 		RegistryOps<JsonElement> registryOps = makeConditionalOps();
 		Reference2ObjectMap<Block, SequencedSet<IWorldTransmutation>> builder = new Reference2ObjectLinkedOpenHashMap<>();
 
 		// Find all data/<domain>/pe_world_transmutations/foo/bar.json
-		for (Entry<ResourceLocation, JsonElement> entry : object.entrySet()) {
-			ResourceLocation file = entry.getKey();//<domain>:foo/bar
+		for (Entry<Identifier, JsonElement> entry : object.entrySet()) {
+			Identifier file = entry.getKey();//<domain>:foo/bar
 			DataResult<Optional<WithConditions<WorldTransmutationFile>>> result = WorldTransmutationFile.CONDITIONAL_CODEC.parse(registryOps, entry.getValue());
 			if (result.isSuccess()) {
 				Optional<WithConditions<WorldTransmutationFile>> decoded = result.getOrThrow();

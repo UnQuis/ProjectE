@@ -7,7 +7,7 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.gameObjs.EnumMatterType;
 import moze_intel.projecte.gameObjs.items.tools.PETrident;
-import net.minecraft.Util;
+import net.minecraft.util.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.TridentModel;
 import net.minecraft.client.model.geom.EntityModelSet;
@@ -16,7 +16,7 @@ import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -24,7 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class TridentISTER extends BlockEntityWithoutLevelRenderer {
 
-    private static final Int2ObjectMap<ResourceLocation> TRIDENT_TEXTURES = Util.make(new Int2ObjectArrayMap<>(2), map -> {
+    private static final Int2ObjectMap<Identifier> TRIDENT_TEXTURES = Util.make(new Int2ObjectArrayMap<>(2), map -> {
         map.put(EnumMatterType.DARK_MATTER.getMatterTier(), PECore.rl("textures/entity/dark_matter_trident.png"));
         map.put(EnumMatterType.RED_MATTER.getMatterTier(), PECore.rl("textures/entity/red_matter_trident.png"));
     });
@@ -53,12 +53,12 @@ public class TridentISTER extends BlockEntityWithoutLevelRenderer {
         matrix.popPose();
     }
 
-    private static ResourceLocation getTexture(ItemStack stack) {
+    private static Identifier getTexture(ItemStack stack) {
         //Fall back to vanilla's trident texture
         return stack.getItem() instanceof PETrident trident ? getTexture(trident.getMatterTier()) : TridentModel.TEXTURE;
     }
 
-    public static ResourceLocation getTexture(int matterTier) {
+    public static Identifier getTexture(int matterTier) {
         //Fall back to vanilla's trident texture
         return TRIDENT_TEXTURES.getOrDefault(matterTier, TridentModel.TEXTURE);
     }

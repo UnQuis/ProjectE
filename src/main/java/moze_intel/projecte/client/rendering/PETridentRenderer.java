@@ -4,7 +4,7 @@ import moze_intel.projecte.client.rendering.item.TridentISTER;
 import moze_intel.projecte.gameObjs.entity.PETridentEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ThrownTridentRenderer;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.projectile.ThrownTrident;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +16,7 @@ public class PETridentRenderer extends ThrownTridentRenderer {
 
     @NotNull
     @Override
-    public ResourceLocation getTextureLocation(@NotNull ThrownTrident entity) {
+    public Identifier getTextureLocation(@NotNull ThrownTrident entity) {
         if (entity instanceof PETridentEntity peTrident) {
             return TridentISTER.getTexture(peTrident.getMatterTier());
         }

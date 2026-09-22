@@ -19,7 +19,7 @@ import moze_intel.projecte.utils.Constants;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -63,7 +63,7 @@ public abstract class BaseRecipeTypeMapper implements IRecipeTypeMapper {
 			// mapper would fail as well due to it being an invalid recipe
 			return true;
 		}
-		ResourceLocation recipeID = recipeHolder.id();
+		Identifier recipeID = recipeHolder.id();
 		Object2IntMap<NormalizedSimpleStack> ingredientMap = new Object2IntOpenHashMap<>();
 		for (Ingredient recipeItem : ingredientsChecked) {
 			if (recipeItem.isEmpty()) {
@@ -141,13 +141,13 @@ public abstract class BaseRecipeTypeMapper implements IRecipeTypeMapper {
 	}
 
 	@VisibleForTesting
-	static List<ItemStack> getNormalizableMatches(ItemStack[] matches, ResourceLocation recipeID,
+	static List<ItemStack> getNormalizableMatches(ItemStack[] matches, Identifier recipeID,
 			Object2IntMap<NormalizedSimpleStack> rawNSSMatches) {
 		return getNormalizableMatches(matches, recipeID, rawNSSMatches, NSSItem::createItem);
 	}
 
 	@VisibleForTesting
-	static List<ItemStack> getNormalizableMatches(ItemStack[] matches, ResourceLocation recipeID,
+	static List<ItemStack> getNormalizableMatches(ItemStack[] matches, Identifier recipeID,
 			Object2IntMap<NormalizedSimpleStack> rawNSSMatches, Function<ItemStack, NormalizedSimpleStack> normalizer) {
 		List<ItemStack> normalizableMatches = new ArrayList<>(matches.length);
 		for (ItemStack match : matches) {
@@ -163,19 +163,19 @@ public abstract class BaseRecipeTypeMapper implements IRecipeTypeMapper {
 	}
 
 	@Nullable
-	static NormalizedSimpleStack normalizeStack(ItemStack stack, ResourceLocation recipeID, String stackRole) {
+	static NormalizedSimpleStack normalizeStack(ItemStack stack, Identifier recipeID, String stackRole) {
 		return normalizeStack(stack, recipeID, stackRole, NSSItem::createItem);
 	}
 
 	@Nullable
-	static NormalizedSimpleStack normalizeStack(ItemStack stack, ResourceLocation recipeID, String stackRole,
+	static NormalizedSimpleStack normalizeStack(ItemStack stack, Identifier recipeID, String stackRole,
 			Function<ItemStack, NormalizedSimpleStack> normalizer) {
 		try {
 			return normalizer.apply(stack);
 		} catch (IllegalArgumentException e) {
 			//NSSItem rejects malformed identities with IllegalArgumentException: empty/default stacks, unbound direct holders,
 			//and items that are not registered. Unexpected runtime failures should escape and abort the remap instead of being hidden.
-			ResourceLocation itemName = BuiltInRegistries.ITEM.getKey(stack.getItem());
+			Identifier itemName = BuiltInRegistries.ITEM.getKey(stack.getItem());
 			PECore.LOGGER.error(LogUtils.FATAL_MARKER, "Error mapping recipe {}. Failed to normalize the {} stack for item {} ({}). "
 													 + "Ignoring this stack so malformed recipe data cannot abort the entire EMC remap.", recipeID, stackRole,
 					itemName, stack.getItem().getClass().getName(), e);
@@ -187,13 +187,13 @@ public abstract class BaseRecipeTypeMapper implements IRecipeTypeMapper {
 		return stack.getItem() == Items.BARRIER && stack.getHoverName() instanceof MutableComponent hoverName && hoverName.getString().startsWith("Empty Tag: ");
 	}
 
-	private ItemStack[] getMatchingStacks(Ingredient ingredient, ResourceLocation recipeID) {
+	private ItemStack[] getMatchingStacks(Ingredient ingredient, Identifier recipeID) {
 		try {
 			return ingredient.getItems();
 		} catch (Exception e) {
 			ICustomIngredient customIngredient = ingredient.getCustomIngredient();
 			if (customIngredient != null) {//Should basically always be the case
-				ResourceLocation name = NeoForgeRegistries.INGREDIENT_TYPES.getKey(customIngredient.getType());
+				Identifier name = NeoForgeRegistries.INGREDIENT_TYPES.getKey(customIngredient.getType());
 				if (name == null) {
 					PECore.LOGGER.error(LogUtils.FATAL_MARKER, "Error mapping recipe {}. Ingredient of type: {} crashed when getting the matching stacks. "
 															   + "Please report this to the ingredient's creator.", recipeID, customIngredient.getClass(), e);
@@ -211,7 +211,7 @@ public abstract class BaseRecipeTypeMapper implements IRecipeTypeMapper {
 	/**
 	 * Returns true if it failed and is invalid
 	 */
-	private boolean addIngredient(Object2IntMap<NormalizedSimpleStack> ingredientMap, ItemStack stack, ResourceLocation recipeID) {
+	private boolean addIngredient(Object2IntMap<NormalizedSimpleStack> ingredientMap, ItemStack stack, Identifier recipeID) {
 		stack = stack.copy();
 		Item item = stack.getItem();
 		boolean hasContainerItem = false;
@@ -229,7 +229,7 @@ public abstract class BaseRecipeTypeMapper implements IRecipeTypeMapper {
 				subtractCraftingRemainder(ingredientMap, NSSItem.createItem(craftingRemainingItem), craftingRemainingItem.getCount());
 			}
 		} catch (Exception e) {
-			ResourceLocation itemName = BuiltInRegistries.ITEM.getKey(item);
+			Identifier itemName = BuiltInRegistries.ITEM.getKey(item);
 			if (hasContainerItem) {
 				PECore.LOGGER.error(LogUtils.FATAL_MARKER, "Error mapping recipe {}. Item: {} reported that it has a container item, but errors when trying to get "
 														   + "the container item based on the stack in the recipe. Please report this to {}.", recipeID, itemName,
@@ -262,7 +262,7 @@ public abstract class BaseRecipeTypeMapper implements IRecipeTypeMapper {
 		try {
 			return getIngredients(recipeHolder.value());
 		} catch (Exception e) {
-			ResourceLocation recipeID = recipeHolder.id();
+			Identifier recipeID = recipeHolder.id();
 			PECore.LOGGER.error(LogUtils.FATAL_MARKER, "Error mapping recipe {}. Failed to get ingredients. Please report this to {}.", recipeID, recipeID.getNamespace(), e);
 		}
 		return null;

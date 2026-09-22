@@ -26,7 +26,7 @@ import moze_intel.projecte.impl.codec.PECodecHelper;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.RegistryOps;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -58,19 +58,19 @@ public class CustomConversionMapper implements IEMCMapper<NormalizedSimpleStack,
 	@Override
 	public void addMappings(IMappingCollector<NormalizedSimpleStack, Long> mapper, ReloadableServerResources serverResources,
 			RegistryAccess registryAccess, ResourceManager resourceManager) {
-		Map<ResourceLocation, CustomConversionFile> files = load(registryAccess, resourceManager);
+		Map<Identifier, CustomConversionFile> files = load(registryAccess, resourceManager);
 		addMappingsFromFiles(files, mapper);
 	}
 
-	private static Map<ResourceLocation, CustomConversionFile> load(RegistryAccess registryAccess, ResourceManager resourceManager) {
-		Map<ResourceLocation, CustomConversionFile> loading = new HashMap<>();
+	private static Map<Identifier, CustomConversionFile> load(RegistryAccess registryAccess, ResourceManager resourceManager) {
+		Map<Identifier, CustomConversionFile> loading = new HashMap<>();
 
 		RegistryOps<JsonElement> serializationContext = registryAccess.createSerializationContext(JsonOps.INSTANCE);
 		try {
 			// Find all data/<domain>/pe_custom_conversions/foo/bar.json
-			for (Map.Entry<ResourceLocation, List<Resource>> entry : CONVERSION_LISTER.listMatchingResourceStacks(resourceManager).entrySet()) {
-				ResourceLocation file = entry.getKey();//<domain>:foo/bar
-				ResourceLocation conversionId = CONVERSION_LISTER.fileToId(file);
+			for (Map.Entry<Identifier, List<Resource>> entry : CONVERSION_LISTER.listMatchingResourceStacks(resourceManager).entrySet()) {
+				Identifier file = entry.getKey();//<domain>:foo/bar
+				Identifier conversionId = CONVERSION_LISTER.fileToId(file);
 
 				PECore.debugLog("Considering file {}, ID {}", file, conversionId);
 				NSSFake.setCurrentNamespace(conversionId.toString());
@@ -94,12 +94,12 @@ public class CustomConversionMapper implements IEMCMapper<NormalizedSimpleStack,
 		return loading;
 	}
 
-	static void addMappingsFromFiles(Map<ResourceLocation, CustomConversionFile> files, IMappingCollector<NormalizedSimpleStack, Long> mapper) {
+	static void addMappingsFromFiles(Map<Identifier, CustomConversionFile> files, IMappingCollector<NormalizedSimpleStack, Long> mapper) {
 		//FileToIdConverter returns a Map without an ordering contract. Apply files by resource ID so conflicting fixed values and forced
 		//conversions have stable precedence that cannot change when an unrelated file changes the backing map's iteration order.
-		List<ResourceLocation> orderedIds = new ArrayList<>(files.keySet());
-		orderedIds.sort(ResourceLocation::compareNamespaced);
-		for (ResourceLocation id : orderedIds) {
+		List<Identifier> orderedIds = new ArrayList<>(files.keySet());
+		orderedIds.sort(Identifier::compareNamespaced);
+		for (Identifier id : orderedIds) {
 			PECore.debugLog("Adding mappings from custom conversion file {}", id);
 			addMappingsFromFile(files.get(id), mapper);
 		}

@@ -27,7 +27,7 @@ import moze_intel.projecte.integration.IntegrationHelper;
 import moze_intel.projecte.integration.recipe_viewer.RecipeViewerHelper;
 import moze_intel.projecte.integration.recipe_viewer.alias.ProjectEAliasMapping;
 import net.minecraft.core.Holder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.ItemLike;
@@ -38,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 @JeiPlugin
 public class PEJeiPlugin implements IModPlugin {
 
-	private static final ResourceLocation UID = PECore.rl("main");
+	private static final Identifier UID = PECore.rl("main");
 
 	private static final ISubtypeInterpreter<ItemStack> PROJECTE_INTERPRETER = new ISubtypeInterpreter<>() {
 		@Nullable
@@ -79,7 +79,7 @@ public class PEJeiPlugin implements IModPlugin {
 
 	@NotNull
 	@Override
-	public ResourceLocation getPluginUid() {
+	public Identifier getPluginUid() {
 		return UID;
 	}
 

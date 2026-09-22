@@ -12,7 +12,7 @@ import moze_intel.projecte.api.conversion.CustomConversionFile;
 import moze_intel.projecte.api.mapper.collector.NoOpMappingCollector;
 import moze_intel.projecte.api.nss.NSSFake;
 import moze_intel.projecte.api.nss.NormalizedSimpleStack;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -32,16 +32,16 @@ class CustomConversionMapperOrderingTest {
 		NormalizedSimpleStack output = NSSFake.create("output");
 		NormalizedSimpleStack alphaIngredient = NSSFake.create("alpha_ingredient");
 		NormalizedSimpleStack zetaIngredient = NSSFake.create("zeta_ingredient");
-		ResourceLocation alphaId = ResourceLocation.fromNamespaceAndPath("test", "alpha");
-		ResourceLocation zetaId = ResourceLocation.fromNamespaceAndPath("test", "zeta");
+		Identifier alphaId = Identifier.fromNamespaceAndPath("test", "alpha");
+		Identifier zetaId = Identifier.fromNamespaceAndPath("test", "zeta");
 
 		CustomConversionFile alpha = createFile(output, 10, alphaIngredient);
 		CustomConversionFile zeta = createFile(output, 20, zetaIngredient);
 
-		Map<ResourceLocation, CustomConversionFile> forward = new LinkedHashMap<>();
+		Map<Identifier, CustomConversionFile> forward = new LinkedHashMap<>();
 		forward.put(alphaId, alpha);
 		forward.put(zetaId, zeta);
-		Map<ResourceLocation, CustomConversionFile> reverse = new LinkedHashMap<>();
+		Map<Identifier, CustomConversionFile> reverse = new LinkedHashMap<>();
 		reverse.put(zetaId, zeta);
 		reverse.put(alphaId, alpha);
 
@@ -64,7 +64,7 @@ class CustomConversionMapperOrderingTest {
 		return file;
 	}
 
-	private static CollectionResult collect(Map<ResourceLocation, CustomConversionFile> files, NormalizedSimpleStack output) {
+	private static CollectionResult collect(Map<Identifier, CustomConversionFile> files, NormalizedSimpleStack output) {
 		RecordingCollector collector = new RecordingCollector();
 		CustomConversionMapper.addMappingsFromFiles(files, collector);
 		return new CollectionResult(

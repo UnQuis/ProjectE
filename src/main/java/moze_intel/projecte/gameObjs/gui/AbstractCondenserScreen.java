@@ -10,7 +10,7 @@ import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
@@ -22,7 +22,7 @@ public abstract class AbstractCondenserScreen<T extends CondenserContainer> exte
 		this.imageHeight = 233;
 	}
 
-	protected abstract ResourceLocation getTexture();
+	protected abstract Identifier getTexture();
 
 	@Override
 	protected void renderBg(@NotNull GuiGraphics graphics, float partialTicks, int x, int y) {
@@ -72,7 +72,7 @@ public abstract class AbstractCondenserScreen<T extends CondenserContainer> exte
 		}
 
 		@Override
-		protected ResourceLocation getTexture() {
+		protected Identifier getTexture() {
 			return PECore.rl("textures/gui/condenser.png");
 		}
 	}
@@ -84,7 +84,7 @@ public abstract class AbstractCondenserScreen<T extends CondenserContainer> exte
 		}
 
 		@Override
-		protected ResourceLocation getTexture() {
+		protected Identifier getTexture() {
 			return PECore.rl("textures/gui/condenser_mk2.png");
 		}
 	}

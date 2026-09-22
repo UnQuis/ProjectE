@@ -8,7 +8,7 @@ import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.fluids.FluidStack;
@@ -23,7 +23,7 @@ public final class NSSFluid extends AbstractDataComponentHolderNSSTag<Fluid> {
 	public static final MapCodec<NSSFluid> CODEC = createCodec(BuiltInRegistries.FLUID, false, NSSFluid::new);
 
 
-	private NSSFluid(@NotNull ResourceLocation resourceLocation, boolean isTag, @NotNull DataComponentPatch componentsPatch) {
+	private NSSFluid(@NotNull Identifier resourceLocation, boolean isTag, @NotNull DataComponentPatch componentsPatch) {
 		super(resourceLocation, isTag, componentsPatch);
 	}
 
@@ -84,26 +84,26 @@ public final class NSSFluid extends AbstractDataComponentHolderNSSTag<Fluid> {
 	}
 
 	/**
-	 * Helper method to create an {@link NSSFluid} representing a fluid from a {@link ResourceLocation}
+	 * Helper method to create an {@link NSSFluid} representing a fluid from a {@link Identifier}
 	 */
 	@NotNull
-	public static NSSFluid createFluid(@NotNull ResourceLocation fluidID) {
+	public static NSSFluid createFluid(@NotNull Identifier fluidID) {
 		return createFluid(fluidID, DataComponentPatch.EMPTY);
 	}
 
 	/**
-	 * Helper method to create an {@link NSSFluid} representing a fluid from a {@link ResourceLocation} and an optional {@link DataComponentPatch}
+	 * Helper method to create an {@link NSSFluid} representing a fluid from a {@link Identifier} and an optional {@link DataComponentPatch}
 	 */
 	@NotNull
-	public static NSSFluid createFluid(@NotNull ResourceLocation fluidID, @NotNull DataComponentPatch componentsPatch) {
+	public static NSSFluid createFluid(@NotNull Identifier fluidID, @NotNull DataComponentPatch componentsPatch) {
 		return new NSSFluid(fluidID, false, componentsPatch);
 	}
 
 	/**
-	 * Helper method to create an {@link NSSFluid} representing a tag from a {@link ResourceLocation}
+	 * Helper method to create an {@link NSSFluid} representing a tag from a {@link Identifier}
 	 */
 	@NotNull
-	public static NSSFluid createTag(@NotNull ResourceLocation tagId) {
+	public static NSSFluid createTag(@NotNull Identifier tagId) {
 		return new NSSFluid(tagId, true, DataComponentPatch.EMPTY);
 	}
 

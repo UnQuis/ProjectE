@@ -3,7 +3,7 @@ package moze_intel.projecte.gameObjs;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.integration.IntegrationHelper;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -78,11 +78,11 @@ public class PETags {
 		}
 
 		private static TagKey<Item> curiosTag(String name) {
-			return ItemTags.create(ResourceLocation.fromNamespaceAndPath(IntegrationHelper.CURIO_MODID, name));
+			return ItemTags.create(Identifier.fromNamespaceAndPath(IntegrationHelper.CURIO_MODID, name));
 		}
 
 		private static TagKey<Item> commonTag(String name) {
-			return ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", name));
+			return ItemTags.create(Identifier.fromNamespaceAndPath("c", name));
 		}
 	}
 
@@ -134,7 +134,7 @@ public class PETags {
 		}
 
 		private static TagKey<Block> commonTag(String name) {
-			return BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", name));
+			return BlockTags.create(Identifier.fromNamespaceAndPath("c", name));
 		}
 	}
 

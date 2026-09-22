@@ -14,7 +14,7 @@ import java.util.Set;
 import moze_intel.projecte.PECore;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -232,7 +232,7 @@ public class SearchQueryParser {
 		IDENTIFIER('&') {
 			@Override
 			public boolean matches(@Nullable Level level, @Nullable Player player, String key, ItemStack stack) {
-				ResourceLocation stackIdentifier = BuiltInRegistries.ITEM.getKey(stack.getItem());
+				Identifier stackIdentifier = BuiltInRegistries.ITEM.getKey(stack.getItem());
 				return stackIdentifier.toString().toLowerCase(Locale.ROOT).contains(key);
 			}
 		};

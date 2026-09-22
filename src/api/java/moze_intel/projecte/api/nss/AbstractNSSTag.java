@@ -14,7 +14,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.HolderSet.Named;
 import net.minecraft.core.Registry;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.tags.TagKey;
 import net.neoforged.neoforge.common.util.NeoForgeExtraCodecs;
 import org.apache.logging.log4j.util.TriConsumer;
@@ -52,10 +52,10 @@ public abstract class AbstractNSSTag<TYPE> implements NSSTag {
 	}
 
 	@NotNull
-	private final ResourceLocation resourceLocation;
+	private final Identifier resourceLocation;
 	private final boolean isTag;
 
-	protected AbstractNSSTag(@NotNull ResourceLocation resourceLocation, boolean isTag) {
+	protected AbstractNSSTag(@NotNull Identifier resourceLocation, boolean isTag) {
 		this.resourceLocation = resourceLocation;
 		this.isTag = isTag;
 		if (isTag) {
@@ -64,10 +64,10 @@ public abstract class AbstractNSSTag<TYPE> implements NSSTag {
 	}
 
 	/**
-	 * @return The {@link ResourceLocation} representing the tag if this {@link NSSTag} represents a tag, or the {@link ResourceLocation} of the object
+	 * @return The {@link Identifier} representing the tag if this {@link NSSTag} represents a tag, or the {@link Identifier} of the object
 	 */
 	@NotNull
-	public ResourceLocation getResourceLocation() {
+	public Identifier getResourceLocation() {
 		return resourceLocation;
 	}
 
@@ -121,7 +121,7 @@ public abstract class AbstractNSSTag<TYPE> implements NSSTag {
 
 	@Override
 	public String toString() {
-		ResourceLocation type = getRegistry().key().location();
+		Identifier type = getRegistry().key().location();
 		if (representsTag()) {
 			return type + " Tag: " + getResourceLocation();
 		}
@@ -152,7 +152,7 @@ public abstract class AbstractNSSTag<TYPE> implements NSSTag {
 	protected static <TYPE, NSS extends AbstractNSSTag<TYPE>> MapCodec<NSS> createTagCodec(NSSTagConstructor<TYPE, NSS> nssConstructor) {
 		return RecordCodecBuilder.mapCodec(instance -> instance.group(
 				IPECodecHelper.INSTANCE.validatePresent(
-						ResourceLocation.CODEC, () -> "Must represent a tag"
+						Identifier.CODEC, () -> "Must represent a tag"
 				).fieldOf("tag").forGetter(nss -> nss.representsTag() ? nss.getResourceLocation() : null)
 		).apply(instance, nssConstructor::createTag));
 	}
@@ -163,8 +163,8 @@ public abstract class AbstractNSSTag<TYPE> implements NSSTag {
 	 * @param registry     Registry that backs this codec.
 	 * @param allowDefault {@code true} to allow ids matching the default element of the registry.
 	 */
-	protected static <TYPE, NSS extends AbstractNSSTag<TYPE>> RecordCodecBuilder<NSS, ResourceLocation> idComponent(Registry<?> registry, boolean allowDefault) {
-		return ResourceLocation.CODEC.validate(id -> {
+	protected static <TYPE, NSS extends AbstractNSSTag<TYPE>> RecordCodecBuilder<NSS, Identifier> idComponent(Registry<?> registry, boolean allowDefault) {
+		return Identifier.CODEC.validate(id -> {
 			if (id == null) {
 				return DataResult.error(() -> "Must represent a registry id");
 			} else if (!registry.containsKey(id)) {
@@ -200,13 +200,13 @@ public abstract class AbstractNSSTag<TYPE> implements NSSTag {
 	@FunctionalInterface
 	protected interface NSSTagConstructor<TYPE, NSS extends AbstractNSSTag<TYPE>> {
 
-		NSS create(ResourceLocation rl, boolean isTag);
+		NSS create(Identifier rl, boolean isTag);
 
-		default NSS create(ResourceLocation rl) {
+		default NSS create(Identifier rl) {
 			return create(rl, false);
 		}
 
-		default NSS createTag(ResourceLocation rl) {
+		default NSS createTag(Identifier rl) {
 			return create(rl, true);
 		}
 	}
