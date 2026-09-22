@@ -108,6 +108,8 @@ public enum PEConfigTranslations implements IConfigTranslation {
 			"False requires your hand be empty for Gem Armor Offensive Abilities to be readied or triggered."),
 	SERVER_MISC_LOOKING_AT_DISPLAY("server.misc.looking_at_display", "Looking At Display",
 			"Shows the EMC value of blocks when looking at them in Jade, TOP, or WTHIT."),
+	SERVER_MISC_SHOW_MISSING_STAGES("server.misc.show_missing_game_stages", "Show Missing Game Stages",
+			"If enabled, warnings will tell you which Game Stages you are missing to use blacklisted items."),
 
 	//EMC Mapping
 	MAPPING_DUMP_TO_FILE("mapping.dump_to_file", "Dump Everything To File",

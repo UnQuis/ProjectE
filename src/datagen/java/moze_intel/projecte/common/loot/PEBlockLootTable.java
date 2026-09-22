@@ -42,6 +42,7 @@ public class PEBlockLootTable extends BlockLootSubProvider {
 	@Override
 	protected void generate() {
 		dropSelf(PEBlocks.AETERNALIS_FUEL.getBlock());
+		dropSelf(PEBlocks.ALCHEMICAL_BARREL.getBlock());
 		dropSelf(PEBlocks.ALCHEMICAL_CHEST.getBlock());
 		dropSelf(PEBlocks.ALCHEMICAL_COAL.getBlock());
 		dropSelf(PEBlocks.COLLECTOR.getBlock());
@@ -52,6 +53,7 @@ public class PEBlockLootTable extends BlockLootSubProvider {
 		dropSelf(PEBlocks.DARK_MATTER.getBlock());
 		dropSelf(PEBlocks.DARK_MATTER_FURNACE.getBlock());
 		dropSelf(PEBlocks.DARK_MATTER_PEDESTAL.getBlock());
+		dropSelf(PEBlocks.INTERDICTION_LANTERN.getBlock());
 		dropSelf(PEBlocks.INTERDICTION_TORCH.getBlock());
 		dropSelf(PEBlocks.MOBIUS_FUEL.getBlock());
 		dropSelf(PEBlocks.RED_MATTER.getBlock());

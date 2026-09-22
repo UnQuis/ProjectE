@@ -8,11 +8,16 @@ import java.util.UUID;
 import moze_intel.projecte.api.ProjectEAPI;
 import moze_intel.projecte.api.ProjectERegistries;
 import moze_intel.projecte.api.capabilities.PECapabilities;
+import moze_intel.projecte.api.event.PlayerAttemptCondenserSetEvent;
+import moze_intel.projecte.api.event.PlayerAttemptLearnEvent;
 import moze_intel.projecte.api.nss.AbstractNSSTag;
 import moze_intel.projecte.config.CustomEMCParser;
 import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.emc.EMCMappingHandler;
 import moze_intel.projecte.emc.FuelMapper;
+import moze_intel.projecte.gameObjs.blacklist.BlacklistManager;
+import moze_intel.projecte.gameObjs.blacklist.BlacklistType;
+import moze_intel.projecte.gameObjs.blacklist.GameStagesHelper;
 import moze_intel.projecte.gameObjs.items.IHasConditionalAttributes;
 import moze_intel.projecte.gameObjs.registries.PEArmorMaterials;
 import moze_intel.projecte.gameObjs.registries.PEAttachmentTypes;
@@ -41,6 +46,7 @@ import moze_intel.projecte.network.commands.RemoveEmcCMD;
 import moze_intel.projecte.network.commands.ResetEmcCMD;
 import moze_intel.projecte.network.commands.SetEmcCMD;
 import moze_intel.projecte.network.commands.ShowBagCMD;
+import moze_intel.projecte.network.packets.to_client.PacketSyncBlacklist;
 import moze_intel.projecte.network.packets.to_client.SyncEmcPKT;
 import moze_intel.projecte.network.packets.to_client.SyncFuelMapperPKT;
 import moze_intel.projecte.network.packets.to_client.SyncWorldTransmutations;
@@ -77,6 +83,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -136,6 +143,7 @@ public class PECore {
 	public PECore(ModContainer modContainer, IEventBus modEventBus) {
 		instance = this;
 		MOD_CONTAINER = modContainer;
+		GameStagesHelper.checkModsLoaded();
 
 		modEventBus.addListener(this::commonSetup);
 		modEventBus.addListener(IntegrationHelper::sendIMCMessages);
@@ -163,6 +171,13 @@ public class PECore {
 		NeoForge.EVENT_BUS.addListener(this::serverQuit);
 		NeoForge.EVENT_BUS.addListener(PEPermissions::registerPermissionNodes);
 		NeoForge.EVENT_BUS.addListener(this::onModifyItemAttributes);
+		//Note: High priority so that ProjectE gets the event after us and clears out any NSSTags we make as we don't need
+		// conversions defined for them. Technically this doesn't fully matter as projecte acts on datapack sync instead of
+		// the reload listener level, but it is still worth doing
+		NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, this::addBlacklistReloadListeners);
+		NeoForge.EVENT_BUS.addListener(this::syncBlacklist);
+		NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onAttemptCondenserSet);
+		NeoForge.EVENT_BUS.addListener(EventPriority.HIGH, this::onAttemptLearnEvent);
 
 		//Register our config files
 		ProjectEConfig.register(modContainer);
@@ -301,6 +316,47 @@ public class PECore {
 		event.addListener(WorldTransmutationManager.INSTANCE);
 	}
 
+	private void addBlacklistReloadListeners(AddReloadListenerEvent event) {
+		if (GameStagesHelper.gameStagesLoaded) {
+			event.addListener(BlacklistManager.INSTANCE);
+		}
+	}
+
+	private void onAttemptCondenserSet(PlayerAttemptCondenserSetEvent event) {
+		if (BlacklistType.CONDENSER.isBlacklisted(event.getPlayer(), event.getSourceInfo(), event.getReducedInfo())) {
+			event.setCanceled(true);
+		}
+	}
+
+	private void onAttemptLearnEvent(PlayerAttemptLearnEvent event) {
+		if (BlacklistType.LEARNING.isBlacklisted(event.getPlayer(), event.getSourceInfo(), event.getReducedInfo())) {
+			event.setCanceled(true);
+		}
+	}
+
+	private void syncBlacklist(OnDatapackSyncEvent event) {
+		if (!GameStagesHelper.gameStagesLoaded) {
+			return;
+		}
+		if (event.getPlayer() == null) {
+			List<ServerPlayer> players = event.getPlayerList().getPlayers();
+			if (players.isEmpty()) {
+				return;
+			}
+			PacketSyncBlacklist blacklistPacket = BlacklistManager.syncPacket();
+			for (ServerPlayer player : players) {
+				if (!player.connection.getConnection().isMemoryConnection()) {
+					PacketDistributor.sendToPlayer(player, blacklistPacket);
+				}
+			}
+		} else {
+			ServerPlayer player = event.getPlayer();
+			if (!player.connection.getConnection().isMemoryConnection()) {
+				PacketDistributor.sendToPlayer(player, BlacklistManager.syncPacket());
+			}
+		}
+	}
+
 	private void registerCommands(RegisterCommandsEvent event) {
 		CommandBuildContext context = event.getBuildContext();
 		event.getDispatcher().register(Commands.literal("projecte")
@@ -325,6 +381,9 @@ public class PECore {
 		CustomEMCParser.flush(event.getServer().registryAccess());
 		TransmutationOffline.cleanAll();
 		EMCMappingHandler.clearEmcMap();
+		if (GameStagesHelper.gameStagesLoaded) {
+			BlacklistManager.clearBlacklist();
+		}
 	}
 
 	private void onModifyItemAttributes(ItemAttributeModifierEvent event) {

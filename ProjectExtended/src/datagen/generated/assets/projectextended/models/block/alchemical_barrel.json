@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/cube_bottom_top",
-  "textures": {
-    "bottom": "projectextended:block/alchemical_barrel_bottom",
-    "side": "projectextended:block/alchemical_barrel_side",
-    "top": "projectextended:block/alchemical_barrel_top"
-  }
-}

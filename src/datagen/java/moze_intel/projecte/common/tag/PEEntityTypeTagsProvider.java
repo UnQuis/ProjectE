@@ -104,7 +104,8 @@ public class PEEntityTypeTagsProvider extends EntityTypeTagsProvider {
 				PEEntityTypes.LAVA_PROJECTILE.get(),
 				PEEntityTypes.LENS_PROJECTILE.get(),
 				PEEntityTypes.SWRG_PROJECTILE.get(),
-				PEEntityTypes.WATER_PROJECTILE.get()
+				PEEntityTypes.WATER_PROJECTILE.get(),
+				PEEntityTypes.PE_TRIDENT.get()
 		);
 	}
 }

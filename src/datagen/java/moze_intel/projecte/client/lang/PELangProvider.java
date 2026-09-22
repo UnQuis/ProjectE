@@ -4,6 +4,8 @@ import moze_intel.projecte.PECore;
 import moze_intel.projecte.config.PEConfigTranslations;
 import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.gameObjs.PETags;
+import moze_intel.projecte.gameObjs.items.tools.PEShield;
+import moze_intel.projecte.gameObjs.registration.impl.ItemRegistryObject;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import moze_intel.projecte.gameObjs.registries.PEEntityTypes;
 import moze_intel.projecte.gameObjs.registries.PEItems;
@@ -15,6 +17,7 @@ import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.Util;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.DyeColor;
 
 public class PELangProvider extends BaseLanguageProvider {
 
@@ -49,6 +52,11 @@ public class PELangProvider extends BaseLanguageProvider {
 		add(PELang.UPDATE_GET_IT, "Get it here!");
 		add(PELang.BLACKLIST, "Blacklist");
 		add(PELang.WHITELIST, "Whitelist");
+		add(PELang.LIST_ELEMENT, " - %1$s");
+		add(PELang.WARNING_BLACKLIST_CONDENSER, "WARNING: This item is blacklisted from the condenser. It cannot be used as the target lock, but can be used for EMC.");
+		add(PELang.WARNING_BLACKLIST_CONDENSER_STAGES, "Missing the following Game Stages in order to use this item as a target lock:");
+		add(PELang.WARNING_BLACKLIST_TRANSMUTATION, "WARNING: This item is blacklisted from the transmutation table. It cannot be learned, but can be consumed for EMC.");
+		add(PELang.WARNING_BLACKLIST_TRANSMUTATION_STAGES, "Missing the following Game Stages in order to learn this item:");
 		add(PELang.DENSITY_MODE_TARGET, "Set target to: %1$s");
 		//Divining Rod
 		add(PELang.DIVINING_AVG_EMC, "Average EMC for %1$s blocks: %2$s");
@@ -145,6 +153,8 @@ public class PELangProvider extends BaseLanguageProvider {
 		add(PELang.ADVANCEMENTS_KLEIN_STAR_DESCRIPTION, "Storing EMC for a rainy day.");
 		add(PELang.ADVANCEMENTS_KLEIN_STAR_BIG, "BIG EMC Batteries");
 		add(PELang.ADVANCEMENTS_KLEIN_STAR_BIG_DESCRIPTION, "Holding the universe in your pocket.");
+		add(PELang.ADVANCEMENTS_ALCHEMICAL_BARREL, "Barrelled Storage!");
+		add(PELang.ADVANCEMENTS_ALCHEMICAL_BARREL_DESCRIPTION, "A \"little\" barrel upgrade.");
 	}
 
 	private void addBlocks() {
@@ -169,6 +179,8 @@ public class PELangProvider extends BaseLanguageProvider {
 		add(PEBlocks.MOBIUS_FUEL, "Mobius Fuel Block");
 		add(PEBlocks.AETERNALIS_FUEL, "Aeternalis Fuel Block");
 		add(PEBlocks.DARK_MATTER_PEDESTAL, "Dark Matter Pedestal");
+		add(PEBlocks.ALCHEMICAL_BARREL, "Alchemical Barrel");
+		add(PEBlocks.INTERDICTION_LANTERN, "Interdiction Lantern");
 	}
 
 	private void addCommands() {
@@ -258,6 +270,7 @@ public class PELangProvider extends BaseLanguageProvider {
 		add(PEEntityTypes.NOVA_CATACLYSM_PRIMED, "Primed Nova Cataclysm");
 		add(PEEntityTypes.SWRG_PROJECTILE, "SWRG Projectile");
 		add(PEEntityTypes.WATER_PROJECTILE, "Water Orb");
+		add(PEEntityTypes.PE_TRIDENT, "Matter Trident");
 	}
 
 	private void addTags() {
@@ -390,6 +403,35 @@ public class PELangProvider extends BaseLanguageProvider {
 		add(PEItems.ZERO_RING, "Zero Ring");
 		add(PEItems.TOME_OF_KNOWLEDGE, "Tome of Knowledge");
 		add(PEItems.TRANSMUTATION_TABLET, "Transmutation Tablet");
+		addShield(PEItems.DARK_MATTER_SHIELD, "Dark Matter Shield");
+		addShield(PEItems.RED_MATTER_SHIELD, "Red Matter Shield");
+		add(PEItems.DARK_MATTER_TRIDENT, "Dark Matter Trident");
+		add(PEItems.RED_MATTER_TRIDENT, "Red Matter Trident");
+	}
+
+	private void addShield(ItemRegistryObject<PEShield> shield, String name) {
+		String baseTranslationKey = shield.getTranslationKey();
+		add(baseTranslationKey, name);
+		addShield(baseTranslationKey, DyeColor.BLACK, "Black", name);
+		addShield(baseTranslationKey, DyeColor.RED, "Red", name);
+		addShield(baseTranslationKey, DyeColor.GREEN, "Green", name);
+		addShield(baseTranslationKey, DyeColor.BLUE, "Blue", name);
+		addShield(baseTranslationKey, DyeColor.BROWN, "Brown", name);
+		addShield(baseTranslationKey, DyeColor.PURPLE, "Purple", name);
+		addShield(baseTranslationKey, DyeColor.CYAN, "Cyan", name);
+		addShield(baseTranslationKey, DyeColor.LIGHT_GRAY, "Light Gray", name);
+		addShield(baseTranslationKey, DyeColor.GRAY, "Gray", name);
+		addShield(baseTranslationKey, DyeColor.PINK, "Pink", name);
+		addShield(baseTranslationKey, DyeColor.LIME, "Lime", name);
+		addShield(baseTranslationKey, DyeColor.YELLOW, "Yellow", name);
+		addShield(baseTranslationKey, DyeColor.LIGHT_BLUE, "Light Blue", name);
+		addShield(baseTranslationKey, DyeColor.MAGENTA, "Magenta", name);
+		addShield(baseTranslationKey, DyeColor.ORANGE, "Orange", name);
+		addShield(baseTranslationKey, DyeColor.WHITE, "White", name);
+	}
+
+	private void addShield(String baseTranslationKey, DyeColor color, String colorName, String name) {
+		add(baseTranslationKey + "." + color, colorName + " " + name);
 	}
 
 	private void addModes() {
@@ -414,6 +456,10 @@ public class PELangProvider extends BaseLanguageProvider {
 		add(PELang.MODE_PICK_2, "3x Tallshot");
 		add(PELang.MODE_PICK_3, "3x Wideshot");
 		add(PELang.MODE_PICK_4, "3x Longshot");
+		add(PELang.TRIDENT_MODE_NORMAL, "Normal");
+		add(PELang.TRIDENT_MODE_CHANNELING, "Channeling");
+		add(PELang.TRIDENT_MODE_RIPTIDE, "Riptide");
+		add(PELang.TRIDENT_MODE_SHOCKWAVE, "Shockwave");
 	}
 
 	private void addPedestalTooltips() {

@@ -2,6 +2,7 @@
   "values": [
     "projecte:alchemical_chest",
     "projecte:alchemical_coal_block",
+    "projecte:alchemical_barrel",
     "projecte:mobius_fuel_block",
     "projecte:aeternalis_fuel_block",
     "projecte:collector_mk1",
@@ -17,6 +18,7 @@
     "projecte:transmutation_table",
     "projecte:relay_mk1",
     "projecte:relay_mk2",
-    "projecte:relay_mk3"
+    "projecte:relay_mk3",
+    "projecte:interdiction_lantern"
   ]
 }

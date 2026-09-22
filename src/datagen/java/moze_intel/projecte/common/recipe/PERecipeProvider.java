@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.gameObjs.PETags;
 import moze_intel.projecte.gameObjs.customRecipes.FullKleinStarsCondition;
+import moze_intel.projecte.gameObjs.customRecipes.PEShieldSpecialRecipe;
 import moze_intel.projecte.gameObjs.customRecipes.PhiloStoneSmeltingRecipe;
 import moze_intel.projecte.gameObjs.customRecipes.RecipesCovalenceRepair;
 import moze_intel.projecte.gameObjs.customRecipes.TomeEnabledCondition;
@@ -14,6 +15,7 @@ import moze_intel.projecte.gameObjs.registration.impl.ItemRegistryObject;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
 import moze_intel.projecte.gameObjs.registries.PEItems;
+import moze_intel.projecte.gameObjs.registries.PERecipeSerializers;
 import moze_intel.projecte.utils.Constants;
 import net.minecraft.advancements.Advancement;
 import net.minecraft.advancements.AdvancementHolder;
@@ -79,6 +81,8 @@ public class PERecipeProvider extends RecipeProvider {
 				.save(recipeOutput, PECore.rl("covalence_repair"));
 		SpecialRecipeBuilder.special(PhiloStoneSmeltingRecipe::new)
 				.save(recipeOutput, PECore.rl("philo_stone_smelting"));
+		SpecialRecipeBuilder.special(PEShieldSpecialRecipe::new)
+				.save(recipeOutput, PERecipeSerializers.SHIELD_DECORATION.getId());
 		fuelUpgradeRecipe(recipeOutput, Items.COAL, PEItems.ALCHEMICAL_COAL);
 		fuelUpgradeRecipe(recipeOutput, PEItems.ALCHEMICAL_COAL, PEItems.MOBIUS_FUEL);
 		fuelUpgradeRecipe(recipeOutput, PEItems.MOBIUS_FUEL, PEItems.AETERNALIS_FUEL);
@@ -97,6 +101,8 @@ public class PERecipeProvider extends RecipeProvider {
 		addCovalenceDustRecipes(recipeOutput);
 		addDiviningRodRecipes(recipeOutput);
 		addMiscToolRecipes(recipeOutput);
+		addTridentRecipes(recipeOutput);
+		addShieldRecipes(recipeOutput);
 		//Conversion recipes
 		addConversionRecipes(recipeOutput);
 		//Alchemical Chest
@@ -119,6 +125,31 @@ public class PERecipeProvider extends RecipeProvider {
 				.pattern("DPD")
 				.pattern("GGG")
 				.define('R', Items.REDSTONE_TORCH)
+				.define('G', Tags.Items.DUSTS_GLOWSTONE)
+				.define('D', Tags.Items.GEMS_DIAMOND)
+				.define('P', PEItems.PHILOSOPHERS_STONE)
+				.unlockedBy("has_philo_stone", has(PEItems.PHILOSOPHERS_STONE))
+				.save(recipeOutput);
+		//Alchemical Barrel
+		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, PEBlocks.ALCHEMICAL_BARREL)
+				.pattern("LMH")
+				.pattern("SDS")
+				.pattern("IBI")
+				.define('L', PEItems.LOW_COVALENCE_DUST)
+				.define('M', PEItems.MEDIUM_COVALENCE_DUST)
+				.define('H', PEItems.HIGH_COVALENCE_DUST)
+				.define('S', Tags.Items.STONES)
+				.define('I', Tags.Items.INGOTS_IRON)
+				.define('B', Tags.Items.BARRELS_WOODEN)
+				.define('D', Tags.Items.GEMS_DIAMOND)
+				.unlockedBy("has_covalence_dust", hasItems(PEItems.LOW_COVALENCE_DUST, PEItems.MEDIUM_COVALENCE_DUST, PEItems.HIGH_COVALENCE_DUST))
+				.save(recipeOutput);
+		//Interdiction Lantern
+		ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, PEBlocks.INTERDICTION_LANTERN)
+				.pattern("RDR")
+				.pattern("DPD")
+				.pattern("GGG")
+				.define('R', Items.SOUL_LANTERN)
 				.define('G', Tags.Items.DUSTS_GLOWSTONE)
 				.define('D', Tags.Items.GEMS_DIAMOND)
 				.define('P', PEItems.PHILOSOPHERS_STONE)
@@ -956,6 +987,47 @@ public class PERecipeProvider extends RecipeProvider {
 		} else {
 			talisman.save(recipeOutput);
 		}
+	}
+
+	private static void addTridentRecipes(RecipeOutput recipeOutput) {
+		addTridentRecipe(recipeOutput, PEItems.DARK_MATTER_TRIDENT, PEItems.DARK_MATTER, Items.TRIDENT, Ingredient.of(Tags.Items.GEMS_DIAMOND));
+		addTridentRecipe(recipeOutput, PEItems.RED_MATTER_TRIDENT, PEItems.RED_MATTER, PEItems.DARK_MATTER_TRIDENT, Ingredient.of(PEItems.DARK_MATTER));
+	}
+
+	private static void addTridentRecipe(RecipeOutput recipeOutput, ItemLike result, ItemLike matter, ItemLike trident, Ingredient previousTier) {
+		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, result)
+				.pattern("MTM")
+				.pattern(" P ")
+				.pattern(" P ")
+				.define('M', matter)
+				.define('T', trident)
+				.define('P', previousTier)
+				.unlockedBy("has_matter", has(matter))
+				.unlockedBy("has_trident", has(trident))
+				.save(recipeOutput);
+	}
+
+	private static void addShieldRecipes(RecipeOutput recipeOutput) {
+		//Dark matter shield
+		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PEItems.DARK_MATTER_SHIELD)
+				.pattern("PMP")
+				.pattern("PPP")
+				.pattern(" P ")
+				.define('M', PEItems.DARK_MATTER)
+				.define('P', Tags.Items.GEMS_DIAMOND)
+				.unlockedBy("has_matter", has(PEItems.DARK_MATTER))
+				.save(recipeOutput);
+		//Red matter shield
+		ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, PEItems.RED_MATTER_SHIELD)
+				.pattern("PMP")
+				.pattern("PSP")
+				.pattern(" P ")
+				.define('M', PEItems.RED_MATTER)
+				.define('S', PEItems.DARK_MATTER_SHIELD)
+				.define('P', PEItems.DARK_MATTER)
+				.unlockedBy("has_matter", has(PEItems.RED_MATTER))
+				.unlockedBy("has_shield", has(PEItems.DARK_MATTER_SHIELD))
+				.save(recipeOutput);
 	}
 
 	private static void addTransmutationTableRecipes(RecipeOutput recipeOutput) {

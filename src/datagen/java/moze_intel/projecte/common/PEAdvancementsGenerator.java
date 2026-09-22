@@ -75,6 +75,8 @@ public class PEAdvancementsGenerator implements AdvancementGenerator {
 		childDisplay(root, PEItems.WHITE_ALCHEMICAL_BAG, PELang.ADVANCEMENTS_ALCH_BAG, PELang.ADVANCEMENTS_ALCH_BAG_DESCRIPTION)
 				.addCriterion("bag", InventoryChangeTrigger.TriggerInstance.hasItems(ItemPredicate.Builder.item().of(PETags.Items.ALCHEMICAL_BAGS).build()))
 				.save(advancementConsumer, PECore.rl("alchemical_bag"), fileHelper);
+		//Alchemical Barrel
+		addStorageBarrels(advancementConsumer, fileHelper, root);
 		//Branch 2
 		AdvancementHolder condenser = childDisplay(root, PEBlocks.CONDENSER, PELang.ADVANCEMENTS_CONDENSER, PELang.ADVANCEMENTS_CONDENSER_DESCRIPTION)
 				.addCriterion("condenser", InventoryChangeTrigger.TriggerInstance.hasItems(PEBlocks.CONDENSER))
@@ -116,5 +118,11 @@ public class PEAdvancementsGenerator implements AdvancementGenerator {
 		childDisplay(dark_matter_block, PEBlocks.DARK_MATTER_FURNACE, PELang.ADVANCEMENTS_DARK_MATTER_FURNACE, PELang.ADVANCEMENTS_DARK_MATTER_FURNACE_DESCRIPTION)
 				.addCriterion("dm_furnace", InventoryChangeTrigger.TriggerInstance.hasItems(PEBlocks.DARK_MATTER_FURNACE))
 				.save(advancementConsumer, PECore.rl("dark_matter_furnace"), fileHelper);
+	}
+
+	private void addStorageBarrels(Consumer<AdvancementHolder> advancementConsumer, ExistingFileHelper fileHelper, AdvancementHolder parent) {
+		childDisplay(parent, PEBlocks.ALCHEMICAL_BARREL, PELang.ADVANCEMENTS_ALCHEMICAL_BARREL, PELang.ADVANCEMENTS_ALCHEMICAL_BARREL_DESCRIPTION)
+				.addCriterion("alchemical_barrel", InventoryChangeTrigger.TriggerInstance.hasItems(PEBlocks.ALCHEMICAL_BARREL))
+				.save(advancementConsumer, PECore.rl("alchemical_barrel"), fileHelper);
 	}
 }

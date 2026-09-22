@@ -3,6 +3,7 @@ package moze_intel.projecte.common.tag;
 import java.util.concurrent.CompletableFuture;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.gameObjs.PETags;
+import moze_intel.projecte.gameObjs.blacklist.BlacklistType;
 import moze_intel.projecte.gameObjs.items.AlchemicalBag;
 import moze_intel.projecte.gameObjs.items.KleinStar.KleinTier;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
@@ -43,6 +44,9 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 		addBags();
 		addGear();
 		addIgnoreMissing();
+		for (BlacklistType blacklistType : BlacklistType.values()) {
+			tag(blacklistType.getBlacklist());
+		}
 		tag(ItemTags.BOOKSHELF_BOOKS).add(PEItems.TOME_OF_KNOWLEDGE.get());
 		tag(ItemTags.FREEZE_IMMUNE_WEARABLES).add(PEItems.GEM_CHESTPLATE.get());
 		tag(PETags.Items.COLLECTOR_FUEL).add(
@@ -117,6 +121,9 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 				Tags.Items.SEEDS
 		);
 		//Vanilla/Forge Tags
+		tag(Tags.Items.BARRELS).add(
+				PEBlocks.ALCHEMICAL_BARREL.asItem()
+		);
 		tag(Tags.Items.TOOLS_SHEAR).add(
 				PEItems.DARK_MATTER_SHEARS.get(),
 				PEItems.RED_MATTER_SHEARS.get(),
@@ -222,6 +229,17 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 				PETags.Items.TOOLS_KATARS,
 				PETags.Items.TOOLS_MORNING_STARS
 		);
+		//Shields
+		tag(Tags.Items.TOOLS_SHIELD).add(
+				PEItems.DARK_MATTER_SHIELD.get(),
+				PEItems.RED_MATTER_SHIELD.get()
+		);
+		//Tridents
+		Item[] tridents = {PEItems.DARK_MATTER_TRIDENT.get(), PEItems.RED_MATTER_TRIDENT.get()};
+		tag(Tags.Items.TOOLS_SPEAR).add(tridents);
+		tag(ItemTags.BREAKS_DECORATED_POTS).add(tridents);
+		tag(Tags.Items.MELEE_WEAPON_TOOLS).add(tridents);
+		tag(Tags.Items.RANGED_WEAPON_TOOLS).add(tridents);
 	}
 
 	private void addArmor() {

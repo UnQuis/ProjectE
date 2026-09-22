@@ -121,6 +121,11 @@ public enum PELang implements ILangEntry {
 	MODE_PICK_4("mode", "pick.4"),
 	MODE_RED_SWORD_1("mode", "red_sword.1"),
 	MODE_RED_SWORD_2("mode", "red_sword.2"),
+	//Trident
+	TRIDENT_MODE_NORMAL("mode", "trident.normal"),
+	TRIDENT_MODE_CHANNELING("mode", "trident.channeling"),
+	TRIDENT_MODE_RIPTIDE("mode", "trident.riptide"),
+	TRIDENT_MODE_SHOCKWAVE("mode", "trident.shockwave"),
 	//Pedestal
 	PEDESTAL_DISABLED("pedestal", "item_disabled"),
 	PEDESTAL_ON("pedestal", "on_pedestal"),
@@ -182,6 +187,12 @@ public enum PELang implements ILangEntry {
 	TOOLTIP_VOLCANITE_2("tooltip", "volcanite.2"),
 	TOOLTIP_VOLCANITE_3("tooltip", "volcanite.3"),
 	TOOLTIP_VOLCANITE_4("tooltip", "volcanite.4"),
+	//Blacklist warnings
+	LIST_ELEMENT("misc", "list_element"),
+	WARNING_BLACKLIST_CONDENSER("warning", "blacklist.condenser"),
+	WARNING_BLACKLIST_CONDENSER_STAGES("warning", "blacklist.condenser.stage"),
+	WARNING_BLACKLIST_TRANSMUTATION("warning", "blacklist.transmutation"),
+	WARNING_BLACKLIST_TRANSMUTATION_STAGES("warning", "blacklist.transmutation.stage"),
 	//Transmutation GUI
 	TRANSMUTATION_TRANSMUTE("transmutation", "transmute"),
 	TRANSMUTATION_LEARNED_1("transmutation", "learned.1"),
@@ -239,6 +250,8 @@ public enum PELang implements ILangEntry {
 	ADVANCEMENTS_RED_MATTER_BLOCK_DESCRIPTION("advancements", "red_matter_block.description"),
 	ADVANCEMENTS_RED_MATTER_FURNACE("advancements", "red_matter_furnace"),
 	ADVANCEMENTS_RED_MATTER_FURNACE_DESCRIPTION("advancements", "red_matter_furnace.description"),
+	ADVANCEMENTS_ALCHEMICAL_BARREL("advancements", "alchemical_barrel"),
+	ADVANCEMENTS_ALCHEMICAL_BARREL_DESCRIPTION("advancements", "alchemical_barrel.description"),
 	;
 
 	private final String key;

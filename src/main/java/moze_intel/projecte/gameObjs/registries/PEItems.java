@@ -43,8 +43,10 @@ import moze_intel.projecte.gameObjs.items.tools.PEKatar;
 import moze_intel.projecte.gameObjs.items.tools.PEMorningStar;
 import moze_intel.projecte.gameObjs.items.tools.PEPickaxe;
 import moze_intel.projecte.gameObjs.items.tools.PEShears;
+import moze_intel.projecte.gameObjs.items.tools.PEShield;
 import moze_intel.projecte.gameObjs.items.tools.PEShovel;
 import moze_intel.projecte.gameObjs.items.tools.PESword;
+import moze_intel.projecte.gameObjs.items.tools.PETrident;
 import moze_intel.projecte.gameObjs.items.tools.RedMatterSword;
 import moze_intel.projecte.gameObjs.registration.impl.ItemDeferredRegister;
 import moze_intel.projecte.gameObjs.registration.impl.ItemRegistryObject;
@@ -62,6 +64,11 @@ public class PEItems {
 	public static final ItemRegistryObject<Item> LOW_COVALENCE_DUST = ITEMS.register("low_covalence_dust");
 	public static final ItemRegistryObject<Item> MEDIUM_COVALENCE_DUST = ITEMS.register("medium_covalence_dust");
 	public static final ItemRegistryObject<Item> HIGH_COVALENCE_DUST = ITEMS.register("high_covalence_dust");
+
+	public static final ItemRegistryObject<PETrident> DARK_MATTER_TRIDENT = ITEMS.registerNoStackFireImmune("dark_matter_trident", properties -> new PETrident(EnumMatterType.DARK_MATTER, 2, 11, properties));
+	public static final ItemRegistryObject<PEShield> DARK_MATTER_SHIELD = ITEMS.registerNoStackFireImmune("dark_matter_shield", properties -> new PEShield(EnumMatterType.DARK_MATTER, properties));
+	public static final ItemRegistryObject<PETrident> RED_MATTER_TRIDENT = ITEMS.registerNoStackFireImmune("red_matter_trident", properties -> new PETrident(EnumMatterType.RED_MATTER, 3, 14, properties));
+	public static final ItemRegistryObject<PEShield> RED_MATTER_SHIELD = ITEMS.registerNoStackFireImmune("red_matter_shield", properties -> new PEShield(EnumMatterType.RED_MATTER, properties));
 
 	public static final ItemRegistryObject<AlchemicalBag> WHITE_ALCHEMICAL_BAG = registerBag(DyeColor.WHITE);
 	public static final ItemRegistryObject<AlchemicalBag> ORANGE_ALCHEMICAL_BAG = registerBag(DyeColor.ORANGE);

@@ -2,12 +2,21 @@ package moze_intel.projecte.client;
 
 import mezz.jei.api.runtime.IRecipesGui;
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.client.rendering.PETridentRenderer;
+import moze_intel.projecte.client.rendering.item.ShieldISTER;
+import moze_intel.projecte.client.rendering.item.TridentISTER;
+import moze_intel.projecte.gameObjs.blacklist.BlacklistManager;
+import moze_intel.projecte.gameObjs.blacklist.BlacklistType;
+import moze_intel.projecte.gameObjs.blacklist.GameStagesHelper;
+import moze_intel.projecte.gameObjs.container.CondenserContainer;
 import moze_intel.projecte.gameObjs.container.DMFurnaceContainer;
+import moze_intel.projecte.gameObjs.container.TransmutationContainer;
 import moze_intel.projecte.gameObjs.entity.EntitySWRGProjectile;
 import moze_intel.projecte.gameObjs.gui.AbstractCollectorScreen;
 import moze_intel.projecte.gameObjs.gui.AbstractCondenserScreen;
 import moze_intel.projecte.gameObjs.gui.AlchBagScreen;
 import moze_intel.projecte.gameObjs.gui.AlchChestScreen;
+import moze_intel.projecte.gameObjs.gui.AlchemicalBarrelScreen;
 import moze_intel.projecte.gameObjs.gui.GUIDMFurnace;
 import moze_intel.projecte.gameObjs.gui.GUIEternalDensity;
 import moze_intel.projecte.gameObjs.gui.GUIMercurialEye;
@@ -34,15 +43,18 @@ import moze_intel.projecte.utils.ClientKeyHelper;
 import moze_intel.projecte.utils.PEKeybind;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.entity.TippableArrowRenderer;
 import net.minecraft.client.renderer.entity.TntRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
+import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.client.renderer.item.ItemPropertyFunction;
 import net.minecraft.client.resources.PlayerSkin;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.Commands;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
@@ -52,17 +64,22 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
+import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
+import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 
 @Mod(value = PECore.MODID, dist = Dist.CLIENT)
 public class PEClient {
 
 	public static final ResourceLocation ACTIVE_OVERRIDE = PECore.rl("active");
 	public static final ResourceLocation MODE_OVERRIDE = PECore.rl("mode");
+	public static final ResourceLocation BLOCKING_OVERRIDE = PECore.rl("blocking");
+	public static final ResourceLocation THROWING_OVERRIDE = PECore.rl("throwing");
 
 	public PEClient(ModContainer container, IEventBus modEventBus) {
 		container.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
@@ -72,9 +89,13 @@ public class PEClient {
 		modEventBus.addListener(this::registerOverlays);
 		modEventBus.addListener(this::registerRenderers);
 		modEventBus.addListener(this::addLayers);
+		modEventBus.addListener(this::registerClientExtensions);
+		modEventBus.addListener(this::registerClientReloadListeners);
 
 		NeoForge.EVENT_BUS.addListener(this::onEntityJoinWorld);
 		NeoForge.EVENT_BUS.addListener(this::registerClientCommands);
+		NeoForge.EVENT_BUS.addListener(this::onDisconnect);
+		NeoForge.EVENT_BUS.addListener(this::tooltipEvent);
 	}
 
 	private void onEntityJoinWorld(EntityJoinLevelEvent event) {
@@ -109,6 +130,7 @@ public class PEClient {
 		event.register(PEContainerTypes.COLLECTOR_MK2_CONTAINER.get(), AbstractCollectorScreen.MK2::new);
 		event.register(PEContainerTypes.COLLECTOR_MK3_CONTAINER.get(), AbstractCollectorScreen.MK3::new);
 		event.register(PEContainerTypes.MERCURIAL_EYE_CONTAINER.get(), GUIMercurialEye::new);
+		event.register(PEContainerTypes.ALCHEMICAL_BARREL_CONTAINER.get(), AlchemicalBarrelScreen::new);
 	}
 
 	private void clientSetup(FMLClientSetupEvent evt) {
@@ -136,6 +158,9 @@ public class PEClient {
 					stack.getOrDefault(PEDataComponentTypes.ARCANA_MODE, PEItems.ARCANA_RING.asItem().getDefaultMode()).ordinal(), PEItems.ARCANA_RING);
 			addPropertyOverrides(MODE_OVERRIDE, (stack, level, entity, seed) ->
 					stack.getOrDefault(PEDataComponentTypes.SWRG_MODE, PEItems.ARCANA_RING.asItem().getDefaultMode()).ordinal(), PEItems.SWIFTWOLF_RENDING_GALE);
+			ClampedItemPropertyFunction override = (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F;
+			addPropertyOverrides(BLOCKING_OVERRIDE, override, PEItems.DARK_MATTER_SHIELD, PEItems.RED_MATTER_SHIELD);
+			addPropertyOverrides(THROWING_OVERRIDE, override, PEItems.DARK_MATTER_TRIDENT, PEItems.RED_MATTER_TRIDENT);
 		});
 	}
 
@@ -164,12 +189,54 @@ public class PEClient {
 		event.registerEntityRenderer(PEEntityTypes.NOVA_CATALYST_PRIMED.get(), TntRenderer::new);
 		event.registerEntityRenderer(PEEntityTypes.NOVA_CATACLYSM_PRIMED.get(), TntRenderer::new);
 		event.registerEntityRenderer(PEEntityTypes.HOMING_ARROW.get(), TippableArrowRenderer::new);
+		event.registerEntityRenderer(PEEntityTypes.PE_TRIDENT.get(), PETridentRenderer::new);
 	}
 
 	private void addLayers(EntityRenderersEvent.AddLayers event) {
 		for (PlayerSkin.Model model : event.getSkins()) {
 			if (event.getSkin(model) instanceof PlayerRenderer skin) {
 				skin.addLayer(new LayerYue(skin));
+			}
+		}
+	}
+
+	private void registerClientReloadListeners(RegisterClientReloadListenersEvent event) {
+		event.registerReloadListener(ShieldISTER.RENDERER);
+		event.registerReloadListener(TridentISTER.RENDERER);
+	}
+
+	private void registerClientExtensions(RegisterClientExtensionsEvent event) {
+		event.registerItem(new IClientItemExtensions() {
+			@Override
+			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+				return ShieldISTER.RENDERER;
+			}
+		}, PEItems.DARK_MATTER_SHIELD, PEItems.RED_MATTER_SHIELD);
+		event.registerItem(new IClientItemExtensions() {
+			@Override
+			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
+				return TridentISTER.RENDERER;
+			}
+		}, PEItems.DARK_MATTER_TRIDENT, PEItems.RED_MATTER_TRIDENT);
+	}
+
+	private void onDisconnect(ClientPlayerNetworkEvent.LoggingOut event) {
+		//Note: The player is null on integrated server startup
+		if (event.getPlayer() != null && GameStagesHelper.gameStagesLoaded) {
+			BlacklistManager.clearBlacklist();
+		}
+	}
+
+	private void tooltipEvent(ItemTooltipEvent event) {
+		Player player = event.getEntity();
+		if (player != null) {
+			BlacklistType blacklistType = switch (player.containerMenu) {
+				case CondenserContainer condenserContainer -> BlacklistType.CONDENSER;
+				case TransmutationContainer transmutationContainer -> BlacklistType.LEARNING;
+				default -> null;
+			};
+			if (blacklistType != null) {
+				blacklistType.addBlacklistWarnings(player, event.getItemStack(), event.getToolTip());
 			}
 		}
 	}

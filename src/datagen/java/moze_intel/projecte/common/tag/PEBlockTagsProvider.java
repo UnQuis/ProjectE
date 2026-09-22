@@ -68,6 +68,9 @@ public class PEBlockTagsProvider extends BlockTagsProvider {
 				.add(Blocks.CLAY)
 				.addTag(Tags.Blocks.GRAVELS);
 		//Vanilla/Forge Tags
+		tag(Tags.Blocks.BARRELS).add(
+				PEBlocks.ALCHEMICAL_BARREL.getBlock()
+		);
 		tag(Tags.Blocks.CHESTS).add(
 				PEBlocks.ALCHEMICAL_CHEST.getBlock()
 		);
@@ -81,8 +84,12 @@ public class PEBlockTagsProvider extends BlockTagsProvider {
 		);
 		tag(BlockTags.GUARDED_BY_PIGLINS).add(
 				PEBlocks.ALCHEMICAL_CHEST.getBlock(),
+				PEBlocks.ALCHEMICAL_BARREL.getBlock(),
 				PEBlocks.CONDENSER.getBlock(),
 				PEBlocks.CONDENSER_MK2.getBlock()
+		);
+		tag(BlockTags.PIGLIN_REPELLENTS).add(
+				PEBlocks.INTERDICTION_LANTERN.getBlock()
 		);
 		tag(BlockTags.INFINIBURN_OVERWORLD).add(
 				PEBlocks.ALCHEMICAL_COAL.getBlock(),
@@ -117,6 +124,7 @@ public class PEBlockTagsProvider extends BlockTagsProvider {
 		tag(BlockTags.MINEABLE_WITH_PICKAXE).add(
 				PEBlocks.ALCHEMICAL_CHEST.getBlock(),
 				PEBlocks.ALCHEMICAL_COAL.getBlock(),
+				PEBlocks.ALCHEMICAL_BARREL.getBlock(),
 				PEBlocks.MOBIUS_FUEL.getBlock(),
 				PEBlocks.AETERNALIS_FUEL.getBlock(),
 				PEBlocks.COLLECTOR.getBlock(),
@@ -132,7 +140,8 @@ public class PEBlockTagsProvider extends BlockTagsProvider {
 				PEBlocks.TRANSMUTATION_TABLE.getBlock(),
 				PEBlocks.RELAY.getBlock(),
 				PEBlocks.RELAY_MK2.getBlock(),
-				PEBlocks.RELAY_MK3.getBlock()
+				PEBlocks.RELAY_MK3.getBlock(),
+				PEBlocks.INTERDICTION_LANTERN.getBlock()
 		);
 
 		//MINEABLE_WITH_PE_SHEARS

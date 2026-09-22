@@ -27,6 +27,8 @@ public class PESpriteSourceProvider extends SpriteSourceProvider {
 		// and it is only a small texture, so it won't matter too much
 		addFiles(atlas(BLOCKS_ATLAS), PECore.rl("curios/empty_klein_star"));
 		addFiles(atlas(BLOCKS_ATLAS), PECore.rl("curios/transmutation_tablet"));
+		//Shield patterns for the matter shields
+		addFiles(atlas(SHIELD_PATTERNS_ATLAS), PECore.rl("entity/dark_matter_shield"), PECore.rl("entity/red_matter_shield"));
 	}
 
 	protected void addFiles(SourceList atlas, ResourceLocation... resourceLocations) {

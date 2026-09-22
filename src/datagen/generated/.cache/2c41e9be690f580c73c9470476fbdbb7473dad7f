@@ -1,6 +1,7 @@
-// 1.21.1	2025-01-07T12:26:04.4047613	Item Models: projecte
+// 1.21.1	2026-09-22T15:14:02.361016761	Item Models: projecte
 d7e717885e108643bb32cfe6879ba780d12f36d5 assets/projecte/models/item/aeternalis_fuel.json
 0fa92e75e06aa7009f9361ccfd11b7b9caf0b7a5 assets/projecte/models/item/aeternalis_fuel_block.json
+9ef6e1da8a57a8ce5a510924a46d71a1c113fa2f assets/projecte/models/item/alchemical_barrel.json
 6403e66fca3c73ab4957dba3c7768b709f352c7f assets/projecte/models/item/alchemical_chest.json
 92e11ec6288a813f040ff167956a866a9cd39b3a assets/projecte/models/item/alchemical_coal.json
 ffb394a7fa46ca2518127f1694a7422843b5d52d assets/projecte/models/item/alchemical_coal_block.json
@@ -30,6 +31,11 @@ c41b2bbd539149225122de23fe94b270dd30457f assets/projecte/models/item/collector_m
 438ec2a4912e6a02bae1c21b242ddf3419cc81b4 assets/projecte/models/item/cyan_alchemical_bag.json
 b87644aa98f01cdaef60e1c41dc93e409fa7d336 assets/projecte/models/item/dark_matter.json
 77a3231c9d6cad9716d1e532cbca4888060a2f41 assets/projecte/models/item/dark_matter_block.json
+a646a6dad94292ceefe3f1322ebd5075253abf24 assets/projecte/models/item/dark_matter_shield.json
+f03bb62d45af6a29910ba952b393b763d836ece7 assets/projecte/models/item/dark_matter_shield_blocking.json
+597ffe35804afde368c30298eb64530434d4fe3a assets/projecte/models/item/dark_matter_trident.json
+c9572447cce3d2a13704438ca845eaabc72cc725 assets/projecte/models/item/dark_matter_trident_gui.json
+dae47fb97390cf1213fe5176bf7dc6e71f4db6b2 assets/projecte/models/item/dark_matter_trident_throwing.json
 bf0efc8213b6bdc8e09fcd3df3818ea7e5221e32 assets/projecte/models/item/destruction_catalyst.json
 99dbe12871d50f1af96285171d68c118a49a23e1 assets/projecte/models/item/divining_rod_1.json
 35a4b38e1e2f0eacc57e5e7b04c89f978c3700d0 assets/projecte/models/item/divining_rod_2.json
@@ -142,6 +148,7 @@ fee04f1ed6be6085865207296ea6475d94c77257 assets/projecte/models/item/green_alche
 53a3671e075cb4a60be2a2f023c0cd2d139f45c0 assets/projecte/models/item/hyperkinetic_lens.json
 42dc62326a73615fc2be42ccb4185cc020a4eb07 assets/projecte/models/item/ignition_on.json
 c11d7585b7b0ffa0ce9e42e23f97a18050ae78bd assets/projecte/models/item/ignition_ring.json
+4740b3e61cf3903b6bb2250f882658498d81ba94 assets/projecte/models/item/interdiction_lantern.json
 ca2c4559449b14a0fcf1eb18d05483a7cc45d49c assets/projecte/models/item/interdiction_torch.json
 911e69c549db1a96972abe66a9f780fa27dcb364 assets/projecte/models/item/iron_band.json
 79947f48a2331be1ef58c0308810741fe398bc2f assets/projecte/models/item/klein_star_drei.json
@@ -173,6 +180,11 @@ a58e30fa52dab6bace188f10b7cda2f90810d83e assets/projecte/models/item/purple_alch
 801ce611cc7491bc9dc6abe1b21bd72242784fc7 assets/projecte/models/item/red_alchemical_bag.json
 adf29532a99548dc7fda209b89ee2ac9732bd06f assets/projecte/models/item/red_matter.json
 c315ff706910cea3390eafcced44885c01598d2c assets/projecte/models/item/red_matter_block.json
+378c12a171ab3efcf207694c52e869946e03a6f8 assets/projecte/models/item/red_matter_shield.json
+8aabc98a306231f4cce7981a8ec9e116763526a9 assets/projecte/models/item/red_matter_shield_blocking.json
+48cfeacd2ae73a73a26831b3872ac9ed933f1a3a assets/projecte/models/item/red_matter_trident.json
+fb6f09e7b4152558e28e176d41a959e7f6deac5d assets/projecte/models/item/red_matter_trident_gui.json
+8f422cfbf697860db4e6206df6c6b6313ec8a3cd assets/projecte/models/item/red_matter_trident_throwing.json
 a34ee263bf3be12be7207c6dcce65b4559f6f73e assets/projecte/models/item/relay_mk1.json
 f72f537de5aa96b9f36d0abef9b5b5f6cbefc29c assets/projecte/models/item/relay_mk2.json
 11dfe41a527ef579241b698879eb6251e623cd07 assets/projecte/models/item/relay_mk3.json

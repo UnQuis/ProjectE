@@ -37,6 +37,36 @@ public class PEBlockStateProvider extends BlockStateProvider {
 		registerInterdictionTorch();
 		registerPedestal();
 		registerTransmutationTable();
+		registerAlchemicalBarrel();
+		registerInterdictionLantern();
+	}
+
+	private void registerAlchemicalBarrel() {
+		BlockModelBuilder barrelModel = models().cubeBottomTop(PEBlocks.ALCHEMICAL_BARREL.getName(),
+				PECore.rl("block/alchemical_barrel_side"),
+				PECore.rl("block/alchemical_barrel_bottom"),
+				PECore.rl("block/alchemical_barrel_top")
+		);
+		BlockModelBuilder openBarrel = models().getBuilder(PEBlocks.ALCHEMICAL_BARREL.getName() + "_open")
+				.parent(barrelModel)
+				.texture("top", PECore.rl("block/alchemical_barrel_top_open"));
+		directionalBlock(PEBlocks.ALCHEMICAL_BARREL.getBlock(), state -> state.getValue(BlockStateProperties.OPEN) ? openBarrel : barrelModel);
+	}
+
+	private void registerInterdictionLantern() {
+		BlockModelBuilder lantern = models().getBuilder(PEBlocks.INTERDICTION_LANTERN.getName())
+				.parent(models().getExistingFile(ResourceLocation.withDefaultNamespace("template_lantern")))
+				.texture("lantern", PECore.rl("block/interdiction_lantern"))
+				.renderType("cutout");
+		BlockModelBuilder hangingLantern = models().getBuilder(PEBlocks.INTERDICTION_LANTERN.getName() + "_hanging")
+				.parent(models().getExistingFile(ResourceLocation.withDefaultNamespace("template_hanging_lantern")))
+				.texture("lantern", PECore.rl("block/interdiction_lantern"))
+				.renderType("cutout");
+
+		getVariantBuilder(PEBlocks.INTERDICTION_LANTERN.getBlock())
+				.forAllStatesExcept(state -> ConfiguredModel.builder()
+						.modelFile(state.getValue(BlockStateProperties.HANGING) ? hangingLantern : lantern)
+						.build(), BlockStateProperties.WATERLOGGED);
 	}
 
 	private void registerChests() {

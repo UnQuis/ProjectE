@@ -12,6 +12,7 @@ import moze_intel.projecte.gameObjs.items.rings.SWRG.SWRGMode;
 import moze_intel.projecte.gameObjs.items.rings.TimeWatch.TimeWatchMode;
 import moze_intel.projecte.gameObjs.items.tools.PEKatar.KatarMode;
 import moze_intel.projecte.gameObjs.items.tools.PEPickaxe.PickaxeMode;
+import moze_intel.projecte.gameObjs.items.tools.PETrident.TridentMode;
 import moze_intel.projecte.gameObjs.registration.PEDeferredHolder;
 import moze_intel.projecte.gameObjs.registration.impl.DataComponentTypeDeferredRegister;
 import net.minecraft.SharedConstants;
@@ -70,4 +71,6 @@ public class PEDataComponentTypes {
 			builder -> builder.persistent(GemMode.CODEC).networkSynchronized(GemMode.STREAM_CODEC));
 	public static final PEDeferredHolder<DataComponentType<?>, DataComponentType<DiviningMode>> DIVINING_ROD_MODE = DATA_COMPONENT_TYPES.simple("divining_mode",
 			builder -> builder.persistent(DiviningMode.CODEC).networkSynchronized(DiviningMode.STREAM_CODEC));
+	public static final PEDeferredHolder<DataComponentType<?>, DataComponentType<TridentMode>> TRIDENT_MODE = DATA_COMPONENT_TYPES.simple("trident_mode",
+			builder -> builder.persistent(TridentMode.CODEC).networkSynchronized(TridentMode.STREAM_CODEC));
 }

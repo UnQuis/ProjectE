@@ -2,6 +2,8 @@
   "values": [
     "#c:tools/hammers",
     "#c:tools/katars",
-    "#c:tools/morning_stars"
+    "#c:tools/morning_stars",
+    "projecte:dark_matter_trident",
+    "projecte:red_matter_trident"
   ]
 }

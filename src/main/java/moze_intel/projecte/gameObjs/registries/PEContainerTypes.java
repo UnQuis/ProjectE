@@ -2,6 +2,7 @@ package moze_intel.projecte.gameObjs.registries;
 
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.gameObjs.block_entities.AlchBlockEntityChest;
+import moze_intel.projecte.gameObjs.block_entities.AlchemicalBarrelBlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.CollectorMK1BlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.CollectorMK2BlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.CollectorMK3BlockEntity;
@@ -14,6 +15,7 @@ import moze_intel.projecte.gameObjs.block_entities.RelayMK2BlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.RelayMK3BlockEntity;
 import moze_intel.projecte.gameObjs.container.AlchBagContainer;
 import moze_intel.projecte.gameObjs.container.AlchChestContainer;
+import moze_intel.projecte.gameObjs.container.AlchemicalBarrelContainer;
 import moze_intel.projecte.gameObjs.container.CollectorMK1Container;
 import moze_intel.projecte.gameObjs.container.CollectorMK2Container;
 import moze_intel.projecte.gameObjs.container.CollectorMK3Container;
@@ -49,4 +51,5 @@ public class PEContainerTypes {
 	public static final ContainerTypeRegistryObject<CollectorMK2Container> COLLECTOR_MK2_CONTAINER = CONTAINER_TYPES.register(PEBlocks.COLLECTOR_MK2, CollectorMK2BlockEntity.class, CollectorMK2Container::new);
 	public static final ContainerTypeRegistryObject<CollectorMK3Container> COLLECTOR_MK3_CONTAINER = CONTAINER_TYPES.register(PEBlocks.COLLECTOR_MK3, CollectorMK3BlockEntity.class, CollectorMK3Container::new);
 	public static final ContainerTypeRegistryObject<MercurialEyeContainer> MERCURIAL_EYE_CONTAINER = CONTAINER_TYPES.register(PEItems.MERCURIAL_EYE, MercurialEyeContainer::fromNetwork);
+	public static final ContainerTypeRegistryObject<AlchemicalBarrelContainer> ALCHEMICAL_BARREL_CONTAINER = CONTAINER_TYPES.register(PEBlocks.ALCHEMICAL_BARREL, AlchemicalBarrelBlockEntity.class, AlchemicalBarrelContainer::new);
 }

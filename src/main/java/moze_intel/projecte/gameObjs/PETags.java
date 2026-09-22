@@ -52,6 +52,14 @@ public class PETags {
 		 * Items in this tag will be valid for the Transmutation Tablet curios slot, and should implement {@link moze_intel.projecte.api.item.ITransmutationTablet}
 		 */
 		public static final TagKey<Item> TRANSMUTATION_TABLET = tag("transmutation_tablets");
+		/**
+		 * Items in this tag will be blacklisted from being set as a target in the condenser.
+		 */
+		public static final TagKey<Item> BLACKLIST_CONDENSER = tag("blacklist_condenser");
+		/**
+		 * Items in this tag will be blacklisted from being learned in a transmutation table.
+		 */
+		public static final TagKey<Item> BLACKLIST_LEARNING = tag("blacklist_learning");
 
 		//Curios tags
 		public static final TagKey<Item> CURIOS_BELT = curiosTag("belt");

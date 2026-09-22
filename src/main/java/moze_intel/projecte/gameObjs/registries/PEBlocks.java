@@ -6,12 +6,14 @@ import moze_intel.projecte.PECore;
 import moze_intel.projecte.gameObjs.EnumCollectorTier;
 import moze_intel.projecte.gameObjs.EnumMatterType;
 import moze_intel.projecte.gameObjs.EnumRelayTier;
+import moze_intel.projecte.gameObjs.blocks.AlchemicalBarrel;
 import moze_intel.projecte.gameObjs.blocks.AlchemicalChest;
 import moze_intel.projecte.gameObjs.blocks.Collector;
 import moze_intel.projecte.gameObjs.blocks.Condenser;
 import moze_intel.projecte.gameObjs.blocks.CondenserMK2;
 import moze_intel.projecte.gameObjs.blocks.InterdictionTorchEntityBlock.InterdictionTorch;
 import moze_intel.projecte.gameObjs.blocks.InterdictionTorchEntityBlock.InterdictionTorchWall;
+import moze_intel.projecte.gameObjs.blocks.InterdictionLantern;
 import moze_intel.projecte.gameObjs.blocks.MatterBlock;
 import moze_intel.projecte.gameObjs.blocks.MatterFurnace;
 import moze_intel.projecte.gameObjs.blocks.Pedestal;
@@ -60,6 +62,25 @@ public class PEBlocks {
 	public static final BlockRegistryObject<Relay, BlockItem> RELAY = registerRelay("relay_mk1", EnumRelayTier.MK1, state -> 7);
 	public static final BlockRegistryObject<Relay, BlockItem> RELAY_MK2 = registerRelay("relay_mk2", EnumRelayTier.MK2, state -> 11);
 	public static final BlockRegistryObject<Relay, BlockItem> RELAY_MK3 = registerRelay("relay_mk3", EnumRelayTier.MK3, state -> 15);
+
+	public static final BlockRegistryObject<AlchemicalBarrel, BlockItem> ALCHEMICAL_BARREL = BLOCKS.register("alchemical_barrel",
+			() -> new AlchemicalBarrel(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.STONE)
+					.instrument(NoteBlockInstrument.BASEDRUM)
+					.requiresCorrectToolForDrops()
+					.strength(10, 3_600_000)
+			));
+	public static final BlockRegistryObject<InterdictionLantern, BlockItem> INTERDICTION_LANTERN = BLOCKS.register("interdiction_lantern",
+			() -> new InterdictionLantern(BlockBehaviour.Properties.of()
+					.mapColor(MapColor.METAL)
+					.forceSolidOn()
+					.requiresCorrectToolForDrops()
+					.strength(3.5F)
+					.sound(SoundType.LANTERN)
+					.lightLevel(state -> 15)
+					.noOcclusion()
+					.pushReaction(PushReaction.DESTROY)
+			));
 
 	private static BlockRegistryObject<Block, BlockItem> registerFuelBlock(String name, MapColor mapColor) {
 		return BLOCKS.register(name, () -> new Block(BlockBehaviour.Properties.of().mapColor(mapColor).instrument(NoteBlockInstrument.BASEDRUM)

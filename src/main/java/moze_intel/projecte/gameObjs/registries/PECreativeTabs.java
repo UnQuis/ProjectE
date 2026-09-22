@@ -132,8 +132,15 @@ public class PECreativeTabs {
 				output.accept(PEBlocks.DARK_MATTER_FURNACE);
 				output.accept(PEBlocks.RED_MATTER_FURNACE);
 				output.accept(PEBlocks.INTERDICTION_TORCH);
+				output.accept(PEBlocks.INTERDICTION_LANTERN);
+				output.accept(PEBlocks.ALCHEMICAL_BARREL);
 				output.accept(PEBlocks.NOVA_CATALYST);
 				output.accept(PEBlocks.NOVA_CATACLYSM);
+
+				output.accept(PEItems.DARK_MATTER_TRIDENT);
+				output.accept(PEItems.RED_MATTER_TRIDENT);
+				output.accept(PEItems.DARK_MATTER_SHIELD);
+				output.accept(PEItems.RED_MATTER_SHIELD);
 			})
 	);
 
@@ -183,7 +190,10 @@ public class PECreativeTabs {
 					PEBlocks.DARK_MATTER_PEDESTAL,
 
 					PEBlocks.DARK_MATTER_FURNACE,
-					PEBlocks.RED_MATTER_FURNACE
+					PEBlocks.RED_MATTER_FURNACE,
+
+					PEBlocks.ALCHEMICAL_BARREL,
+					PEBlocks.INTERDICTION_LANTERN
 			);
 		} else if (tabKey == CreativeModeTabs.REDSTONE_BLOCKS) {
 			addToExistingTab(event,
@@ -205,7 +215,9 @@ public class PECreativeTabs {
 					PEBlocks.RED_MATTER_FURNACE,
 					//TNT like blocks
 					PEBlocks.NOVA_CATALYST,
-					PEBlocks.NOVA_CATACLYSM
+					PEBlocks.NOVA_CATACLYSM,
+
+					PEBlocks.ALCHEMICAL_BARREL
 			);
 		} else if (tabKey == CreativeModeTabs.TOOLS_AND_UTILITIES) {
 			addToExistingTab(event,
@@ -294,7 +306,12 @@ public class PECreativeTabs {
 			addToExistingTab(event,
 					PEItems.DARK_MATTER_SWORD,
 					PEItems.RED_MATTER_SWORD,
-					PEItems.RED_MATTER_KATAR
+					PEItems.RED_MATTER_KATAR,
+
+					PEItems.DARK_MATTER_TRIDENT,
+					PEItems.RED_MATTER_TRIDENT,
+					PEItems.DARK_MATTER_SHIELD,
+					PEItems.RED_MATTER_SHIELD
 			);
 
 			addArmor(event::accept);

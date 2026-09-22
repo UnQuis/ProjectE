@@ -7,15 +7,18 @@ import moze_intel.projecte.gameObjs.registration.impl.BlockRegistryObject;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import moze_intel.projecte.utils.Constants;
+import net.minecraft.client.renderer.block.model.BlockModel.GuiLight;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.models.ItemModelGenerators;
 import net.minecraft.data.models.ItemModelGenerators.TrimModelData;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
+import net.neoforged.neoforge.client.model.generators.loaders.SeparateTransformsModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class PEItemModelProvider extends ItemModelProvider {
@@ -26,10 +29,10 @@ public class PEItemModelProvider extends ItemModelProvider {
 
 	@Override
 	protected void registerModels() {
-		blockParentModel(PEBlocks.ALCHEMICAL_COAL, PEBlocks.MOBIUS_FUEL, PEBlocks.AETERNALIS_FUEL, PEBlocks.DARK_MATTER, PEBlocks.RED_MATTER,
-				PEBlocks.DARK_MATTER_PEDESTAL, PEBlocks.DARK_MATTER_FURNACE, PEBlocks.RED_MATTER_FURNACE, PEBlocks.COLLECTOR, PEBlocks.COLLECTOR_MK2,
-				PEBlocks.COLLECTOR_MK3, PEBlocks.NOVA_CATALYST, PEBlocks.NOVA_CATACLYSM, PEBlocks.TRANSMUTATION_TABLE, PEBlocks.RELAY, PEBlocks.RELAY_MK2,
-				PEBlocks.RELAY_MK3);
+		blockParentModel(PEBlocks.ALCHEMICAL_BARREL, PEBlocks.ALCHEMICAL_COAL, PEBlocks.MOBIUS_FUEL, PEBlocks.AETERNALIS_FUEL, PEBlocks.DARK_MATTER,
+				PEBlocks.RED_MATTER, PEBlocks.DARK_MATTER_PEDESTAL, PEBlocks.DARK_MATTER_FURNACE, PEBlocks.RED_MATTER_FURNACE, PEBlocks.COLLECTOR,
+				PEBlocks.COLLECTOR_MK2, PEBlocks.COLLECTOR_MK3, PEBlocks.NOVA_CATALYST, PEBlocks.NOVA_CATACLYSM, PEBlocks.TRANSMUTATION_TABLE,
+				PEBlocks.RELAY, PEBlocks.RELAY_MK2, PEBlocks.RELAY_MK3);
 		registerGenerated(PEItems.CATALYTIC_LENS, PEItems.DESTRUCTION_CATALYST, PEItems.LOW_DIVINING_ROD, PEItems.MEDIUM_DIVINING_ROD, PEItems.HIGH_DIVINING_ROD,
 				PEItems.HYPERKINETIC_LENS, PEItems.MERCURIAL_EYE, PEItems.PHILOSOPHERS_STONE, PEItems.REPAIR_TALISMAN, PEItems.TOME_OF_KNOWLEDGE,
 				PEItems.TRANSMUTATION_TABLET);
@@ -42,11 +45,14 @@ public class PEItemModelProvider extends ItemModelProvider {
 		generated(PEItems.MEDIUM_COVALENCE_DUST, modLoc("item/covalence_dust/medium"));
 		generated(PEItems.HIGH_COVALENCE_DUST, modLoc("item/covalence_dust/high"));
 		generated(PEBlocks.INTERDICTION_TORCH, modLoc("block/interdiction_torch"));
+		generated(PEBlocks.INTERDICTION_LANTERN, modLoc("item/interdiction_lantern"));
 		generateAlchemicalBags();
 		generateChests();
 		generateRings();
 		generateKleinStars();
 		generateGear();
+		generateShields();
+		generateTridents();
 		generated(PEItems.GEM_OF_ETERNAL_DENSITY, modLoc("item/dense_gem_off"))
 				.override()
 				.predicate(PEClient.ACTIVE_OVERRIDE, 1)
@@ -234,6 +240,73 @@ public class PEItemModelProvider extends ItemModelProvider {
 		armorWithTrim(PEItems.GEM_CHESTPLATE, modLoc("item/gem_armor/chest"));
 		armorWithTrim(PEItems.GEM_LEGGINGS, modLoc("item/gem_armor/legs"));
 		armorWithTrim(PEItems.GEM_BOOTS, modLoc("item/gem_armor/feet"));
+	}
+
+	private void generateShields() {
+		generateShieldModel(PEItems.DARK_MATTER_SHIELD, mcLoc("block/diamond_block"));
+		generateShieldModel(PEItems.RED_MATTER_SHIELD, PECore.rl("block/dark_matter_block"));
+	}
+
+	private void generateShieldModel(INamedEntry item, ResourceLocation particle) {
+		String name = item.getName();
+		withExistingParent(name, "shield")
+				.texture("particle", particle)
+				.override()
+				.predicate(PEClient.BLOCKING_OVERRIDE, 1)
+				.model(withExistingParent(name + "_blocking", "shield_blocking")
+						.texture("particle", particle))
+				.end();
+	}
+
+	private void generateTridents() {
+		generateTridentModel(PEItems.DARK_MATTER_TRIDENT);
+		generateTridentModel(PEItems.RED_MATTER_TRIDENT);
+	}
+
+	private void generateTridentModel(INamedEntry item) {
+		String name = item.getName();
+		ResourceLocation itemLoc = itemTexture(item);
+		ItemModelBuilder guiModel = nested()
+				.parent(withExistingParent(name + "_gui", "item/generated")
+						.texture("layer0", itemLoc));
+		ItemModelBuilder throwingModel = getBuilder(name + "_throwing")
+				.guiLight(GuiLight.FRONT)
+				.texture("particle", itemLoc)
+				.customLoader(SeparateTransformsModelBuilder::begin)
+				//Throwing model is "base" so that we can have our transforms
+				.base(nested()
+						.parent(getExistingFile(mcLoc("trident_throwing")))
+						.texture("particle", itemLoc))
+				//Gui, ground, and fixed all use the normal "item model"
+				.perspective(ItemDisplayContext.GUI, guiModel)
+				.perspective(ItemDisplayContext.GROUND, guiModel)
+				.perspective(ItemDisplayContext.FIXED, guiModel)
+				.end();
+		getBuilder(name)
+				.guiLight(GuiLight.FRONT)
+				.texture("particle", itemLoc)
+				//Override when throwing to the throwing model to ensure we have the correct transforms
+				.override()
+				.predicate(PEClient.THROWING_OVERRIDE, 1)
+				.model(throwingModel)
+				.end()
+				.customLoader(SeparateTransformsModelBuilder::begin)
+				//In hand model is base
+				.base(nested()
+						.parent(getExistingFile(mcLoc("trident_in_hand")))
+						.texture("particle", itemLoc)
+						//Add head transformation
+						.transforms()
+						.transform(ItemDisplayContext.HEAD)
+						.rotation(0, 180, 120)
+						.translation(8, 10, -11)
+						.scale(1.5F)
+						.end()
+						.end())
+				//Gui, ground, and fixed all use the normal "item model"
+				.perspective(ItemDisplayContext.GUI, guiModel)
+				.perspective(ItemDisplayContext.GROUND, guiModel)
+				.perspective(ItemDisplayContext.FIXED, guiModel);
 	}
 
 	private void blockParentModel(BlockRegistryObject<?, ?>... blocks) {

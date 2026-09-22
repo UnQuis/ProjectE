@@ -1,5 +1,7 @@
 {
   "values": [
-    "#c:tools/katars"
+    "#c:tools/katars",
+    "projecte:dark_matter_trident",
+    "projecte:red_matter_trident"
   ]
 }

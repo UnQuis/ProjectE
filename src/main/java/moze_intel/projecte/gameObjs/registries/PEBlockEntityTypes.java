@@ -3,6 +3,7 @@ package moze_intel.projecte.gameObjs.registries;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.gameObjs.block_entities.AlchBlockEntityChest;
+import moze_intel.projecte.gameObjs.block_entities.AlchemicalBarrelBlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.CollectorMK1BlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.CollectorMK2BlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.CollectorMK3BlockEntity;
@@ -12,6 +13,7 @@ import moze_intel.projecte.gameObjs.block_entities.DMFurnaceBlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.DMPedestalBlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.EmcChestBlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.InterdictionBlockEntity;
+import moze_intel.projecte.gameObjs.block_entities.InterdictionLanternBlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.RMFurnaceBlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.RelayMK1BlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.RelayMK2BlockEntity;
@@ -90,5 +92,14 @@ public class PEBlockEntityTypes {
 			.serverTicker(DMPedestalBlockEntity::tickServer)
 			.with(PECapabilities.EMC_STORAGE_CAPABILITY, (be, side) -> be)
 			.with(ItemHandler.BLOCK, DMPedestalBlockEntity.INVENTORY_PROVIDER)
+			.build();
+	public static final BlockEntityTypeRegistryObject<AlchemicalBarrelBlockEntity> ALCHEMICAL_BARREL = BLOCK_ENTITY_TYPES.builder(PEBlocks.ALCHEMICAL_BARREL, AlchemicalBarrelBlockEntity::new)
+			.clientTicker(AlchemicalBarrelBlockEntity::tickClient)
+			.serverTicker(AlchemicalBarrelBlockEntity::tickServer)
+			.with(PECapabilities.EMC_STORAGE_CAPABILITY, (be, side) -> be)
+			.with(ItemHandler.BLOCK, AlchemicalBarrelBlockEntity::getInventory)
+			.build();
+	public static final BlockEntityTypeRegistryObject<InterdictionLanternBlockEntity> INTERDICTION_LANTERN = BLOCK_ENTITY_TYPES.builder(PEBlocks.INTERDICTION_LANTERN, InterdictionLanternBlockEntity::new)
+			.commonTicker(InterdictionLanternBlockEntity::tick)
 			.build();
 }

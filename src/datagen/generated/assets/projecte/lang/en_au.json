@@ -16,9 +16,14 @@
   "gem.projecte.activate": "Activated Gem Armour Offensive Abilities",
   "gem.projecte.deactivate": "Deactivated Gem Armour Offensive Abilities",
   "gem.projecte.lore.chest": "Infernal Armour",
+  "item.projecte.dark_matter_shield.gray": "Grey Dark Matter Shield",
+  "item.projecte.dark_matter_shield.light_gray": "Light Grey Dark Matter Shield",
   "item.projecte.gray_alchemical_bag": "Alchemical Bag (Grey)",
   "item.projecte.light_gray_alchemical_bag": "Alchemical Bag (Light Grey)",
+  "item.projecte.red_matter_shield.gray": "Grey Red Matter Shield",
+  "item.projecte.red_matter_shield.light_gray": "Light Grey Red Matter Shield",
   "tag.entity_type.projecte.randomizer.hostile": "Hostile Randomiser Mobs",
   "tag.entity_type.projecte.randomizer.peaceful": "Peaceful Randomiser Mobs",
-  "tooltip.projecte.tome": "Unlocks all transmutation knowledge when learnt"
+  "tooltip.projecte.tome": "Unlocks all transmutation knowledge when learnt",
+  "warning.projecte.blacklist.transmutation": "WARNING: This item is blacklisted from the transmutation table. It cannot be learnt, but can be consumed for EMC."
 }

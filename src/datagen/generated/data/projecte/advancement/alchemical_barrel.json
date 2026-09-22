@@ -1,0 +1,33 @@
+{
+  "parent": "projecte:alchemical_chest",
+  "criteria": {
+    "alchemical_barrel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projecte:alchemical_barrel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projecte.alchemical_barrel.description"
+    },
+    "icon": {
+      "count": 1,
+      "id": "projecte:alchemical_barrel"
+    },
+    "title": {
+      "translate": "advancements.projecte.alchemical_barrel"
+    }
+  },
+  "requirements": [
+    [
+      "alchemical_barrel"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,5 +1,6 @@
-// 1.21.1	2025-01-07T12:26:04.3777609	Block States: projecte
+// 1.21.1	2026-09-22T15:14:02.355836672	Block States: projecte
 9856188d04dacdca3f11ccc503b4bcbca6aa1dc4 assets/projecte/blockstates/aeternalis_fuel_block.json
+b126acd08ef7f47e841339efd8d79766dba4ff33 assets/projecte/blockstates/alchemical_barrel.json
 3020df6885e467689fd0277bf1fa83390f340eca assets/projecte/blockstates/alchemical_chest.json
 6942162349a8399cbaa2fa90036772a56f3a7137 assets/projecte/blockstates/alchemical_coal_block.json
 cbf619ecda0859e6d016a39c66bc7dc7e69f355b assets/projecte/blockstates/collector_mk1.json
@@ -10,6 +11,7 @@ df7350fe97c676623e43ffaf92920dcedb435705 assets/projecte/blockstates/condenser_m
 703284a2c1a340e19cbaf806b039988b7cd5b6fc assets/projecte/blockstates/dark_matter_block.json
 3122d1010a8a18e66d4f0173219ee0f4b82343f1 assets/projecte/blockstates/dm_furnace.json
 9627ca23a08df03c580a965323667d007d201177 assets/projecte/blockstates/dm_pedestal.json
+00fb810ab46328f8c27ff3cc7af8419d30c527cb assets/projecte/blockstates/interdiction_lantern.json
 ba851fae2fa45eb861d2ebed56d26d0a539ec160 assets/projecte/blockstates/interdiction_torch.json
 ce3b25636777b2c6435a5a7ed5f6d9ced451424c assets/projecte/blockstates/mobius_fuel_block.json
 cdcf9c06e8e747b6084556b3b0f8a8a93b5d39c5 assets/projecte/blockstates/nova_cataclysm.json
@@ -22,6 +24,8 @@ c87cccf83c8cde302e05be539fbf3c4324529c8b assets/projecte/blockstates/rm_furnace.
 47cac2fff599f84f80bd4e2975114d3d1bfd75a3 assets/projecte/blockstates/transmutation_table.json
 d80fed95c44df0d69c15a6762f2978f77fcfdc88 assets/projecte/blockstates/wall_interdiction_torch.json
 0d0ed92d76c7354a4b13332d121637c3f19e96c0 assets/projecte/models/block/aeternalis_fuel_block.json
+df94663f370ba2129f797f0bac07e6c4c23878fd assets/projecte/models/block/alchemical_barrel.json
+0832af6675ac0357a42d6fb8201c47d02973897e assets/projecte/models/block/alchemical_barrel_open.json
 ecdcd31981d61e28847051fd90ca23de1454af7c assets/projecte/models/block/alchemical_chest.json
 625d98ce22cf0176c2b799ff542767e130e59270 assets/projecte/models/block/alchemical_coal_block.json
 e529e5c102d6c51f4fe844d747c468a0e5eafac8 assets/projecte/models/block/base_chest.json
@@ -34,6 +38,8 @@ ee69ee43fd62ee6bd2612fe1de661b2c1f47b4cc assets/projecte/models/block/condenser_
 7179b90a0488744e063d4aeaad1d2a4f38d1a071 assets/projecte/models/block/dm_furnace.json
 fde747e628e5e8ad2b8622313510c7968bbc811c assets/projecte/models/block/dm_furnace_on.json
 3bf4cac43365a11cabf17e499e984d05831f38fb assets/projecte/models/block/dm_pedestal.json
+4a62efefe996af8a1a5a3bfb0a620c94977853c8 assets/projecte/models/block/interdiction_lantern.json
+ade0e30cb42f5990ff0528034a70671d4ef0c21d assets/projecte/models/block/interdiction_lantern_hanging.json
 58bb491c0f826d96569bcab85c9d9d629e081830 assets/projecte/models/block/interdiction_torch.json
 f11553e36679773a4c0e6258978b15aa87ae4c8e assets/projecte/models/block/mobius_fuel_block.json
 6dfe64d55cbdb8e278545a3f8e1c94ba8285ccc1 assets/projecte/models/block/nova_cataclysm.json

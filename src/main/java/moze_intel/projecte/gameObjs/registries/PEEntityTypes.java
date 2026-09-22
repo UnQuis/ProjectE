@@ -10,6 +10,7 @@ import moze_intel.projecte.gameObjs.entity.EntityNovaCataclysmPrimed;
 import moze_intel.projecte.gameObjs.entity.EntityNovaCatalystPrimed;
 import moze_intel.projecte.gameObjs.entity.EntitySWRGProjectile;
 import moze_intel.projecte.gameObjs.entity.EntityWaterProjectile;
+import moze_intel.projecte.gameObjs.entity.PETridentEntity;
 import moze_intel.projecte.gameObjs.registration.impl.EntityTypeDeferredRegister;
 import moze_intel.projecte.gameObjs.registration.impl.EntityTypeRegistryObject;
 import net.minecraft.SharedConstants;
@@ -33,4 +34,12 @@ public class PEEntityTypes {
 	public static final EntityTypeRegistryObject<EntityNovaCataclysmPrimed> NOVA_CATACLYSM_PRIMED = ENTITY_TYPES.registerTnt("nova_cataclysm_primed", EntityNovaCataclysmPrimed::new);
 	public static final EntityTypeRegistryObject<EntitySWRGProjectile> SWRG_PROJECTILE = ENTITY_TYPES.registerNoGravThrowable("swrg_projectile", EntitySWRGProjectile::new);
 	public static final EntityTypeRegistryObject<EntityWaterProjectile> WATER_PROJECTILE = ENTITY_TYPES.registerNoGravThrowable("water_projectile", EntityWaterProjectile::new);
+	public static final EntityTypeRegistryObject<PETridentEntity> PE_TRIDENT = ENTITY_TYPES.registerMisc("pe_trident", PETridentEntity::new, builder -> builder
+			//[VanillaCopy] similar to EntityType.TRIDENT but as a matter trident
+			.sized(0.5F, 0.5F)
+			.eyeHeight(0.13F)
+			.clientTrackingRange(4)
+			.updateInterval(SharedConstants.TICKS_PER_SECOND)
+			.fireImmune()
+	);
 }
