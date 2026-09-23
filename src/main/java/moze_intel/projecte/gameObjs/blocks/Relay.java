@@ -23,8 +23,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.function.Consumer;
 
-public class Relay extends BlockDirection implements PEEntityBlock<RelayMK1BlockEntity> {
+public class Relay extends BlockDirection implements PEEntityBlock<RelayMK1BlockEntity>, IBlockTooltip {
 
 	private final EnumRelayTier tier;
 
@@ -41,7 +42,7 @@ public class Relay extends BlockDirection implements PEEntityBlock<RelayMK1Block
 	@Override
 	@Deprecated
 	protected InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult rtr) {
-		if (level.isClientSide) {
+		if (level.isClientSide()) {
 			return InteractionResult.SUCCESS;
 		}
 		RelayMK1BlockEntity relay = WorldHelper.getBlockEntity(RelayMK1BlockEntity.class, level, pos, true);
@@ -52,11 +53,10 @@ public class Relay extends BlockDirection implements PEEntityBlock<RelayMK1Block
 	}
 
 	@Override
-	public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flags) {
-		super.appendHoverText(stack, context, tooltip, flags);
+	public void appendBlockTooltip(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull Consumer<Component> tooltip, @NotNull TooltipFlag flags) {
 		if (ProjectEConfig.client.statToolTips.get()) {
-			tooltip.add(PELang.EMC_MAX_OUTPUT_RATE.translateColored(ChatFormatting.DARK_PURPLE, ChatFormatting.BLUE, EMCHelper.formatEmc(tier.getChargeRate())));
-			tooltip.add(PELang.EMC_MAX_STORAGE.translateColored(ChatFormatting.DARK_PURPLE, ChatFormatting.BLUE, EMCHelper.formatEmc(tier.getStorage())));
+			tooltip.accept(PELang.EMC_MAX_OUTPUT_RATE.translateColored(ChatFormatting.DARK_PURPLE, ChatFormatting.BLUE, EMCHelper.formatEmc(tier.getChargeRate())));
+			tooltip.accept(PELang.EMC_MAX_STORAGE.translateColored(ChatFormatting.DARK_PURPLE, ChatFormatting.BLUE, EMCHelper.formatEmc(tier.getStorage())));
 		}
 	}
 

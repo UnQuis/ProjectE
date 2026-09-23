@@ -63,7 +63,7 @@ public class DumpMissingEmc {
 		}) {
 			return true;
 		} else if (!FMLEnvironment.production && SKIP_TOP &&
-				   holder.unwrapKey().map(key -> key.location().getNamespace().equals(IntegrationHelper.TOP_MODID)).orElse(false)) {
+				   holder.unwrapKey().map(key -> key.identifier().getNamespace().equals(IntegrationHelper.TOP_MODID)).orElse(false)) {
 			//Skip TOP items in dev
 			return true;
 		}

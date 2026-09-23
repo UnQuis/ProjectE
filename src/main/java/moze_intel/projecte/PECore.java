@@ -83,17 +83,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
-import net.neoforged.neoforge.capabilities.Capabilities.FluidHandler;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
+import net.neoforged.neoforge.event.AddServerReloadListenersEvent;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
@@ -123,7 +123,7 @@ public class PECore {
 	public static ModContainer MOD_CONTAINER;
 
 	public static void debugLog(String msg, Object... args) {
-		if (!FMLEnvironment.production || ProjectEConfig.common.debugLogging.get()) {
+		if (!FMLEnvironment.isProduction() || ProjectEConfig.common.debugLogging.get()) {
 			LOGGER.info(msg, args);
 		} else {
 			LOGGER.debug(msg, args);
@@ -151,7 +151,6 @@ public class PECore {
 		modEventBus.addListener(this::registerRegistries);
 		modEventBus.addListener(this::modifyRegistries);
 		PEAttachmentTypes.ATTACHMENT_TYPES.register(modEventBus);
-		PEArmorMaterials.ARMOR_MATERIALS.register(modEventBus);
 		PEBlockEntityTypes.BLOCK_ENTITY_TYPES.register(modEventBus);
 		PEBlocks.BLOCKS.register(modEventBus);
 		PEBlockTypes.BLOCK_TYPES.register(modEventBus);
@@ -255,7 +254,7 @@ public class PECore {
 					Level level = source.level();
 					Direction direction = source.state().getValue(DispenserBlock.FACING);
 					BlockPos pos = source.pos().relative(direction);
-					IFluidHandler fluidHandler = WorldHelper.getCapability(level, FluidHandler.BLOCK, pos, direction.getOpposite());
+					IFluidHandler fluidHandler = IFluidHandler.of(WorldHelper.getCapability(level, Capabilities.Fluid.BLOCK, pos, direction.getOpposite()));
 					if (fluidHandler != null) {
 						fluidHandler.fill(new FluidStack(Fluids.WATER, FluidType.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE);
 						return stack;
@@ -311,14 +310,15 @@ public class PECore {
 		}
 	}
 
-	private void addReloadListeners(AddReloadListenerEvent event) {
-		event.addListener((ResourceManagerReloadListener) manager -> emcUpdateResourceManager = new EmcUpdateData(event.getServerResources(), event.getRegistryAccess(), manager));
-		event.addListener(WorldTransmutationManager.INSTANCE);
+	private void addReloadListeners(AddServerReloadListenersEvent event) {
+		//26.1: addListener now requires a unique Identifier key for each mod-added listener
+		event.addListener(rl("emc_data"), (ResourceManagerReloadListener) manager -> emcUpdateResourceManager = new EmcUpdateData(event.getServerResources(), event.getRegistryAccess(), manager));
+		event.addListener(rl("world_transmutation"), WorldTransmutationManager.INSTANCE);
 	}
 
-	private void addBlacklistReloadListeners(AddReloadListenerEvent event) {
+	private void addBlacklistReloadListeners(AddServerReloadListenersEvent event) {
 		if (GameStagesHelper.gameStagesLoaded) {
-			event.addListener(BlacklistManager.INSTANCE);
+			event.addListener(rl("blacklist"), BlacklistManager.INSTANCE);
 		}
 	}
 

@@ -2,11 +2,9 @@ package moze_intel.projecte.gameObjs.customRecipes;
 
 import moze_intel.projecte.gameObjs.items.tools.PEShield;
 import moze_intel.projecte.gameObjs.registries.PERecipeSerializers;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.BannerItem;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -16,8 +14,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PEShieldSpecialRecipe extends CustomRecipe {
 
-	public PEShieldSpecialRecipe(CraftingBookCategory category) {
-		super(category);
+	public PEShieldSpecialRecipe() {
 	}
 
 	@Override
@@ -48,7 +45,7 @@ public class PEShieldSpecialRecipe extends CustomRecipe {
 
 	@NotNull
 	@Override
-	public ItemStack assemble(CraftingInput inv, @NotNull HolderLookup.Provider registryAccess) {
+	public ItemStack assemble(CraftingInput inv) {
 		ItemStack bannerStack = ItemStack.EMPTY;
 		ItemStack shieldStack = ItemStack.EMPTY;
 		for (ItemStack stackInSlot : inv.items()) {
@@ -68,14 +65,9 @@ public class PEShieldSpecialRecipe extends CustomRecipe {
 		return shieldStack;
 	}
 
-	@Override
-	public boolean canCraftInDimensions(int width, int height) {
-		return width * height >= 2;
-	}
-
 	@NotNull
 	@Override
-	public RecipeSerializer<?> getSerializer() {
+	public RecipeSerializer<PEShieldSpecialRecipe> getSerializer() {
 		return PERecipeSerializers.SHIELD_DECORATION.get();
 	}
 }

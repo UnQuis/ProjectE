@@ -39,7 +39,7 @@ public class DecoratedPotMapper extends SpecialRecipeMapper<DecoratedPotRecipe> 
 
 	@Override
 	protected boolean handleRecipe(IMappingCollector<NormalizedSimpleStack, Long> mapper, RegistryAccess registryAccess, INSSFakeGroupManager fakeGroupManager) {
-		Optional<Named<Item>> tag = BuiltInRegistries.ITEM.getTag(ItemTags.DECORATED_POT_INGREDIENTS);
+		Optional<Named<Item>> tag = BuiltInRegistries.ITEM.get(ItemTags.DECORATED_POT_INGREDIENTS);
 		if (tag.isEmpty()) {
 			return false;
 		}

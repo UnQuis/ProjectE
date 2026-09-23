@@ -10,6 +10,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -37,7 +39,7 @@ public class EntityFireProjectile extends NoGravityThrowableProjectile {
 	@Override
 	protected void onHitBlock(@NotNull BlockHitResult result) {
 		super.onHitBlock(result);
-		if (!level().isClientSide && getOwner() instanceof Player player) {
+		if (!level().isClientSide() && getOwner() instanceof Player player) {
 			BlockPos pos = result.getBlockPos();
 			BlockState state = level().getBlockState(pos);
 			if (state.is(Blocks.OBSIDIAN)) {
@@ -62,7 +64,7 @@ public class EntityFireProjectile extends NoGravityThrowableProjectile {
 	@Override
 	protected void onHitEntity(@NotNull EntityHitResult result) {
 		super.onHitEntity(result);
-		if (!level().isClientSide && getOwner() instanceof Player player) {
+		if (!level().isClientSide() && getOwner() instanceof Player player) {
 			ItemStack found = PlayerHelper.findFirstItem(player, fromArcana ? PEItems.ARCANA_RING : PEItems.IGNITION_RING);
 			if (!found.isEmpty() && ItemPE.consumeFuel(player, found, 32, true)) {
 				Entity ent = result.getEntity();
@@ -74,13 +76,13 @@ public class EntityFireProjectile extends NoGravityThrowableProjectile {
 	}
 
 	@Override
-	public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+	public void readAdditionalSaveData(@NotNull ValueInput compound) {
 		super.readAdditionalSaveData(compound);
-		fromArcana = compound.getBoolean("fromArcana");
+		fromArcana = compound.getBooleanOr("fromArcana", false);
 	}
 
 	@Override
-	public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+	public void addAdditionalSaveData(@NotNull ValueOutput compound) {
 		super.addAdditionalSaveData(compound);
 		compound.putBoolean("fromArcana", fromArcana);
 	}

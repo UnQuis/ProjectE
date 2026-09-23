@@ -66,7 +66,7 @@ public class WorldTransmutationBuilder extends BaseFileBuilder<WorldTransmutatio
 	 * @param result Resulting block state.
 	 */
 	public WorldTransmutationBuilder register(BlockState from, BlockState result) {
-		if (from.getValues().isEmpty() && result.getValues().isEmpty()) {
+		if (from.getValues().findAny().isEmpty() && result.getValues().findAny().isEmpty()) {
 			throw new IllegalArgumentException("None of the provided states have any properties, use the block based register method.");
 		} else if (from == result) {
 			throw new IllegalArgumentException("Cannot register a world transmutation from a block to itself.");
@@ -82,7 +82,7 @@ public class WorldTransmutationBuilder extends BaseFileBuilder<WorldTransmutatio
 	 * @param altResult Alternate resulting state.
 	 */
 	public WorldTransmutationBuilder register(BlockState from, BlockState result, BlockState altResult) {
-		if (from.getValues().isEmpty() && result.getValues().isEmpty() && altResult.getValues().isEmpty()) {
+		if (from.getValues().findAny().isEmpty() && result.getValues().findAny().isEmpty() && altResult.getValues().findAny().isEmpty()) {
 			throw new IllegalArgumentException("None of the provided states have any properties, use the block based register method.");
 		} else if (from == result || from == altResult) {
 			throw new IllegalArgumentException("Cannot register a world transmutation from a block to itself.");

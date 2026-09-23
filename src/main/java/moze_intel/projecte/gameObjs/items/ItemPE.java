@@ -9,6 +9,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Range;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
+import org.jetbrains.annotations.Nullable;
 
 public class ItemPE extends Item {
 
@@ -96,7 +99,18 @@ public class ItemPE extends Item {
 		return true;
 	}
 
-	public static boolean hotBarOrOffHand(int slot) {
-		return slot < Inventory.getSelectionSize() || slot == Inventory.SLOT_OFFHAND;
+	public static boolean hotBarOrOffHand(Entity entity, ItemStack stack, @Nullable EquipmentSlot slot) {
+		if (slot == EquipmentSlot.MAINHAND || slot == EquipmentSlot.OFFHAND) {
+			return true;
+		}
+		if (slot == null && entity instanceof Player player) {
+			Inventory inventory = player.getInventory();
+			for (int i = 0; i < Inventory.getSelectionSize(); i++) {
+				if (inventory.getItem(i) == stack) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }

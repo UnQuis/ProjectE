@@ -10,11 +10,12 @@ import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
 import moze_intel.projecte.utils.ItemHelper;
 import moze_intel.projecte.utils.ToolHelper;
 import net.minecraft.core.Holder;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.component.DataComponents;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -37,24 +38,16 @@ public class PEShears extends ShearsItem implements IItemCharge, IBarHelper {
 		super(props.component(PEDataComponentTypes.CHARGE, 0)
 						.component(PEDataComponentTypes.STORED_EMC, 0L)
 						.component(DataComponents.TOOL, new Tool(List.of(
-								Tool.Rule.minesAndDrops(PETags.Blocks.MINEABLE_WITH_PE_SHEARS, matterType.getSpeed()),
-								Tool.Rule.overrideSpeed(BlockTags.LEAVES, 15.0F),
-								Tool.Rule.overrideSpeed(BlockTags.WOOL, 5.0F),
-								Tool.Rule.overrideSpeed(List.of(Blocks.VINE, Blocks.GLOW_LICHEN), 2.0F)
-						), 1.0F, 1))
+								Tool.Rule.minesAndDrops(ToolHelper.blockSet(PETags.Blocks.MINEABLE_WITH_PE_SHEARS), matterType.getSpeed()),
+								Tool.Rule.overrideSpeed(ToolHelper.blockSet(BlockTags.LEAVES), 15.0F),
+								Tool.Rule.overrideSpeed(ToolHelper.blockSet(BlockTags.WOOL), 5.0F),
+								Tool.Rule.overrideSpeed(HolderSet.direct(
+										BuiltInRegistries.BLOCK.wrapAsHolder(Blocks.VINE),
+										BuiltInRegistries.BLOCK.wrapAsHolder(Blocks.GLOW_LICHEN)), 2.0F)
+						), 1.0F, 1, true))
 		);
 		this.matterType = matterType;
 		this.numCharges = numCharges;
-	}
-
-	@Override
-	public boolean isEnchantable(@NotNull ItemStack stack) {
-		return false;
-	}
-
-	@Override
-	public boolean isBookEnchantable(@NotNull ItemStack stack, @NotNull ItemStack book) {
-		return false;
 	}
 
 	@Override
@@ -104,7 +97,7 @@ public class PEShears extends ShearsItem implements IItemCharge, IBarHelper {
 
 	@NotNull
 	@Override
-	public InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
+	public InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
 		return ItemHelper.actionResultFromType(ToolHelper.shearEntityAOE(player, hand, 0), player.getItemInHand(hand));
 	}
 

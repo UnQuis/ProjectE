@@ -3,8 +3,8 @@ package moze_intel.projecte.utils;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -23,13 +23,8 @@ public final class ItemHelper {
 	/**
 	 * Gets an ActionResult based on a type
 	 */
-	public static InteractionResultHolder<ItemStack> actionResultFromType(InteractionResult type, ItemStack stack) {
-		return switch (type) {
-			case SUCCESS -> InteractionResultHolder.success(stack);
-			case CONSUME -> InteractionResultHolder.consume(stack);
-			case FAIL -> InteractionResultHolder.fail(stack);
-			default -> InteractionResultHolder.pass(stack);
-		};
+	public static InteractionResult actionResultFromType(InteractionResult type, ItemStack stack) {
+		return type;
 	}
 
 	/**
@@ -99,7 +94,10 @@ public final class ItemHelper {
 	}
 
 	public static boolean isRepairableDamagedItem(ItemStack stack) {
-		return stack.isDamageableItem() && stack.isRepairable() && stack.getDamageValue() > 0;
+		//MC 26.1 removed ItemStack#isRepairable; repairability is now expressed via the REPAIRABLE
+		// data component (repair with a matching material in an anvil) or combine-repairing with a copy
+		return stack.isDamageableItem() && stack.getDamageValue() > 0 &&
+			(stack.has(DataComponents.REPAIRABLE) || stack.getItem().isCombineRepairable(stack));
 	}
 
 	/**

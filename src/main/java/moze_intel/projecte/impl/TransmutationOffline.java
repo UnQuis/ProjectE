@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.Optional;
 import java.util.UUID;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.api.ItemInfo;
@@ -68,18 +69,21 @@ public class TransmutationOffline {
 		if (Files.exists(player) && Files.isRegularFile(player)) {
 			try (InputStream in = Files.newInputStream(player)) {
 				CompoundTag playerDat = NbtIo.readCompressed(in, NbtAccounter.unlimitedHeap()); // No need to create buffered stream, that call does it for us
-				if (playerDat.contains(AttachmentHolder.ATTACHMENTS_NBT_KEY, Tag.TAG_COMPOUND)) {
-					CompoundTag attachmentData = playerDat.getCompound(AttachmentHolder.ATTACHMENTS_NBT_KEY);
-					CompoundTag knowledgeData = attachmentData.getCompound(PEAttachmentTypes.KNOWLEDGE.getId().toString());
-					RegistryOps<Tag> serializationContext = server.registryAccess().createSerializationContext(NbtOps.INSTANCE);
-					DataResult<KnowledgeAttachment> result = KnowledgeAttachment.CODEC.parse(serializationContext, knowledgeData);
-					if (result.isSuccess()) {
-						cachedKnowledgeProviders.put(playerUUID, immutableView(result.getOrThrow()));
-						PECore.debugLog("Caching offline data for UUID: {}", playerUUID);
-						return true;
+				//26.1: CompoundTag#getCompound now returns an Optional and contains lost its type argument
+				Optional<CompoundTag> attachmentData = playerDat.getCompound(AttachmentHolder.ATTACHMENTS_NBT_KEY);
+				if (attachmentData.isPresent()) {
+					Optional<CompoundTag> knowledgeData = attachmentData.get().getCompound(PEAttachmentTypes.KNOWLEDGE.getId().toString());
+					if (knowledgeData.isPresent()) {
+						RegistryOps<Tag> serializationContext = server.registryAccess().createSerializationContext(NbtOps.INSTANCE);
+						DataResult<KnowledgeAttachment> result = KnowledgeAttachment.CODEC.parse(serializationContext, knowledgeData.get());
+						if (result.isSuccess()) {
+							cachedKnowledgeProviders.put(playerUUID, immutableView(result.getOrThrow()));
+							PECore.debugLog("Caching offline data for UUID: {}", playerUUID);
+							return true;
 					} else {
 						result.ifError(error -> PECore.LOGGER.warn("Failed to cache offline data for API calls for UUID: {}. {}", playerUUID, error.message()));
 					}
+				}
 				}
 			} catch (IOException e) {
 				PECore.LOGGER.warn("Failed to cache offline data for API calls for UUID: {}", playerUUID);

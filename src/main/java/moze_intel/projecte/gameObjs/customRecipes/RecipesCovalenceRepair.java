@@ -7,9 +7,7 @@ import moze_intel.projecte.gameObjs.PETags;
 import moze_intel.projecte.gameObjs.registries.PERecipeSerializers;
 import moze_intel.projecte.utils.EMCHelper;
 import moze_intel.projecte.utils.ItemHelper;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
@@ -19,8 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 public class RecipesCovalenceRepair extends CustomRecipe {
 
-	public RecipesCovalenceRepair(CraftingBookCategory category) {
-		super(category);
+	public RecipesCovalenceRepair() {
 	}
 
 	@Nullable
@@ -53,7 +50,7 @@ public class RecipesCovalenceRepair extends CustomRecipe {
 
 	@NotNull
 	@Override
-	public ItemStack assemble(@NotNull CraftingInput inv, @NotNull HolderLookup.Provider registryAccess) {
+	public ItemStack assemble(@NotNull CraftingInput inv) {
 		RepairTargetInfo targetInfo = findIngredients(inv);
 		if (targetInfo == null) {
 			//If there isn't actually a match return no result
@@ -64,14 +61,9 @@ public class RecipesCovalenceRepair extends CustomRecipe {
 		return output;
 	}
 
-	@Override
-	public boolean canCraftInDimensions(int width, int height) {
-		return width > 1 || height > 1;
-	}
-
 	@NotNull
 	@Override
-	public RecipeSerializer<?> getSerializer() {
+	public RecipeSerializer<RecipesCovalenceRepair> getSerializer() {
 		return PERecipeSerializers.COVALENCE_REPAIR.get();
 	}
 

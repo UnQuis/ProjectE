@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.PermissionCheck;
 import net.neoforged.neoforge.server.permission.PermissionAPI;
 import net.neoforged.neoforge.server.permission.events.PermissionGatherEvent;
 import net.neoforged.neoforge.server.permission.nodes.PermissionDynamicContext;
@@ -20,12 +21,13 @@ import org.jetbrains.annotations.Nullable;
 public class PEPermissions {
 
 	private static final List<PermissionNode<?>> NODES_TO_REGISTER = new ArrayList<>();
-	private static final PermissionResolver<Boolean> PLAYER_IS_OP = (player, uuid, context) -> player != null && player.hasPermissions(Commands.LEVEL_GAMEMASTERS);
+	//26.1: permission levels are now PermissionCheck objects tested against a PermissionSet
+	private static final PermissionResolver<Boolean> PLAYER_IS_OP = (player, uuid, context) -> player != null && Commands.LEVEL_GAMEMASTERS.check(player.permissions());
 	private static final PermissionResolver<Boolean> ALWAYS_TRUE = (player, uuid, context) -> true;
 
 	//Commands
 	public static final CommandPermissionNode COMMAND = new CommandPermissionNode(node("command", PermissionTypes.BOOLEAN,
-			(player, uuid, contexts) -> player != null && player.hasPermissions(Commands.LEVEL_ALL)), Commands.LEVEL_ALL);
+			(player, uuid, contexts) -> player != null && Commands.LEVEL_ALL.check(player.permissions())), Commands.LEVEL_ALL);
 
 	public static final CommandPermissionNode COMMAND_REMOVE_EMC = nodeOpCommand("remove_emc");
 	public static final CommandPermissionNode COMMAND_RESET_EMC = nodeOpCommand("reset_emc");
@@ -94,13 +96,14 @@ public class PEPermissions {
 		return PermissionAPI.getPermission(player, node, context);
 	}
 
-	public record CommandPermissionNode(PermissionNode<Boolean> node, int fallbackLevel) implements Predicate<CommandSourceStack> {
+	public record CommandPermissionNode(PermissionNode<Boolean> node, PermissionCheck fallbackLevel) implements Predicate<CommandSourceStack> {
 
 		@Override
 		public boolean test(CommandSourceStack source) {
 			//See https://github.com/MinecraftForge/MinecraftForge/commit/f7eea35cb9b043aae0a3866a9578724aa7560585 for details on why
 			// has permission is checked first and the implications
-			return source.hasPermission(fallbackLevel) || source.source instanceof ServerPlayer player && PermissionAPI.getPermission(player, node);
+			//26.1: CommandSourceStack#hasPermission(int) was replaced by testing the PermissionCheck against the source's PermissionSet
+			return fallbackLevel.check(source.permissions()) || source.source instanceof ServerPlayer player && PermissionAPI.getPermission(player, node);
 		}
 	}
 

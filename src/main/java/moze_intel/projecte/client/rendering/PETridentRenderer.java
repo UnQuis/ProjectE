@@ -5,7 +5,7 @@ import moze_intel.projecte.gameObjs.entity.PETridentEntity;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.ThrownTridentRenderer;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.entity.projectile.ThrownTrident;
+import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
 import org.jetbrains.annotations.NotNull;
 
 public class PETridentRenderer extends ThrownTridentRenderer {

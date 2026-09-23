@@ -8,10 +8,9 @@ import java.util.List;
 import java.util.Set;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import moze_intel.projecte.gameObjs.registries.PERecipeSerializers;
-import net.minecraft.core.HolderLookup;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingBookCategory;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CustomRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -25,8 +24,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class PhiloStoneSmeltingRecipe extends CustomRecipe {
 
-	public PhiloStoneSmeltingRecipe(CraftingBookCategory category) {
-		super(category);
+	public PhiloStoneSmeltingRecipe() {
 	}
 
 	@Override
@@ -37,14 +35,15 @@ public class PhiloStoneSmeltingRecipe extends CustomRecipe {
 
 	@NotNull
 	@Override
-	public ItemStack assemble(@NotNull CraftingInput inv, @NotNull HolderLookup.Provider registryAccess) {
+	public ItemStack assemble(@NotNull CraftingInput inv) {
 		Set<RecipeHolder<SmeltingRecipe>> matchingRecipes = getMatchingRecipes(inv, ServerLifecycleHooks.getCurrentServer().overworld());
 		if (matchingRecipes.isEmpty()) {
 			return ItemStack.EMPTY;
 		}
 		//If we have at least one matching recipe, return the output
 		//Note: It is multiplied by seven as we have seven inputs
-		ItemStack output = matchingRecipes.stream().findFirst().get().value().getResultItem(registryAccess);
+		//26.1: SingleItemRecipe.assemble only returns the fixed result template, the input is unused
+		ItemStack output = matchingRecipes.stream().findFirst().get().value().assemble(new SingleRecipeInput(ItemStack.EMPTY));
 		return output.copyWithCount(output.getCount() * 7);
 	}
 
@@ -68,6 +67,12 @@ public class PhiloStoneSmeltingRecipe extends CustomRecipe {
 			}
 		}
 		if (allItems.size() == 9) {
+			if (!(level instanceof ServerLevel serverLevel)) {
+				//26.1: Client levels do not expose the full recipe list (RecipeAccess only has blocksets/stonecutter),
+				// recipe matching only happens server side, the crafting result slot is synced to the client
+				return Collections.emptySet();
+			}
+			var recipeManager = serverLevel.recipeAccess();
 			//If we have exactly 9 items check for a matching recipe
 			for (ItemStack philoStone : philoStones) {
 				for (ItemStack coal : coals) {
@@ -83,7 +88,7 @@ public class PhiloStoneSmeltingRecipe extends CustomRecipe {
 								if (matchingRecipes.isEmpty()) {
 									//If there are no matching recipes yet see if there are any recipes that match the current stack and add them if they are,
 									// if we didn't end up adding any elements that means there are no matching recipes so fail
-									if (!matchingRecipes.addAll(level.getRecipeManager().getRecipesFor(RecipeType.SMELTING, furnaceInput, level))) {
+									if (!matchingRecipes.addAll(recipeManager.recipeMap().getRecipesFor(RecipeType.SMELTING, furnaceInput, level).toList())) {
 										return Collections.emptySet();
 									}
 								} else {
@@ -113,14 +118,9 @@ public class PhiloStoneSmeltingRecipe extends CustomRecipe {
 		return Collections.emptySet();
 	}
 
-	@Override
-	public boolean canCraftInDimensions(int width, int height) {
-		return width * height >= 9;
-	}
-
 	@NotNull
 	@Override
-	public RecipeSerializer<?> getSerializer() {
+	public RecipeSerializer<PhiloStoneSmeltingRecipe> getSerializer() {
 		return PERecipeSerializers.PHILO_STONE_SMELTING.get();
 	}
 }

@@ -100,7 +100,7 @@ public final class PlayerHelper {
 	}
 
 	public static ItemStack findFirstItem(Player player, Holder<Item> consumeFrom) {
-		for (ItemStack s : player.getInventory().items) {
+		for (ItemStack s : player.getInventory().getNonEquipmentItems()) {
 			if (!s.isEmpty() && s.is(consumeFrom)) {
 				return s;
 			}

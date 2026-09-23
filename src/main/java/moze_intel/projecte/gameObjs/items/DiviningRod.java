@@ -31,11 +31,14 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 import net.minecraft.world.item.crafting.SmeltingRecipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 
 public class DiviningRod extends ItemPE implements IItemMode<DiviningMode> {
 
@@ -54,7 +57,7 @@ public class DiviningRod extends ItemPE implements IItemMode<DiviningMode> {
 			return InteractionResult.FAIL;
 		}
 		Level level = ctx.getLevel();
-		if (level.isClientSide) {
+		if (level.isClientSide()) {
 			return InteractionResult.SUCCESS;
 		}
 		LongList emcValues = new LongArrayList();
@@ -76,12 +79,13 @@ public class DiviningRod extends ItemPE implements IItemMode<DiviningMode> {
 			long blockEmc = IEMCProxy.INSTANCE.getValue(blockStack);
 			if (blockEmc == 0) {
 				if (furnaceRecipes == null) {//Lazily init the list of furnace recipes
-					furnaceRecipes = level.getRecipeManager().getAllRecipesFor(RecipeType.SMELTING);
+					//26.1: recipe lookup moved to RecipeManager via ServerLevel#recipeAccess, getAllRecipesFor was replaced by RecipeMap#byType
+					furnaceRecipes = List.copyOf(((ServerLevel) level).recipeAccess().recipeMap().byType(RecipeType.SMELTING));
 				}
 				for (RecipeHolder<SmeltingRecipe> furnaceRecipeHolder : furnaceRecipes) {
 					SmeltingRecipe furnaceRecipe = furnaceRecipeHolder.value();
-					if (furnaceRecipe.getIngredients().getFirst().test(blockStack)) {
-						long currentValue = IEMCProxy.INSTANCE.getValue(furnaceRecipe.getResultItem(level.registryAccess()));
+					if (furnaceRecipe.input().test(blockStack)) {
+						long currentValue = IEMCProxy.INSTANCE.getValue(furnaceRecipe.assemble(new SingleRecipeInput(ItemStack.EMPTY)));
 						if (currentValue != 0) {
 							if (!emcValues.contains(currentValue)) {
 								emcValues.add(currentValue);
@@ -129,9 +133,9 @@ public class DiviningRod extends ItemPE implements IItemMode<DiviningMode> {
 	}
 
 	@Override
-	public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flags) {
-		super.appendHoverText(stack, context, tooltip, flags);
-		tooltip.add(getToolTip(stack));
+	public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull TooltipDisplay display, @NotNull Consumer<Component> tooltip, @NotNull TooltipFlag flags) {
+		super.appendHoverText(stack, context, display, tooltip, flags);
+		tooltip.accept(getToolTip(stack));
 	}
 
 	@Override

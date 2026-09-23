@@ -32,6 +32,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
@@ -119,7 +120,8 @@ public final class PacketHandler {
 	}
 
 	public void activateArchangel() {
-		PacketDistributor.sendToServer(activateArchangel);
+		//26.1: serverbound payloads moved to ClientPacketDistributor
+		ClientPacketDistributor.sendToServer(activateArchangel);
 	}
 
 	protected record SimplePacketPayLoad(CustomPacketPayload.Type<CustomPacketPayload> type) implements CustomPacketPayload {

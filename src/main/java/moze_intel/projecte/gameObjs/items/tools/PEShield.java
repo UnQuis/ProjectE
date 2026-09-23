@@ -29,16 +29,6 @@ public class PEShield extends ShieldItem {
     }
 
     @Override
-    public boolean isEnchantable(@NotNull ItemStack stack) {
-        return false;
-    }
-
-    @Override
-    public boolean isBookEnchantable(@NotNull ItemStack stack, @NotNull ItemStack book) {
-        return false;
-    }
-
-    @Override
     public boolean isPrimaryItemFor(@NotNull ItemStack stack, @NotNull Holder<Enchantment> enchantment) {
         return false;
     }
@@ -51,11 +41,5 @@ public class PEShield extends ShieldItem {
     @Override
     public <T extends LivingEntity> int damageItem(@NotNull ItemStack stack, int amount, T entity, @NotNull Consumer<Item> onBroken) {
         return 0;
-    }
-
-    @Override
-    public boolean isValidRepairItem(@NotNull ItemStack toRepair, @NotNull ItemStack repair) {
-        //Override the shield allowing planks to repair it as we can't lose durability anyway
-        return false;
     }
 }

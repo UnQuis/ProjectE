@@ -20,11 +20,13 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.entity.projectile.ThrownTrident;
+import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
@@ -96,7 +98,7 @@ public class PETridentEntity extends ThrownTrident {
         // Vanilla only lets loyal tridents return after dealing damage or hitting the ground,
         // so a trident thrown into the void never comes back. Once it is past the bottom of the
         // world, recall it above the owner and let the vanilla loyalty logic fly it back to hand.
-        if (!level().isClientSide && getMatterTier() > 0 && getY() < level().getMinBuildHeight() - 32
+        if (!level().isClientSide() && getMatterTier() > 0 && getY() < level().getMinBuildHeight() - 32
               && getOwner() != null && entityData.get(ID_LOYALTY) > 0) {
             Entity owner = getOwner();
             moveTo(owner.getX(), owner.getBoundingBox().maxY + 2.0, owner.getZ(), owner.getYRot(), owner.getXRot());
@@ -199,7 +201,7 @@ public class PETridentEntity extends ThrownTrident {
                     // so that it has the proper values set before adding it to the level
                     lightning.moveTo(hitTarget);
                     lightning.setCause(thrower);
-                }, hitPos, MobSpawnType.TRIGGERED, false, false);
+                }, hitPos, EntitySpawnReason.TRIGGERED, false, false);
                 if (!hasPlayed) {
                     hasPlayed = true;
                     if (!isSilent()) {
@@ -228,9 +230,9 @@ public class PETridentEntity extends ThrownTrident {
     }
 
     @Override
-    public void readAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void readAdditionalSaveData(@NotNull ValueInput compound) {
         super.readAdditionalSaveData(compound);
-        noReturn = compound.getBoolean("no_return");
+        noReturn = compound.getBooleanOr("no_return", false);
         if (noReturn) {
             entityData.set(ID_LOYALTY, (byte) 0);
         }
@@ -238,7 +240,7 @@ public class PETridentEntity extends ThrownTrident {
     }
 
     @Override
-    public void addAdditionalSaveData(@NotNull CompoundTag compound) {
+    public void addAdditionalSaveData(@NotNull ValueOutput compound) {
         super.addAdditionalSaveData(compound);
         compound.putBoolean("no_return", noReturn);
     }
@@ -247,9 +249,9 @@ public class PETridentEntity extends ThrownTrident {
     public void tickDespawn() {
         if (this.pickup != Pickup.ALLOWED) {
             super.tickDespawn();
-        } else if (noReturn && !level().isClientSide) {
+        } else if (noReturn && !level().isClientSide()) {
             //Drop the item if we despawned after not having been able to return
-            spawnAtLocation(getPickupItem(), 0.1F);
+            spawnAtLocation((ServerLevel) level(), getPickupItem(), 0.1F);
             discard();
         }
     }

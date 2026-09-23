@@ -82,7 +82,7 @@ public abstract class AbstractNSSTag<TYPE> implements NSSTag {
 	 */
 	protected final Optional<HolderSet.Named<TYPE>> getTag(Registry<TYPE> registry) {
 		if (representsTag()) {
-			return registry.getTag(TagKey.create(registry.key(), getResourceLocation()));
+			return registry.get(TagKey.create(registry.key(), getResourceLocation()));
 		}
 		return Optional.empty();
 	}
@@ -121,7 +121,7 @@ public abstract class AbstractNSSTag<TYPE> implements NSSTag {
 
 	@Override
 	public String toString() {
-		Identifier type = getRegistry().key().location();
+		Identifier type = getRegistry().key().identifier();
 		if (representsTag()) {
 			return type + " Tag: " + getResourceLocation();
 		}
@@ -168,9 +168,9 @@ public abstract class AbstractNSSTag<TYPE> implements NSSTag {
 			if (id == null) {
 				return DataResult.error(() -> "Must represent a registry id");
 			} else if (!registry.containsKey(id)) {
-				return DataResult.error(() -> "Registry " + registry.key().location() + " does not contain element " + id);
+				return DataResult.error(() -> "Registry " + registry.key().identifier() + " does not contain element " + id);
 			} else if (!allowDefault && registry instanceof DefaultedRegistry<?> defaultedRegistry && id.equals(defaultedRegistry.getDefaultKey())) {
-				return DataResult.error(() -> "NormalizedSimpleStack cannot be created for registry " + registry.key().location() + " with the default element " + id);
+				return DataResult.error(() -> "NormalizedSimpleStack cannot be created for registry " + registry.key().identifier() + " with the default element " + id);
 			}
 			return DataResult.success(id);
 		}).fieldOf("id").forGetter(nss -> nss.representsTag() ? null : nss.getResourceLocation());

@@ -70,7 +70,8 @@ public class ComponentProcessorHelper implements IComponentProcessorHelper {
 
 	private ItemStack[] getMatchingStacks(Ingredient ingredient) {
 		try {
-			return ingredient.getItems();
+			//26.1: Ingredient#getItems was replaced by a Stream of Item holders
+			return ingredient.items().map(ItemStack::new).toArray(ItemStack[]::new);
 		} catch (Exception e) {
 			//Note: In theory this should never throw as it is called after all the reload listeners have fired, but in case it does error: catch it
 			ICustomIngredient customIngredient = ingredient.getCustomIngredient();

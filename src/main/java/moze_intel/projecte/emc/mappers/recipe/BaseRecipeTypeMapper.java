@@ -20,12 +20,15 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.context.ContextMap;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.display.RecipeDisplay;
 import net.neoforged.neoforge.common.crafting.ICustomIngredient;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
 import org.jetbrains.annotations.Nullable;
@@ -52,7 +55,14 @@ public abstract class BaseRecipeTypeMapper implements IRecipeTypeMapper {
 			//Skip handling of any "special" recipes as they might have issues if we try to handle them
 			return false;
 		}
-		ItemStack recipeOutput = recipe.getResultItem(registryAccess);
+		//26.1: getResultItem was removed; recipes expose their output through the display system.
+		// Recipes that do not override display() report an empty result, matching the old default of getResultItem
+		ItemStack recipeOutput = recipe.display().stream()
+				.map(RecipeDisplay::result)
+				.map(slotDisplay -> slotDisplay.resolveForFirstStack(ContextMap.EMPTY))
+				.filter(output -> !output.isEmpty())
+				.findFirst()
+				.orElse(ItemStack.EMPTY);
 		if (recipeOutput.isEmpty()) {
 			//If there is no output (for example a special recipe), don't mark it that we handled it
 			return false;
@@ -63,7 +73,7 @@ public abstract class BaseRecipeTypeMapper implements IRecipeTypeMapper {
 			// mapper would fail as well due to it being an invalid recipe
 			return true;
 		}
-		Identifier recipeID = recipeHolder.id();
+		Identifier recipeID = recipeHolder.id().identifier();
 		Object2IntMap<NormalizedSimpleStack> ingredientMap = new Object2IntOpenHashMap<>();
 		for (Ingredient recipeItem : ingredientsChecked) {
 			if (recipeItem.isEmpty()) {
@@ -189,7 +199,8 @@ public abstract class BaseRecipeTypeMapper implements IRecipeTypeMapper {
 
 	private ItemStack[] getMatchingStacks(Ingredient ingredient, Identifier recipeID) {
 		try {
-			return ingredient.getItems();
+			//26.1: Ingredient#getItems was replaced by a Stream of Item holders
+			return ingredient.items().map(ItemStack::new).toArray(ItemStack[]::new);
 		} catch (Exception e) {
 			ICustomIngredient customIngredient = ingredient.getCustomIngredient();
 			if (customIngredient != null) {//Should basically always be the case
@@ -216,13 +227,15 @@ public abstract class BaseRecipeTypeMapper implements IRecipeTypeMapper {
 		Item item = stack.getItem();
 		boolean hasContainerItem = false;
 		try {
-			//Note: We include the hasContainerItem check in the try catch, as if a mod is handling tags incorrectly
-			// there is a chance their hasContainerItem is checking something about tags, and
-			hasContainerItem = item.hasCraftingRemainingItem(stack);
+			//Note: We include the crafting remainder check in the try catch, as if a mod is handling tags incorrectly
+			// there is a chance their remainder logic is checking something about tags, and
+			//26.1: Item#hasCraftingRemainingItem/getCraftingRemainingItem were replaced by ItemStack#getCraftingRemainder
+			ItemStackTemplate remainderTemplate = stack.getCraftingRemainder();
+			hasContainerItem = remainderTemplate != null;
 			if (hasContainerItem) {
 				//If this item has a container for the stack, remove the full returned stack cost. Most vanilla remainders have a count of one,
-				//but the API returns an ItemStack and third-party items may legitimately return more than one item.
-				ItemStack craftingRemainingItem = item.getCraftingRemainingItem(stack);
+				//but the template creates an ItemStack and third-party items may legitimately return more than one item.
+				ItemStack craftingRemainingItem = remainderTemplate.create();
 				if (craftingRemainingItem.isEmpty()) {
 					throw new IllegalStateException("Item reported a crafting remainder but returned an empty stack");
 				}
@@ -262,14 +275,15 @@ public abstract class BaseRecipeTypeMapper implements IRecipeTypeMapper {
 		try {
 			return getIngredients(recipeHolder.value());
 		} catch (Exception e) {
-			Identifier recipeID = recipeHolder.id();
+			Identifier recipeID = recipeHolder.id().identifier();
 			PECore.LOGGER.error(LogUtils.FATAL_MARKER, "Error mapping recipe {}. Failed to get ingredients. Please report this to {}.", recipeID, recipeID.getNamespace(), e);
 		}
 		return null;
 	}
 
-	//Allow overwriting the ingredients list because Smithing recipes don't override it themselves
+	//Allow overwriting the ingredients list because Recipe no longer exposes a raw ingredient list in 26.1,
+	// instead placementInfo() provides them (and it already covers smithing recipes via createFromOptionals)
 	protected Collection<Ingredient> getIngredients(Recipe<?> recipe) {
-		return recipe.getIngredients();
+		return recipe.placementInfo().ingredients();
 	}
 }

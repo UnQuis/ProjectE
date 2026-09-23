@@ -12,8 +12,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.animal.Rabbit;
-import net.minecraft.world.entity.animal.Rabbit.Variant;
+import net.minecraft.world.entity.animal.rabbit.Rabbit;
+import net.minecraft.world.entity.animal.rabbit.Rabbit.Variant;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,7 +66,7 @@ public class EntityRandomizerHelper {
 	}
 
 	private static EntityType<?> getRandomTagEntry(RandomSource random, Registry<EntityType<?>> registry, TagKey<EntityType<?>> tagKey, EntityType<?> toExclude) {
-		Optional<HolderSet.Named<EntityType<?>>> optionalTag = registry.getTag(tagKey);
+		Optional<HolderSet.Named<EntityType<?>>> optionalTag = registry.get(tagKey);
 		if (optionalTag.isEmpty()) {
 			//Failed to get the tag
 			return toExclude;

@@ -2,18 +2,21 @@ package moze_intel.projecte.gameObjs.customRecipes;
 
 import com.mojang.serialization.MapCodec;
 import java.util.function.Function;
-import net.minecraft.network.RegistryFriendlyByteBuf;
-import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
 
-public record PERecipeSerializer<RECIPE extends Recipe<?>>(MapCodec<RECIPE> codec, StreamCodec<RegistryFriendlyByteBuf, RECIPE> streamCodec) implements RecipeSerializer<RECIPE> {
+/**
+ * 26.1: {@link RecipeSerializer} is now a record and can no longer be implemented directly.
+ * This builds a plain serializer instance that wraps/delegates to {@link ShapelessRecipe#SERIALIZER}.
+ */
+public final class PERecipeSerializer {
 
-	public static <RECIPE extends WrappedShapelessRecipe> PERecipeSerializer<RECIPE> wrapped(Function<ShapelessRecipe, RECIPE> wrapper) {
-		return new PERecipeSerializer<>(
-				RecipeSerializer.SHAPELESS_RECIPE.codec().xmap(wrapper, WrappedShapelessRecipe::getInternal),
-				RecipeSerializer.SHAPELESS_RECIPE.streamCodec().map(wrapper, WrappedShapelessRecipe::getInternal)
-		);
+	private PERecipeSerializer() {
+	}
+
+	public static <RECIPE extends WrappedShapelessRecipe> RecipeSerializer<RECIPE> wrapped(Function<ShapelessRecipe, RECIPE> wrapper) {
+		RecipeSerializer<ShapelessRecipe> base = ShapelessRecipe.SERIALIZER;
+		MapCodec<RECIPE> codec = base.codec().xmap(wrapper, WrappedShapelessRecipe::getInternal);
+		return new RecipeSerializer<>(codec, base.streamCodec().map(wrapper, WrappedShapelessRecipe::getInternal));
 	}
 }

@@ -26,7 +26,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
@@ -63,7 +63,7 @@ public class AlchemicalBarrel extends DirectionalBlock implements PEEntityBlock<
 	@Override
 	@Deprecated
 	public InteractionResult useWithoutItem(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player, @NotNull BlockHitResult rtr) {
-		if (level.isClientSide) {
+		if (level.isClientSide()) {
 			return InteractionResult.SUCCESS;
 		}
 		AlchemicalBarrelBlockEntity barrel = WorldHelper.getBlockEntity(AlchemicalBarrelBlockEntity.class, level, pos);
@@ -79,7 +79,7 @@ public class AlchemicalBarrel extends DirectionalBlock implements PEEntityBlock<
 	@Deprecated
 	public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
 		if (state.getBlock() != newState.getBlock()) {
-			IItemHandler handler = WorldHelper.getCapability(level, ItemHandler.BLOCK, pos, state, null, null);
+			IItemHandler handler = IItemHandler.of(WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, state, null, null));
 			WorldHelper.dropInventory(handler, level, pos);
 			super.onRemove(state, level, pos, newState, isMoving);
 		}
@@ -88,7 +88,7 @@ public class AlchemicalBarrel extends DirectionalBlock implements PEEntityBlock<
 	@Override
 	@Deprecated
 	public void attack(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player) {
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			ItemStack stack = player.getMainHandItem();
 			if (!stack.isEmpty() && stack.is(PEItems.PHILOSOPHERS_STONE)) {
 				level.setBlockAndUpdate(pos, level.getBlockState(pos).setValue(FACING, player.getDirection().getOpposite()));
@@ -127,7 +127,7 @@ public class AlchemicalBarrel extends DirectionalBlock implements PEEntityBlock<
 	@Override
 	@Deprecated
 	public int getAnalogOutputSignal(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos) {
-		return ItemHandlerHelper.calcRedstoneFromInventory(WorldHelper.getCapability(level, ItemHandler.BLOCK, pos, null));
+		return ItemHandlerHelper.calcRedstoneFromInventory(WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, null));
 	}
 
 	@NotNull

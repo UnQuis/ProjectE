@@ -57,24 +57,8 @@ public class PEJeiPlugin implements IModPlugin {
 			}
 			return null;
 		}
-
-		@NotNull
-		@Override
-		public String getLegacyStringSubtypeInfo(@NotNull ItemStack stack, @NotNull UidContext context) {
-			if (context == UidContext.Ingredient) {
-				Object mode = null;
-				if (stack.getItem() instanceof IModeChanger<?> modeChanger) {
-					mode = modeChanger.getMode(stack);
-				}
-				Long stored = stack.get(PEDataComponentTypes.STORED_EMC);
-				if (stored != null && stored > 0) {
-					return mode == null ? stored.toString() : mode + ";" + stored;
-				} else if (mode != null) {
-					return mode.toString();
-				}
-			}
-			return "";
-		}
+		//Note: ISubtypeInterpreter#getLegacyStringSubtypeInfo was removed in JEI 29.40 for MC 26.1,
+		// only getSubtypeData remains
 	};
 
 	@NotNull
@@ -124,16 +108,16 @@ public class PEJeiPlugin implements IModPlugin {
 			registry.addRecipeCatalyst(new ItemStack(PEBlocks.COLLECTOR), CollectorRecipeCategory.RECIPE_TYPE);
 			registry.addRecipeCatalyst(new ItemStack(PEBlocks.COLLECTOR_MK2), CollectorRecipeCategory.RECIPE_TYPE);
 			registry.addRecipeCatalyst(new ItemStack(PEBlocks.COLLECTOR_MK3), CollectorRecipeCategory.RECIPE_TYPE);
-			registry.addRecipeCatalyst(new ItemStack(PEBlocks.DARK_MATTER_FURNACE), RecipeTypes.SMELTING, RecipeTypes.FUELING);
-			registry.addRecipeCatalyst(new ItemStack(PEBlocks.RED_MATTER_FURNACE), RecipeTypes.SMELTING, RecipeTypes.FUELING);
+			registry.addRecipeCatalyst(new ItemStack(PEBlocks.DARK_MATTER_FURNACE), RecipeTypes.SMELTING, RecipeTypes.SMELTING_FUEL);
+			registry.addRecipeCatalyst(new ItemStack(PEBlocks.RED_MATTER_FURNACE), RecipeTypes.SMELTING, RecipeTypes.SMELTING_FUEL);
 		}
 	}
 
 	@Override
 	public void registerGuiHandlers(@NotNull IGuiHandlerRegistration registry) {
 		if (shouldLoad()) {
-			registry.addRecipeClickArea(GUIDMFurnace.class, 73, 34, 25, 16, RecipeTypes.SMELTING, RecipeTypes.FUELING);
-			registry.addRecipeClickArea(GUIRMFurnace.class, 88, 35, 25, 17, RecipeTypes.SMELTING, RecipeTypes.FUELING);
+			registry.addRecipeClickArea(GUIDMFurnace.class, 73, 34, 25, 16, RecipeTypes.SMELTING, RecipeTypes.SMELTING_FUEL);
+			registry.addRecipeClickArea(GUIRMFurnace.class, 88, 35, 25, 17, RecipeTypes.SMELTING, RecipeTypes.SMELTING_FUEL);
 			registry.addRecipeClickArea(AbstractCollectorScreen.MK1.class, 138, 31, 10, 24, CollectorRecipeCategory.RECIPE_TYPE);
 			registry.addRecipeClickArea(AbstractCollectorScreen.MK2.class, 138 + 16, 31, 10, 24, CollectorRecipeCategory.RECIPE_TYPE);
 			registry.addRecipeClickArea(AbstractCollectorScreen.MK3.class, 138 + 34, 31, 10, 24, CollectorRecipeCategory.RECIPE_TYPE);

@@ -3,7 +3,6 @@ package moze_intel.projecte.gameObjs;
 import com.mojang.serialization.Codec;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringRepresentable;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.MapColor;
 import org.jetbrains.annotations.NotNull;
@@ -70,12 +69,6 @@ public enum EnumMatterType implements StringRepresentable, IMatterType {
 	@Override
 	public int getEnchantmentValue() {
 		return 0;
-	}
-
-	@NotNull
-	@Override
-	public Ingredient getRepairIngredient() {
-		return Ingredient.EMPTY;
 	}
 
 	public MapColor getMapColor() {

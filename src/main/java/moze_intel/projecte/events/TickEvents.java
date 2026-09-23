@@ -12,12 +12,13 @@ import moze_intel.projecte.gameObjs.items.IFireProtector;
 import moze_intel.projecte.handlers.InternalAbilities;
 import moze_intel.projecte.utils.PlayerHelper;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 
@@ -66,7 +67,11 @@ public class TickEvents {
 	}
 
 	public static boolean shouldPlayerResistFire(Player player) {
-		for (ItemStack stack : player.getArmorSlots()) {
+		for (EquipmentSlot slotType : EquipmentSlot.values()) {
+			if (!slotType.isArmor()) {
+				continue;
+			}
+			ItemStack stack = player.getItemBySlot(slotType);
 			if (!stack.isEmpty() && stack.getItem() instanceof IFireProtector protector && protector.canProtectAgainstFire(stack, player)) {
 				return true;
 			}
@@ -76,7 +81,7 @@ public class TickEvents {
 
 	private static void collectBagColorsPresent(Player player, Set<DyeColor> bagsPresent) {
 		bagsPresent.clear();
-		IItemHandler inv = player.getCapability(ItemHandler.ENTITY);
+		IItemHandler inv = IItemHandler.of(player.getCapability(Capabilities.Item.ENTITY));
 		if (inv != null) {
 			for (int i = 0, slots = inv.getSlots(); i < slots; i++) {
 				ItemStack stack = inv.getStackInSlot(i);

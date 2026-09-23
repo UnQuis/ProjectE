@@ -16,7 +16,6 @@ import moze_intel.projecte.emc.components.processor.MapScaleProcessor;
 import moze_intel.projecte.gameObjs.customRecipes.PhiloStoneSmeltingRecipe;
 import moze_intel.projecte.gameObjs.customRecipes.RecipesCovalenceRepair;
 import net.minecraft.core.RegistryAccess;
-import net.minecraft.world.item.crafting.ArmorDyeRecipe;
 import net.minecraft.world.item.crafting.BannerDuplicateRecipe;
 import net.minecraft.world.item.crafting.BookCloningRecipe;
 import net.minecraft.world.item.crafting.CustomRecipe;
@@ -24,7 +23,6 @@ import net.minecraft.world.item.crafting.DecoratedPotRecipe;
 import net.minecraft.world.item.crafting.FireworkRocketRecipe;
 import net.minecraft.world.item.crafting.FireworkStarFadeRecipe;
 import net.minecraft.world.item.crafting.FireworkStarRecipe;
-import net.minecraft.world.item.crafting.MapCloningRecipe;
 import net.minecraft.world.item.crafting.MapExtendingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -56,12 +54,12 @@ public class SpecialRecipeMarkHandledMapper implements IRecipeTypeMapper {
 			} else if (recipe instanceof FireworkRocketRecipe) {
 				return MappingConfig.isEnabled(FireworkProcessor.INSTANCE);
 			}
-			//TODO: Do we eventually want to try and figure out how to handle the armor dye recipe?
-			//It is currently left unmapped and classified separately because its output is dynamic.
+			//Note: The armor dye recipe was removed as code in 26.1, it is now a datapack recipe
+			// handled through the generic recipe mapping path
 			//Not needed, it just recreates the smelting recipes
 			return recipe instanceof PhiloStoneSmeltingRecipe
 				   //Cloning recipes, creates something from itself, doesn't change overall emc values as amounts all balance out
-					|| recipe instanceof BookCloningRecipe || recipe instanceof MapCloningRecipe || recipe instanceof BannerDuplicateRecipe;
+					|| recipe instanceof BookCloningRecipe || recipe instanceof BannerDuplicateRecipe;
 		} else if (recipe instanceof MapExtendingRecipe) {
 			return MappingConfig.isEnabled(MapScaleProcessor.INSTANCE);
 		}
@@ -74,9 +72,9 @@ public class SpecialRecipeMarkHandledMapper implements IRecipeTypeMapper {
 	}
 
 	@Override
-	@Nullable
 	public final String getExpectedUnhandledReason(RecipeHolder<?> recipeHolder, RegistryAccess registryAccess) {
-		return recipeHolder.value() instanceof ArmorDyeRecipe ? ARMOR_DYE_SKIP_REASON : null;
+		//26.1: the armor dye recipe no longer exists as code, nothing needs a special unhandled reason
+		return null;
 	}
 
 	@Override

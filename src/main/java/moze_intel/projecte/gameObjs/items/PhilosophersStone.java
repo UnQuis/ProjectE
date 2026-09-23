@@ -55,6 +55,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
+import net.minecraft.world.item.component.TooltipDisplay;
+import java.util.function.Consumer;
 
 public class PhilosophersStone extends ItemMode<PhilosophersStoneMode> implements IProjectileShooter, IExtraFunction {
 
@@ -96,7 +98,7 @@ public class PhilosophersStone extends ItemMode<PhilosophersStoneMode> implement
 			}
 		}
 
-		if (level.isClientSide) {
+		if (level.isClientSide()) {
 			if (WorldTransmutationManager.INSTANCE.getWorldTransmutation(level.getBlockState(pos), true) == null) {
 				//Pass if there is no world transmutation for the target block
 				return InteractionResult.PASS;
@@ -124,7 +126,7 @@ public class PhilosophersStone extends ItemMode<PhilosophersStoneMode> implement
 			} else {
 				PlayerHelper.checkedReplaceBlock((ServerPlayer) player, level, currentPos, targetState);
 			}
-			if (level.random.nextInt(8) == 0) {
+			if (level.getRandom().nextInt(8) == 0) {
 				((ServerLevel) level).sendParticles(ParticleTypes.LARGE_SMOKE, currentPos.getX(), currentPos.getY() + 1, currentPos.getZ(), 2, 0, 0, 0, 0);
 			}
 		}
@@ -145,16 +147,16 @@ public class PhilosophersStone extends ItemMode<PhilosophersStoneMode> implement
 
 	@Override
 	public boolean doExtraFunction(@NotNull Player player, @NotNull ItemStack stack, InteractionHand hand) {
-		if (!player.level().isClientSide) {
+		if (!player.level().isClientSide()) {
 			player.openMenu(new ContainerProvider(stack));
 		}
 		return true;
 	}
 
 	@Override
-	public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flags) {
-		super.appendHoverText(stack, context, tooltip, flags);
-		tooltip.add(PELang.TOOLTIP_PHILOSTONE.translate(ClientKeyHelper.getKeyName(PEKeybind.EXTRA_FUNCTION)));
+	public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull TooltipDisplay display, @NotNull Consumer<Component> tooltip, @NotNull TooltipFlag flags) {
+		super.appendHoverText(stack, context, display, tooltip, flags);
+		tooltip.accept(PELang.TOOLTIP_PHILOSTONE.translate(ClientKeyHelper.getKeyName(PEKeybind.EXTRA_FUNCTION)));
 	}
 
 	public static Object2ReferenceMap<BlockPos, BlockState> getChanges(Level level, BlockPos pos, Direction sideHit, Direction horizontalDirection, boolean isSneaking,

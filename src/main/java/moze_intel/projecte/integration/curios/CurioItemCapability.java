@@ -6,7 +6,7 @@ import net.minecraft.core.Holder;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
-import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -25,7 +25,7 @@ public record CurioItemCapability(ItemStack stack) implements ICurio {
 	public void curioTick(SlotContext context) {
 		if (!context.cosmetic()) {
 			//Note: We act as if curios are being held by the offhand when it comes to ticking
-			getStack().inventoryTick(context.entity().level(), context.entity(), Inventory.SLOT_OFFHAND, false);
+			getStack().inventoryTick(context.entity().level(), context.entity(), EquipmentSlot.OFFHAND);
 		}
 	}
 

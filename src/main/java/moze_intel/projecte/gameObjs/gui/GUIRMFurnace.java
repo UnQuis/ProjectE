@@ -2,7 +2,8 @@ package moze_intel.projecte.gameObjs.gui;
 
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.gameObjs.container.RMFurnaceContainer;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
@@ -22,7 +23,7 @@ public class GUIRMFurnace extends GUIDMFurnace<RMFurnaceContainer> {
 	}
 
 	@Override
-	protected void renderBurnProgress(@NotNull GuiGraphics graphics, int burnProgress) {
-		graphics.blit(texture, leftPos + 88, topPos + 34, 210, 14, burnProgress, 16);
+	protected void extractBurnProgress(@NotNull GuiGraphicsExtractor graphics, int burnProgress) {
+		graphics.blit(RenderPipelines.GUI_TEXTURED, texture, leftPos + 88, topPos + 34, 210, 14, burnProgress, 16, 256, 256);
 	}
 }

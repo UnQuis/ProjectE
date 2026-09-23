@@ -14,6 +14,7 @@ import moze_intel.projecte.PECore;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.capabilities.item.IItemCharge;
 import moze_intel.projecte.config.ProjectEConfig;
+import moze_intel.projecte.gameObjs.EnumMatterType;
 import moze_intel.projecte.gameObjs.IMatterType;
 import moze_intel.projecte.gameObjs.PETags;
 import moze_intel.projecte.gameObjs.blocks.IMatterBlock;
@@ -25,7 +26,11 @@ import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.core.HolderGetter;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -42,15 +47,19 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.MobSpawnType;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.animal.Sheep;
+import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
@@ -75,6 +84,8 @@ import org.jetbrains.annotations.Nullable;
 public class ToolHelper {
 
 	private static final Identifier CHARGE_MODIFIER_ID = PECore.rl("charge_modifier");
+	//An empty tag matches nothing, so PE tools/armor are never repairable in an anvil (same as the old Ingredient.EMPTY behavior).
+	private static final TagKey<Item> NO_REPAIR = TagKey.create(Registries.ITEM, PECore.rl("empty_repair"));
 
 	public static final ItemAbility HAMMER_DIG = ItemAbility.get("hammer_dig");
 	public static final ItemAbility KATAR_DIG = ItemAbility.get("katar_dig");
@@ -139,7 +150,7 @@ public class ToolHelper {
 		for (BlockPos pos : WorldHelper.getPositionsInBox(player.getBoundingBox().inflate(horizontalRadius, verticalRadius, horizontalRadius))) {
 			BlockState state = level.getBlockState(pos);
 			if (state.is(tag)) {
-				if (level.isClientSide) {
+				if (level.isClientSide()) {
 					return InteractionResult.SUCCESS;
 				}
 				//Ensure we are immutable so that changing blocks doesn't act weird
@@ -149,7 +160,7 @@ public class ToolHelper {
 						drops.addAll(Block.getDrops(state, (ServerLevel) level, pos, WorldHelper.getBlockEntity(level, pos), player, stack));
 						level.removeBlock(pos, false);
 						hasAction = true;
-						if (level.random.nextInt(5) == 0) {
+						if (level.getRandom().nextInt(5) == 0) {
 							((ServerLevel) level).sendParticles(ParticleTypes.LARGE_SMOKE, pos.getX(), pos.getY(), pos.getZ(), 2, 0, 0, 0, 0);
 						}
 					} else {
@@ -181,7 +192,7 @@ public class ToolHelper {
 			if (!level.isClientSide()) {
 				level.setBlock(pos, state.setValue(CampfireBlock.LIT, Boolean.FALSE), Block.UPDATE_ALL_IMMEDIATE);
 			}
-			return InteractionResult.sidedSuccess(level.isClientSide);
+			return (level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME);
 		}
 		return InteractionResult.PASS;
 	}
@@ -240,7 +251,7 @@ public class ToolHelper {
 		if (modifiedState == null) {
 			//Skip modifying the blocks if the one we clicked cannot be modified
 			return InteractionResult.PASS;
-		} else if (level.isClientSide) {
+		} else if (level.isClientSide()) {
 			return InteractionResult.SUCCESS;
 		}
 		//Process the block we interacted with initially and play the sound
@@ -299,7 +310,7 @@ public class ToolHelper {
 	 * Called by multiple tools' left click function. Charge has no effect. Free operation.
 	 */
 	public static void digBasedOnMode(ItemStack stack, Level level, BlockPos pos, LivingEntity living, RayTracePointer tracePointer, PickaxeMode mode) {
-		if (level.isClientSide || mode == PickaxeMode.STANDARD || ProjectEConfig.server.items.disableAllRadiusMining.get() || !(living instanceof Player player)) {
+		if (level.isClientSide() || mode == PickaxeMode.STANDARD || ProjectEConfig.server.items.disableAllRadiusMining.get() || !(living instanceof Player player)) {
 			return;
 		}
 		BlockHitResult result = tracePointer.rayTrace(level, player, ClipContext.Fluid.NONE);
@@ -353,7 +364,7 @@ public class ToolHelper {
 		for (BlockPos newPos : WorldHelper.getPositionsInBox(box)) {
 			BlockState state = level.getBlockState(newPos);
 			if (!state.isAir() && state.getDestroySpeed(level, newPos) != Block.INDESTRUCTIBLE && stack.isCorrectToolForDrops(state)) {
-				if (level.isClientSide) {
+				if (level.isClientSide()) {
 					return InteractionResult.SUCCESS;
 				}
 				//Ensure we are immutable so that changing blocks doesn't act weird
@@ -382,7 +393,7 @@ public class ToolHelper {
 	 * Attacks through armor. Charge affects damage. Free operation.
 	 */
 	public static void attackWithCharge(ItemStack stack, LivingEntity damaged, LivingEntity damager, float baseDmg) {
-		if (!(damager instanceof Player player) || damager.level().isClientSide) {
+		if (!(damager instanceof Player player) || damager.level().isClientSide()) {
 			return;
 		}
 		DamageSource dmg;
@@ -402,7 +413,7 @@ public class ToolHelper {
 	 */
 	public static void attackAOE(ItemStack stack, Player player, boolean slayAll, float damage, long emcCost, InteractionHand hand) {
 		Level level = player.level();
-		if (level.isClientSide) {
+		if (level.isClientSide()) {
 			return;
 		}
 		int charge = getCharge(stack);
@@ -439,7 +450,7 @@ public class ToolHelper {
 			BlockPos entityPosition = ent.blockPosition();
 			IShearable target = (IShearable) ent;
 			if (target.isShearable(player, stack, level, entityPosition)) {
-				if (level.isClientSide) {
+				if (level.isClientSide()) {
 					return InteractionResult.SUCCESS;
 				}
 				if (ItemPE.consumeFuel(player, stack, emcCost, true)) {
@@ -459,15 +470,16 @@ public class ToolHelper {
 					break;
 				}
 			}
-			if (!level.isClientSide && Math.random() < 0.01) {
-				Entity e = ent.getType().create(level);
+			if (!level.isClientSide() && Math.random() < 0.01) {
+				Entity e = ent.getType().create(level, EntitySpawnReason.EVENT);
 				if (e != null) {
 					e.setPos(ent.getX(), ent.getY(), ent.getZ());
 					if (e instanceof Mob mob) {
-						EventHooks.finalizeMobSpawn(mob, (ServerLevel) level, level.getCurrentDifficultyAt(entityPosition), MobSpawnType.EVENT, null);
+						EventHooks.finalizeMobSpawn(mob, (ServerLevel) level, ((ServerLevel) level).getCurrentDifficultyAt(entityPosition),
+								EntitySpawnReason.EVENT, null);
 					}
 					if (e instanceof Sheep sheep) {
-						sheep.setColor(DyeColor.byId(level.random.nextInt(16)));
+						sheep.setColor(DyeColor.byId(level.getRandom().nextInt(16)));
 					}
 					if (e instanceof AgeableMob mob) {
 						mob.setAge(AgeableMob.BABY_START_AGE);
@@ -523,12 +535,70 @@ public class ToolHelper {
 		}
 		List<ItemStack> drops = new ArrayList<>();
 		if (WorldHelper.harvestVein(level, player, stack, area, drops, data, stateChecker) > 0) {
-			if (!level.isClientSide) {
+			if (!level.isClientSide()) {
 				spawnDrops.drop(drops, level, dropPos);
 			}
-			return InteractionResult.sidedSuccess(level.isClientSide);
+			return (level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME);
 		}
 		return InteractionResult.PASS;
+	}
+
+	//The helpers below bridge IMatterType to data that used to come from the now removed net.minecraft.world.item.Tier interface.
+	//IMatterType still declares Tier as its parent, but that class no longer exists in this Minecraft version, so the values are
+	// read off of EnumMatterType (the only implementation of IMatterType) which declares all of these methods itself.
+
+	public static float getToolSpeed(IMatterType matterType) {
+		return ((EnumMatterType) matterType).getSpeed();
+	}
+
+	public static float getAttackDamageBonus(IMatterType matterType) {
+		return ((EnumMatterType) matterType).getAttackDamageBonus();
+	}
+
+	/**
+	 * Converts a block tag to the {@link HolderSet} that {@link Tool.Rule} factories now require.
+	 */
+	public static HolderSet<Block> blockSet(TagKey<Block> tag) {
+		return BuiltInRegistries.acquireBootstrapRegistrationLookup(BuiltInRegistries.BLOCK).getOrThrow(tag);
+	}
+
+	/**
+	 * Replacement for the {@code createAttributes} helpers that used to be provided by the removed
+	 * SwordItem/PickaxeItem/DiggerItem classes. Uses the same formula as vanilla's {@code ToolMaterial} attribute creation:
+	 * baseline damage + the material's attack damage bonus.
+	 */
+	public static ItemAttributeModifiers createAttributes(IMatterType matterType, float attackDamageBaseline, float attackSpeedBaseline) {
+		return ItemAttributeModifiers.builder()
+				.add(Attributes.ATTACK_DAMAGE, new AttributeModifier(Item.BASE_ATTACK_DAMAGE_ID,
+						attackDamageBaseline + getAttackDamageBonus(matterType), Operation.ADD_VALUE), EquipmentSlotGroup.MAINHAND)
+				.add(Attributes.ATTACK_SPEED, new AttributeModifier(Item.BASE_ATTACK_SPEED_ID, attackSpeedBaseline, Operation.ADD_VALUE),
+						EquipmentSlotGroup.MAINHAND)
+				.build();
+	}
+
+	/**
+	 * Builds the standard digger {@code Tool} component: drops are denied on blocks the matter type is incorrect for,
+	 * and the given tag is mined at the matter type's speed. Extra rules (such as the sword efficiency overrides) are appended last.
+	 */
+	public static Tool createToolProperties(IMatterType matterType, TagKey<Block> minesEfficiently, int damagePerBlock, Tool.Rule... extraRules) {
+		HolderGetter<Block> lookup = BuiltInRegistries.acquireBootstrapRegistrationLookup(BuiltInRegistries.BLOCK);
+		EnumMatterType matter = (EnumMatterType) matterType;
+		List<Tool.Rule> rules = new ArrayList<>(List.of(
+				Tool.Rule.deniesDrops(lookup.getOrThrow(matter.getIncorrectBlocksForDrops())),
+				Tool.Rule.minesAndDrops(lookup.getOrThrow(minesEfficiently), matter.getSpeed())
+		));
+		Collections.addAll(rules, extraRules);
+		return new Tool(rules, 1.0F, damagePerBlock, true);
+	}
+
+	/**
+	 * Replacement for the {@code Tier} that the surviving AxeItem/ShovelItem/HoeItem constructors still require.
+	 * The durability matches what {@code ItemDeferredRegister#registerTool} sets; PE tools never actually consume
+	 * durability as {@code damageItem} is a no-op.
+	 */
+	public static ToolMaterial createToolMaterial(IMatterType matterType) {
+		EnumMatterType matter = (EnumMatterType) matterType;
+		return new ToolMaterial(matter.getIncorrectBlocksForDrops(), Integer.MAX_VALUE, matter.getSpeed(), matter.getAttackDamageBonus(), 0, NO_REPAIR);
 	}
 
 	public static float getDestroySpeed(float parentDestroySpeed, IMatterType matterType, int charge) {
@@ -604,7 +674,7 @@ public class ToolHelper {
 			//Note: This may not be the most optimal way of checking this, but it gives a decent enough estimate of it
 			//TODO: Do we want to try and come up with a better tag or check for if it is a replaceable plant?
 			if (aboveState.is(PETags.Blocks.FARMING_OVERRIDE) || aboveState.canBeReplaced() && aboveState.is(BlockTags.REPLACEABLE_BY_TREES)) {
-				return aboveState.getFluidState().isEmpty() && !aboveState.isSolidRender(level, abovePos);
+				return aboveState.getFluidState().isEmpty() && !aboveState.isSolidRender();
 			}
 			return false;
 		}

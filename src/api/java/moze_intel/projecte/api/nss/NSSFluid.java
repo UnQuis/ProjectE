@@ -33,7 +33,7 @@ public final class NSSFluid extends AbstractDataComponentHolderNSSTag<Fluid> {
 	@NotNull
 	public static NSSFluid createFluid(@NotNull FluidStack stack) {
 		//Don't bother checking if it is empty as getFluid returns EMPTY which will then fail anyway for being empty
-		return createFluid(stack.getFluidHolder(), stack.getComponentsPatch());
+		return createFluid(stack.typeHolder(), stack.getComponentsPatch());
 	}
 
 	/**
@@ -80,7 +80,7 @@ public final class NSSFluid extends AbstractDataComponentHolderNSSTag<Fluid> {
 			throw new IllegalArgumentException("Can't make NSSFluid with an empty stack");
 		}
 		//This should never be null, or it would have crashed on being registered
-		return createFluid(key.location(), componentsPatch);
+		return createFluid(key.identifier(), componentsPatch);
 	}
 
 	/**

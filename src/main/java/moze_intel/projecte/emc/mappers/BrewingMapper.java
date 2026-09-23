@@ -131,7 +131,8 @@ public class BrewingMapper implements IEMCMapper<NormalizedSimpleStack, Long> {
 	@Nullable
 	private static ItemStack[] getMatchingStacks(Ingredient ingredient) {
 		try {
-			return ingredient.getItems();
+			//26.1: Ingredient#getItems was replaced by a Stream of Item holders
+			return ingredient.items().map(ItemStack::new).toArray(ItemStack[]::new);
 		} catch (Exception e) {
 			return null;
 		}
@@ -146,7 +147,8 @@ public class BrewingMapper implements IEMCMapper<NormalizedSimpleStack, Long> {
 
 	private <T> void addReagents(Set<ItemInfo> allReagents, List<PotionBrewing.Mix<T>> conversions) {
 		for (PotionBrewing.Mix<T> conversion : conversions) {
-			for (ItemStack r : conversion.ingredient().getItems()) {
+			//26.1: Ingredient#getItems was replaced by a Stream of Item holders
+			for (ItemStack r : conversion.ingredient().items().map(ItemStack::new).toArray(ItemStack[]::new)) {
 				allReagents.add(ItemInfo.fromStack(r));
 			}
 		}
@@ -166,7 +168,8 @@ public class BrewingMapper implements IEMCMapper<NormalizedSimpleStack, Long> {
 				}
 			}
 		}
-		for (Holder<Potion> potion : BuiltInRegistries.POTION.holders().toList()) {
+		//26.1: Registry#holders was removed, map the stream values to holders instead
+		for (Holder<Potion> potion : BuiltInRegistries.POTION.stream().map(BuiltInRegistries.POTION::wrapAsHolder).toList()) {
 			PotionContents contents = new PotionContents(potion);
 			for (ItemInfo input : inputs) {
 				ItemStack stack = input.createStack();

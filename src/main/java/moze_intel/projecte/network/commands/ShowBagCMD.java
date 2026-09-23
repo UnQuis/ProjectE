@@ -42,6 +42,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.LevelResource;
 import net.neoforged.neoforge.attachment.AttachmentHolder;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
@@ -89,11 +90,13 @@ public class ShowBagCMD {
 	private static MenuProvider createContainer(MinecraftServer server, ServerPlayer sender, UUID target, DyeColor color) throws CommandSyntaxException {
 		//Try to get the bag
 		IItemHandlerModifiable inv = loadOfflineBag(server, target, color);
-		Component name = PEItems.getBag(color).getDescription();
-		Optional<GameProfile> profileByUUID = server.getProfileCache() == null ? Optional.empty() : server.getProfileCache().get(target);
+		//26.1: Item#getDescription was removed, use the stack's hover name
+		Component name = new ItemStack(PEItems.getBag(color)).getHoverName();
+		//26.1: MinecraftServer#getProfileCache was replaced by the ProfileResolver service, GameProfile is now a record
+		Optional<GameProfile> profileByUUID = server.services().profileResolver().fetchById(target);
 		if (profileByUUID.isPresent()) {
 			//If we have a cache of the player, include their last known name in the name of the bag
-			name = PELang.SHOWBAG_NAMED.translate(name, profileByUUID.get().getName());
+			name = PELang.SHOWBAG_NAMED.translate(name, profileByUUID.get().name());
 		}
 		return getContainer(sender, name, inv, true, () -> true);
 	}
@@ -125,13 +128,16 @@ public class ShowBagCMD {
 		if (Files.exists(player) && Files.isRegularFile(player)) {
 			try (InputStream in = Files.newInputStream(player)) {
 				CompoundTag playerDat = NbtIo.readCompressed(in, NbtAccounter.unlimitedHeap());
-				if (playerDat.contains(AttachmentHolder.ATTACHMENTS_NBT_KEY, Tag.TAG_COMPOUND)) {
-					CompoundTag attachmentData = playerDat.getCompound(AttachmentHolder.ATTACHMENTS_NBT_KEY);
-					CompoundTag bagData = attachmentData.getCompound(PEAttachmentTypes.ALCHEMICAL_BAGS.getId().toString());
-					RegistryOps<Tag> serializationContext = server.registryAccess().createSerializationContext(NbtOps.INSTANCE);
-					DataResult<AlchemicalBagAttachment> result = AlchemicalBagAttachment.CODEC.parse(serializationContext, bagData);
-					if (result.isSuccess()) {
-						return result.getOrThrow().getBag(color);
+				//26.1: CompoundTag#getCompound now returns an Optional and contains lost its type argument
+				Optional<CompoundTag> attachmentData = playerDat.getCompound(AttachmentHolder.ATTACHMENTS_NBT_KEY);
+				if (attachmentData.isPresent()) {
+					Optional<CompoundTag> bagData = attachmentData.get().getCompound(PEAttachmentTypes.ALCHEMICAL_BAGS.getId().toString());
+					if (bagData.isPresent()) {
+						RegistryOps<Tag> serializationContext = server.registryAccess().createSerializationContext(NbtOps.INSTANCE);
+						DataResult<AlchemicalBagAttachment> result = AlchemicalBagAttachment.CODEC.parse(serializationContext, bagData.get());
+						if (result.isSuccess()) {
+							return result.getOrThrow().getBag(color);
+						}
 					}
 				}
 			} catch (IOException e) {

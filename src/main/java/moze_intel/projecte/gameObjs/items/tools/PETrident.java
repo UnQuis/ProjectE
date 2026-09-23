@@ -38,7 +38,6 @@ import net.minecraft.util.ByIdMap;
 import net.minecraft.util.Mth;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
@@ -47,11 +46,12 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.projectile.AbstractArrow;
-import net.minecraft.world.entity.projectile.AbstractArrow.Pickup;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow.Pickup;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.ThrownTrident;
+import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
@@ -67,6 +67,8 @@ import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.InteractionResult;
 
 //TODO - 1.21: After a backport of https://github.com/neoforged/NeoForge/pull/2009 is merged, bump min neo version to require it
 public class PETrident extends TridentItem implements IItemCharge, IItemMode<TridentMode>, IBarHelper, IHasConditionalAttributes {
@@ -97,26 +99,11 @@ public class PETrident extends TridentItem implements IItemCharge, IItemMode<Tri
 
     public static float getAttackDamage(ItemStack stack) {
         //Note: This includes the damage from the stack being charged
-        return (float) stack.getAttributeModifiers().compute(0, EquipmentSlot.MAINHAND);
+        return (float) stack.getAttributeModifiers().compute(Attributes.ATTACK_DAMAGE, 0, EquipmentSlot.MAINHAND);
     }
 
     public int getMatterTier() {
         return matterType.getMatterTier();
-    }
-
-    @Override
-    public int getEnchantmentValue() {
-        return 0;
-    }
-
-    @Override
-    public boolean isEnchantable(@NotNull ItemStack stack) {
-        return false;
-    }
-
-    @Override
-    public boolean isBookEnchantable(@NotNull ItemStack stack, @NotNull ItemStack book) {
-        return false;
     }
 
     @Override
@@ -160,8 +147,8 @@ public class PETrident extends TridentItem implements IItemCharge, IItemMode<Tri
     }
 
     @Override
-    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull List<Component> list, @NotNull TooltipFlag flags) {
-        list.add(getToolTip(stack));
+    public void appendHoverText(@NotNull ItemStack stack, @NotNull TooltipContext context, @NotNull TooltipDisplay display, @NotNull Consumer<Component> list, @NotNull TooltipFlag flags) {
+        list.accept(getToolTip(stack));
     }
 
     @Override
@@ -170,16 +157,16 @@ public class PETrident extends TridentItem implements IItemCharge, IItemMode<Tri
     }
 
     @Override
-    public void releaseUsing(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity, int timeLeft) {
+    public boolean releaseUsing(@NotNull ItemStack stack, @NotNull Level level, @NotNull LivingEntity entity, int timeLeft) {
         if (entity instanceof Player player && getUseDuration(stack, entity) - timeLeft >= THROW_THRESHOLD_TIME) {
             float tridentSpinStrength = EnchantmentHelper.getTridentSpinAttackStrength(stack, player);
             if (tridentSpinStrength > 0 && !TridentMode.RIPTIDE.canUseSpecialAbility(level, player, matterType)) {
                 //If it is riptide, and we can't use it, then don't
-                return;
+                return false;
             }
             Holder<SoundEvent> soundEvent = EnchantmentHelper.pickHighestLevel(stack, EnchantmentEffectComponents.TRIDENT_SOUND)
                   .orElse(SoundEvents.TRIDENT_THROW);
-            if (!level.isClientSide && tridentSpinStrength == 0) {
+            if (!level.isClientSide() && tridentSpinStrength == 0) {
                 //Modify what trident entity is actually created by super
                 PETridentEntity trident = new PETridentEntity(level, player, stack);
                 //Increase the speed compared to vanilla based on the tier of the trident
@@ -214,19 +201,21 @@ public class PETrident extends TridentItem implements IItemCharge, IItemMode<Tri
                 }
                 level.playSound(null, player, soundEvent.value(), SoundSource.PLAYERS, 1.0F, 1.0F);
             }
+            return true;
         }
+        return false;
     }
 
     @NotNull
     @Override
-    public InteractionResultHolder<ItemStack> use(@NotNull Level level, Player player, @NotNull InteractionHand hand) {
+    public InteractionResult use(@NotNull Level level, Player player, @NotNull InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         TridentMode mode = getMode(stack);
         if (mode == TridentMode.RIPTIDE && !mode.canUseSpecialAbility(level, player, matterType)) {
-            return InteractionResultHolder.fail(stack);
+            return InteractionResult.FAIL;
         }
         player.startUsingItem(hand);
-        return InteractionResultHolder.consume(stack);
+        return InteractionResult.CONSUME;
     }
 
     @NotNull
@@ -238,13 +227,16 @@ public class PETrident extends TridentItem implements IItemCharge, IItemMode<Tri
     }
 
     @Override
-    public int getEnchantmentLevel(@NotNull ItemStack stack, @NotNull Holder<Enchantment> enchantment) {
-        if (stack.isEmpty()) {
+    public int getEnchantmentLevel(@NotNull ItemInstance stack, @NotNull Holder<Enchantment> enchantment) {
+        if (!(stack instanceof ItemStack itemStack)) {
+            return super.getEnchantmentLevel(stack, enchantment);
+        }
+        if (itemStack.isEmpty()) {
             return 0;
         }
-        TridentMode mode = getMode(stack);
+        TridentMode mode = getMode(itemStack);
         if (mode.providesLoyalty && enchantment.is(Enchantments.LOYALTY) || mode.enchantment != null && enchantment.is(mode.enchantment)) {
-            return Math.max(getCharge(stack) + 1, super.getEnchantmentLevel(stack, enchantment));
+            return Math.max(getCharge(itemStack) + 1, super.getEnchantmentLevel(stack, enchantment));
         }
         return super.getEnchantmentLevel(stack, enchantment);
     }

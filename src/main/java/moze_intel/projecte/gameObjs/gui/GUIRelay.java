@@ -6,7 +6,8 @@ import moze_intel.projecte.gameObjs.container.RelayMK1Container;
 import moze_intel.projecte.gameObjs.container.RelayMK2Container;
 import moze_intel.projecte.gameObjs.container.RelayMK3Container;
 import moze_intel.projecte.utils.EMCHelper;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
@@ -23,8 +24,8 @@ public class GUIRelay<CONTAINER extends RelayMK1Container> extends PEContainerSc
 	private final int shiftY;
 
 	protected GUIRelay(CONTAINER container, Inventory invPlayer, Component title, Identifier texture, int emcX, int emcY, int vOffset,
-			int emcBarShift, int shiftX, int shiftY) {
-		super(container, invPlayer, title);
+			int emcBarShift, int shiftX, int shiftY, int imageWidth, int imageHeight) {
+		super(container, invPlayer, title, imageWidth, imageHeight);
 		this.texture = texture;
 		this.emcX = emcX;
 		this.emcY = emcY;
@@ -35,27 +36,27 @@ public class GUIRelay<CONTAINER extends RelayMK1Container> extends PEContainerSc
 	}
 
 	@Override
-	protected void renderLabels(@NotNull GuiGraphics graphics, int x, int y) {
-		graphics.drawString(font, title, titleLabelX, titleLabelY, 0x404040, false);
+	protected void extractLabels(@NotNull GuiGraphicsExtractor graphics, int x, int y) {
+		graphics.text(font, title, titleLabelX, titleLabelY, 0x404040, false);
 		//Don't render inventory as we don't have space
-		graphics.drawString(font, EMCHelper.formatEmc(menu.emc.get()), emcX, emcY, 0x404040, false);
+		graphics.text(font, EMCHelper.formatEmc(menu.emc.get()), emcX, emcY, 0x404040, false);
 	}
 
 	@Override
-	protected void renderBg(@NotNull GuiGraphics graphics, float partialTicks, int x, int y) {
-		graphics.blit(texture, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+	public void extractBackground(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+		graphics.blit(RenderPipelines.GUI_TEXTURED, texture, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
 
 		//Emc bar progress
 		int progress = (int) ((double) menu.emc.get() / menu.relay.getMaximumEmc() * CondenserContainer.MAX_PROGRESS);
-		graphics.blit(texture, leftPos + emcBarShift, topPos + 6, 30, vOffset, progress, 10);
+		graphics.blit(RenderPipelines.GUI_TEXTURED, texture, leftPos + emcBarShift, topPos + 6, 30, vOffset, progress, 10, 256, 256);
 
 		//Klein start bar progress. Max is 30.
 		progress = (int) (menu.getKleinChargeProgress() * 30);
-		graphics.blit(texture, leftPos + 116 + shiftX, topPos + 67 + shiftY, 0, vOffset, progress, 10);
+		graphics.blit(RenderPipelines.GUI_TEXTURED, texture, leftPos + 116 + shiftX, topPos + 67 + shiftY, 0, vOffset, progress, 10, 256, 256);
 
 		//Burn Slot bar progress. Max is 30.
 		progress = (int) (menu.getInputBurnProgress() * 30);
-		graphics.blit(texture, leftPos + 64 + shiftX, topPos + 67 + shiftY, 0, vOffset, progress, 10);
+		graphics.blit(RenderPipelines.GUI_TEXTURED, texture, leftPos + 64 + shiftX, topPos + 67 + shiftY, 0, vOffset, progress, 10, 256, 256);
 	}
 
 	public static class GUIRelayMK1 extends GUIRelay<RelayMK1Container> {
@@ -63,9 +64,7 @@ public class GUIRelay<CONTAINER extends RelayMK1Container> extends PEContainerSc
 		private static final Identifier MK1_TEXTURE = PECore.rl("textures/gui/relay1.png");
 
 		public GUIRelayMK1(RelayMK1Container container, Inventory invPlayer, Component title) {
-			super(container, invPlayer, title, MK1_TEXTURE, 88, 24, 177, 64, 0, 0);
-			this.imageWidth = 175;
-			this.imageHeight = 176;
+			super(container, invPlayer, title, MK1_TEXTURE, 88, 24, 177, 64, 0, 0, 175, 176);
 			this.titleLabelX = 10;
 		}
 	}
@@ -75,9 +74,7 @@ public class GUIRelay<CONTAINER extends RelayMK1Container> extends PEContainerSc
 		private static final Identifier MK2_TEXTURE = PECore.rl("textures/gui/relay2.png");
 
 		public GUIRelayMK2(RelayMK2Container container, Inventory invPlayer, Component title) {
-			super(container, invPlayer, title, MK2_TEXTURE, 107, 25, 183, 86, 17, 1);
-			this.imageWidth = 193;
-			this.imageHeight = 182;
+			super(container, invPlayer, title, MK2_TEXTURE, 107, 25, 183, 86, 17, 1, 193, 182);
 			this.titleLabelX = 28;
 		}
 	}
@@ -87,9 +84,7 @@ public class GUIRelay<CONTAINER extends RelayMK1Container> extends PEContainerSc
 		private static final Identifier MK3_TEXTURE = PECore.rl("textures/gui/relay3.png");
 
 		public GUIRelayMK3(RelayMK3Container container, Inventory invPlayer, Component title) {
-			super(container, invPlayer, title, MK3_TEXTURE, 125, 39, 195, 105, 37, 15);
-			this.imageWidth = 212;
-			this.imageHeight = 194;
+			super(container, invPlayer, title, MK3_TEXTURE, 125, 39, 195, 105, 37, 15, 212, 194);
 			this.titleLabelX = 38;
 		}
 	}

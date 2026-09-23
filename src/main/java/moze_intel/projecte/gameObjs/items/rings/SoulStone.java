@@ -24,6 +24,9 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.EquipmentSlot;
+import org.jetbrains.annotations.Nullable;
 
 public class SoulStone extends PEToggleItem implements IPedestalItem, ICapabilityAware {
 
@@ -32,9 +35,9 @@ public class SoulStone extends PEToggleItem implements IPedestalItem, ICapabilit
 	}
 
 	@Override
-	public void inventoryTick(@NotNull ItemStack stack, @NotNull Level level, @NotNull Entity entity, int slot, boolean isHeld) {
-		super.inventoryTick(stack, level, entity, slot, isHeld);
-		if (level.isClientSide || !hotBarOrOffHand(slot) || !(entity instanceof Player player)) {
+	public void inventoryTick(@NotNull ItemStack stack, @NotNull ServerLevel level, @NotNull Entity entity, @Nullable EquipmentSlot slot) {
+		super.inventoryTick(stack, level, entity, slot);
+		if (level.isClientSide() || !hotBarOrOffHand(entity, stack, slot) || !(entity instanceof Player player)) {
 			return;
 		}
 		if (stack.getOrDefault(PEDataComponentTypes.ACTIVE, false)) {
@@ -53,7 +56,7 @@ public class SoulStone extends PEToggleItem implements IPedestalItem, ICapabilit
 	@Override
 	public <PEDESTAL extends BlockEntity & IDMPedestal> boolean updateInPedestal(@NotNull ItemStack stack, @NotNull Level level, @NotNull BlockPos pos,
 			@NotNull PEDESTAL pedestal) {
-		if (!level.isClientSide && ProjectEConfig.server.cooldown.pedestal.soul.get() != -1) {
+		if (!level.isClientSide() && ProjectEConfig.server.cooldown.pedestal.soul.get() != -1) {
 			if (pedestal.getActivityCooldown() == 0) {
 				for (ServerPlayer player : level.getEntitiesOfClass(ServerPlayer.class, pedestal.getEffectBounds(),
 						ent -> !ent.isSpectator() && ent.getHealth() < ent.getMaxHealth())) {

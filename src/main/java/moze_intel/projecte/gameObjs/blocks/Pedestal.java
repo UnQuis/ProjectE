@@ -14,7 +14,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
@@ -38,8 +38,9 @@ import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import java.util.function.Consumer;
 
-public class Pedestal extends Block implements SimpleWaterloggedBlock, PEEntityBlock<DMPedestalBlockEntity>, IMatterBlock {
+public class Pedestal extends Block implements SimpleWaterloggedBlock, PEEntityBlock<DMPedestalBlockEntity>, IMatterBlock, IBlockTooltip {
 
 	private static final VoxelShape SHAPE = Shapes.or(
 			Block.box(3, 0, 3, 13, 2, 13),
@@ -101,13 +102,13 @@ public class Pedestal extends Block implements SimpleWaterloggedBlock, PEEntityB
 	@Override
 	@Deprecated
 	public void attack(@NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player) {
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			dropItem(level, pos);
 		}
 	}
 
 	@Override
-	public boolean onDestroyedByPlayer(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, boolean willHarvest, @NotNull FluidState fluid) {
+	public boolean onDestroyedByPlayer(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, Player player, @NotNull ItemStack toolStack, boolean willHarvest, @NotNull FluidState fluid) {
 		if (player.isCreative() && dropItem(level, pos)) {
 			//If the player is creative, try to drop the item, and if we succeeded return false to cancel removing the pedestal
 			// Note: we notify the block of an update to make sure that it re-appears visually on the client instead of having there
@@ -115,18 +116,18 @@ public class Pedestal extends Block implements SimpleWaterloggedBlock, PEEntityB
 			level.sendBlockUpdated(pos, state, state, Block.UPDATE_IMMEDIATE);
 			return false;
 		}
-		return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+		return super.onDestroyedByPlayer(state, level, pos, player, toolStack, willHarvest, fluid);
 	}
 
 	@NotNull
 	@Override
 	@Deprecated
-	protected ItemInteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player,
+	protected InteractionResult useItemOn(@NotNull ItemStack stack, @NotNull BlockState state, Level level, @NotNull BlockPos pos, @NotNull Player player,
 			@NotNull InteractionHand hand, @NotNull BlockHitResult rtr) {
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			DMPedestalBlockEntity pedestal = WorldHelper.getBlockEntity(DMPedestalBlockEntity.class, level, pos, true);
 			if (pedestal == null) {
-				return ItemInteractionResult.FAIL;
+				return InteractionResult.FAIL;
 			}
 			ItemStack item = pedestal.getInventory().getStackInSlot(0);
 			if (stack.isEmpty() && !item.isEmpty()) {
@@ -139,7 +140,7 @@ public class Pedestal extends Block implements SimpleWaterloggedBlock, PEEntityB
 				pedestal.getInventory().setStackInSlot(0, stack.split(1));
 			}
 		}
-		return ItemInteractionResult.sidedSuccess(level.isClientSide);
+		return InteractionResult.SUCCESS;
 	}
 
 	// [VanillaCopy] Adapted from NoteBlock
@@ -198,11 +199,10 @@ public class Pedestal extends Block implements SimpleWaterloggedBlock, PEEntityB
 	}
 
 	@Override
-	public void appendHoverText(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull List<Component> tooltip, @NotNull TooltipFlag flags) {
-		super.appendHoverText(stack, context, tooltip, flags);
+	public void appendBlockTooltip(@NotNull ItemStack stack, @NotNull Item.TooltipContext context, @NotNull Consumer<Component> tooltip, @NotNull TooltipFlag flags) {
 		Component interact = Component.keybind("key.use");
-		tooltip.add(PELang.PEDESTAL_TOOLTIP1.translate(interact, Component.keybind("key.attack")));
-		tooltip.add(PELang.PEDESTAL_TOOLTIP2.translate(interact));
+		tooltip.accept(PELang.PEDESTAL_TOOLTIP1.translate(interact, Component.keybind("key.attack")));
+		tooltip.accept(PELang.PEDESTAL_TOOLTIP2.translate(interact));
 	}
 
 	@Nullable

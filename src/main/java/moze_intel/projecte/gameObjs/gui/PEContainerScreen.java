@@ -1,11 +1,9 @@
 package moze_intel.projecte.gameObjs.gui;
 
-import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import org.jetbrains.annotations.NotNull;
 
 public abstract class PEContainerScreen<T extends AbstractContainerMenu> extends AbstractContainerScreen<T> {
 
@@ -15,11 +13,13 @@ public abstract class PEContainerScreen<T extends AbstractContainerMenu> extends
 		super(container, invPlayer, title);
 	}
 
-	@Override
-	public void render(@NotNull GuiGraphics graphics, int mouseX, int mouseY, float partialTicks) {
-		super.render(graphics, mouseX, mouseY, partialTicks);
-		this.renderTooltip(graphics, mouseX, mouseY);
+	public PEContainerScreen(T container, Inventory invPlayer, Component title, int imageWidth, int imageHeight) {
+		super(container, invPlayer, title, imageWidth, imageHeight);
 	}
+
+	//Note: Tooltips are now rendered automatically by AbstractContainerScreen#extractTooltip
+	// which is invoked at the end of AbstractContainerScreen#extractRenderState, so no
+	// render override is needed here anymore
 
 	@Override
 	public void removed() {

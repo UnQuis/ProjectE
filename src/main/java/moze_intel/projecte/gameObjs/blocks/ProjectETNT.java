@@ -36,7 +36,7 @@ public class ProjectETNT extends TntBlock {
 
 	@Override
 	public void onCaughtFire(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @Nullable Direction side, @Nullable LivingEntity igniter) {
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			createAndAddEntity(level, pos, igniter);
 			level.gameEvent(igniter, GameEvent.PRIME_FUSE, pos);
 		}
@@ -65,10 +65,10 @@ public class ProjectETNT extends TntBlock {
 
 	@Override
 	public void wasExploded(Level level, @NotNull BlockPos pos, @NotNull Explosion explosion) {
-		if (!level.isClientSide) {
+		if (!level.isClientSide()) {
 			PrimedTnt tnt = tntEntityCreator.create(level, (float) pos.getX() + 0.5F, pos.getY(), (float) pos.getZ() + 0.5F, explosion.getIndirectSourceEntity());
 			int fuse = tnt.getFuse();
-			tnt.setFuse((short) (level.random.nextInt(fuse / 4) + fuse / 8));
+			tnt.setFuse((short) (level.getRandom().nextInt(fuse / 4) + fuse / 8));
 			level.addFreshEntity(tnt);
 		}
 	}

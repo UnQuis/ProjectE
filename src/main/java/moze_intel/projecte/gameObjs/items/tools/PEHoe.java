@@ -23,22 +23,13 @@ public class PEHoe extends HoeItem implements IItemCharge, IBarHelper {
 	private final int numCharges;
 
 	public PEHoe(IMatterType matterType, int numCharges, Properties props) {
-		super(matterType, props.attributes(createAttributes(matterType, -matterType.getAttackDamageBonus(), matterType.getMatterTier()))
+		//HoeItem applies the attribute modifiers and Tool component itself via Item.Properties#hoe
+		super(ToolHelper.createToolMaterial(matterType), -matterType.getAttackDamageBonus(), matterType.getMatterTier(), props
 				.component(PEDataComponentTypes.CHARGE, 0)
 				.component(PEDataComponentTypes.STORED_EMC, 0L)
 		);
 		this.matterType = matterType;
 		this.numCharges = numCharges;
-	}
-
-	@Override
-	public boolean isEnchantable(@NotNull ItemStack stack) {
-		return false;
-	}
-
-	@Override
-	public boolean isBookEnchantable(@NotNull ItemStack stack, @NotNull ItemStack book) {
-		return false;
 	}
 
 	@Override

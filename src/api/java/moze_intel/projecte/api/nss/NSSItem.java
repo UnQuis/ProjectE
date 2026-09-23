@@ -35,7 +35,7 @@ public final class NSSItem extends AbstractDataComponentHolderNSSTag<Item> {
 		if (stack.isEmpty()) {
 			throw new IllegalArgumentException("Can't make NSSItem with empty stack");
 		}
-		return createItem(stack.getItemHolder(), stack.getComponentsPatch());
+		return createItem(stack.typeHolder(), stack.getComponentsPatch());
 	}
 
 	/**
@@ -74,7 +74,7 @@ public final class NSSItem extends AbstractDataComponentHolderNSSTag<Item> {
 			throw new IllegalArgumentException("Can't make NSSItem with an empty stack");
 		}
 		//This should never be null, or it would have crashed on being registered
-		return createItem(key.location(), componentsPatch);
+		return createItem(key.identifier(), componentsPatch);
 	}
 
 	/**
@@ -98,7 +98,7 @@ public final class NSSItem extends AbstractDataComponentHolderNSSTag<Item> {
 	 */
 	@NotNull
 	public static NSSItem createItem(@NotNull ResourceKey<Item> itemID) {
-		return createItem(itemID.location());
+		return createItem(itemID.identifier());
 	}
 
 	/**

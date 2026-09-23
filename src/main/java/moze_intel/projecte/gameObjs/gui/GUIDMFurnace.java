@@ -3,7 +3,8 @@ package moze_intel.projecte.gameObjs.gui;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.gameObjs.block_entities.DMFurnaceBlockEntity;
 import moze_intel.projecte.gameObjs.container.DMFurnaceContainer;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
@@ -27,10 +28,8 @@ public class GUIDMFurnace<CONTAINER extends DMFurnaceContainer> extends PEContai
 
 	public GUIDMFurnace(CONTAINER container, Inventory invPlayer, Component title, Identifier texture, int textureWidth, int textureHeight,
 			int labelX) {
-		super(container, invPlayer, title);
+		super(container, invPlayer, title, textureWidth, textureHeight);
 		this.texture = texture;
-		this.imageWidth = textureWidth;
-		this.imageHeight = textureHeight;
 		this.furnace = container.furnace;
 		this.titleLabelX = labelX;
 		this.inventoryLabelX = labelX;
@@ -42,20 +41,20 @@ public class GUIDMFurnace<CONTAINER extends DMFurnaceContainer> extends PEContai
 	}
 
 	@Override
-	protected void renderBg(@NotNull GuiGraphics graphics, float partialTicks, int x, int y) {
-		graphics.blit(texture, leftPos, topPos, 0, 0, imageWidth, imageHeight);
+	public void extractBackground(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+		graphics.blit(RenderPipelines.GUI_TEXTURED, texture, leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
 
 		if (furnace.isLit()) {
 			int litProgress = Mth.ceil(furnace.getLitProgress() * 11) + 1;
 			int litPortion = LIT_SIZE - litProgress;
-			graphics.blitSprite(LIT_PROGRESS_SPRITE, LIT_SIZE, LIT_SIZE, 0, litPortion, leftPos + getLitX(), topPos + 36 + litPortion, LIT_SIZE, litProgress);
+			graphics.blitSprite(RenderPipelines.GUI_TEXTURED, LIT_PROGRESS_SPRITE, LIT_SIZE, LIT_SIZE, 0, litPortion, leftPos + getLitX(), topPos + 36 + litPortion, LIT_SIZE, litProgress);
 		}
 
 		int burnProgress = Mth.ceil(furnace.getBurnProgress() * 24);
-		renderBurnProgress(graphics, burnProgress);
+		extractBurnProgress(graphics, burnProgress);
 	}
 
-	protected void renderBurnProgress(@NotNull GuiGraphics graphics, int burnProgress) {
-		graphics.blit(texture, leftPos + 73, topPos + 34, 179, 14, burnProgress, 16);
+	protected void extractBurnProgress(@NotNull GuiGraphicsExtractor graphics, int burnProgress) {
+		graphics.blit(RenderPipelines.GUI_TEXTURED, texture, leftPos + 73, topPos + 34, 179, 14, burnProgress, 16, 256, 256);
 	}
 }

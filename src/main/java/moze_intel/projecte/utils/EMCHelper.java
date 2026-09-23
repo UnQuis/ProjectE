@@ -25,7 +25,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
@@ -87,7 +87,7 @@ public final class EMCHelper {
 		}
 
 		//Note: The implementation of this will iterate in the order: Main inventory, Armor, Offhand
-		IItemHandler inv = player.getCapability(ItemHandler.ENTITY);
+		IItemHandler inv = IItemHandler.of(player.getCapability(Capabilities.Item.ENTITY));
 		if (inv != null) {
 			//Ensure that we have an item handler capability, because if for example the player is dead we will not
 			Int2IntMap map = new Int2IntOpenHashMap();
