@@ -1,72 +1,89 @@
 package moze_intel.projecte.client.rendering.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.serialization.MapCodec;
 import java.util.Objects;
+import java.util.function.Consumer;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.gameObjs.items.tools.PEShield;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.ShieldModel;
-import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.model.object.equipment.ShieldModel;
 import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BannerRenderer;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.resources.model.Material;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
+import net.minecraft.client.renderer.special.SpecialModelRenderer;
+import net.minecraft.client.resources.model.sprite.SpriteGetter;
+import net.minecraft.client.resources.model.sprite.SpriteId;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.resources.Identifier;
+import net.minecraft.util.Unit;
 import net.minecraft.world.item.DyeColor;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BannerPatternLayers;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3fc;
 
-public class ShieldISTER extends BlockEntityWithoutLevelRenderer {
+public class ShieldISTER implements SpecialModelRenderer<ShieldISTER.ShieldData> {
 
-    private static final Material DM_SHIELD = new Material(Sheets.SHIELD_SHEET, PECore.rl("entity/dark_matter_shield"));
-    private static final Material RM_SHIELD = new Material(Sheets.SHIELD_SHEET, PECore.rl("entity/red_matter_shield"));
-    public static final ShieldISTER RENDERER = new ShieldISTER(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+	private static final Identifier DM_SHIELD = PECore.rl("entity/dark_matter_shield");
+	private static final Identifier RM_SHIELD = PECore.rl("entity/red_matter_shield");
 
-    private final EntityModelSet modelSet;
-    private ShieldModel shieldModel;
+	private final SpriteGetter sprites;
+	private final ShieldModel model;
 
-    private ShieldISTER(BlockEntityRenderDispatcher renderDispatcher, EntityModelSet modelSet) {
-        super(renderDispatcher, modelSet);
-        this.modelSet = modelSet;
-    }
+	private ShieldISTER(SpriteGetter sprites, ShieldModel model) {
+		this.sprites = sprites;
+		this.model = model;
+	}
 
-    @Override
-    public void onResourceManagerReload(@NotNull ResourceManager resourceManager) {
-        this.shieldModel = new ShieldModel(modelSet.bakeLayer(ModelLayers.SHIELD));
-    }
+	@Override
+	public void submit(@Nullable ShieldData data, PoseStack poseStack, SubmitNodeCollector submitNodeCollector, int lightCoords, int overlayCoords,
+			boolean hasFoil, int outlineColor) {
+		if (data == null) {
+			return;
+		}
+		SpriteId spriteId = new SpriteId(Sheets.SHIELD_SHEET, data.texture());
+		submitNodeCollector.submitModel(model, Unit.INSTANCE, poseStack, lightCoords, overlayCoords, -1, spriteId, sprites, outlineColor, null);
+		BannerPatternLayers patterns = data.patterns();
+		DyeColor baseColor = data.baseColor();
+		if (!patterns.layers().isEmpty() || baseColor != null) {
+			BannerRenderer.submitPatterns(sprites, poseStack, submitNodeCollector, lightCoords, overlayCoords, model, Unit.INSTANCE, false,
+					Objects.requireNonNullElse(baseColor, DyeColor.WHITE), patterns, null);
+		}
+		if (hasFoil) {
+			submitNodeCollector.submitModel(model, Unit.INSTANCE, poseStack, RenderTypes.entityGlint(), lightCoords, overlayCoords, -1, sprites.get(spriteId),
+					0, null);
+		}
+	}
 
-    @Override
-    public void renderByItem(@NotNull ItemStack stack, @NotNull ItemDisplayContext displayContext, @NotNull PoseStack matrix, @NotNull MultiBufferSource renderer,
-          int light, int overlayLight) {
-        BannerPatternLayers patternLayers = stack.getOrDefault(DataComponents.BANNER_PATTERNS, BannerPatternLayers.EMPTY);
-        DyeColor dyeColor = stack.get(DataComponents.BASE_COLOR);
+	@Override
+	public void getExtents(Consumer<Vector3fc> output) {
+		model.root().getExtentsForGui(new PoseStack(), output);
+	}
 
-        matrix.pushPose();
-        matrix.scale(1, -1, -1);
-        Material material;
-        if (stack.getItem() instanceof PEShield shield && shield.getMatterTier() > 0) {
-            material = RM_SHIELD;
-        } else {
-            //Fallback to dark matter shield
-            material = DM_SHIELD;
-        }
-        VertexConsumer buffer = material.sprite().wrap(ItemRenderer.getFoilBufferDirect(renderer, shieldModel.renderType(material.atlasLocation()),
-              true, stack.hasFoil()));
-        shieldModel.handle().render(matrix, buffer, light, overlayLight);
-        if (!patternLayers.layers().isEmpty() || dyeColor != null) {
-            BannerRenderer.renderPatterns(matrix, renderer, light, overlayLight, shieldModel.plate(), material, false,
-                  Objects.requireNonNullElse(dyeColor, DyeColor.WHITE), patternLayers, stack.hasFoil());
-        } else {
-            shieldModel.plate().render(matrix, buffer, light, overlayLight);
-        }
-        matrix.popPose();
-    }
+	@Override
+	public ShieldData extractArgument(ItemStack stack) {
+		BannerPatternLayers patterns = stack.getOrDefault(DataComponents.BANNER_PATTERNS, BannerPatternLayers.EMPTY);
+		DyeColor baseColor = stack.get(DataComponents.BASE_COLOR);
+		Identifier texture = stack.getItem() instanceof PEShield shield && shield.getMatterTier() > 0 ? RM_SHIELD : DM_SHIELD;
+		return new ShieldData(patterns, baseColor, texture);
+	}
+
+	public record ShieldData(BannerPatternLayers patterns, @Nullable DyeColor baseColor, Identifier texture) {
+	}
+
+	public record Unbaked() implements SpecialModelRenderer.Unbaked<ShieldData> {
+		public static final MapCodec<ShieldISTER.Unbaked> MAP_CODEC = MapCodec.unit(new ShieldISTER.Unbaked());
+
+		@Override
+		public MapCodec<ShieldISTER.Unbaked> type() {
+			return MAP_CODEC;
+		}
+
+		@Override
+		public ShieldISTER bake(SpecialModelRenderer.BakingContext context) {
+			return new ShieldISTER(context.sprites(), new ShieldModel(context.entityModelSet().bakeLayer(ModelLayers.SHIELD)));
+		}
+	}
 }

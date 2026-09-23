@@ -1,65 +1,75 @@
 package moze_intel.projecte.client.rendering.item;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.VertexConsumer;
+import com.mojang.serialization.MapCodec;
 import it.unimi.dsi.fastutil.ints.Int2ObjectArrayMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import java.util.function.Consumer;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.gameObjs.EnumMatterType;
 import moze_intel.projecte.gameObjs.items.tools.PETrident;
-import net.minecraft.util.Util;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.model.TridentModel;
-import net.minecraft.client.model.geom.EntityModelSet;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.model.object.projectile.TridentModel;
+import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.resources.Identifier;
-import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.util.Util;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Vector3fc;
 
-public class TridentISTER extends BlockEntityWithoutLevelRenderer {
+public class TridentISTER implements SpecialModelRenderer<Identifier> {
 
-    private static final Int2ObjectMap<Identifier> TRIDENT_TEXTURES = Util.make(new Int2ObjectArrayMap<>(2), map -> {
-        map.put(EnumMatterType.DARK_MATTER.getMatterTier(), PECore.rl("textures/entity/dark_matter_trident.png"));
-        map.put(EnumMatterType.RED_MATTER.getMatterTier(), PECore.rl("textures/entity/red_matter_trident.png"));
-    });
-    public static final TridentISTER RENDERER = new TridentISTER(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+	private static final Int2ObjectMap<Identifier> TRIDENT_TEXTURES = Util.make(new Int2ObjectArrayMap<>(2), map -> {
+		map.put(EnumMatterType.DARK_MATTER.getMatterTier(), PECore.rl("textures/entity/dark_matter_trident.png"));
+		map.put(EnumMatterType.RED_MATTER.getMatterTier(), PECore.rl("textures/entity/red_matter_trident.png"));
+	});
 
-    private final EntityModelSet modelSet;
-    private TridentModel tridentModel;
+	private final TridentModel model;
 
-    private TridentISTER(BlockEntityRenderDispatcher renderDispatcher, EntityModelSet modelSet) {
-        super(renderDispatcher, modelSet);
-        this.modelSet = modelSet;
-    }
+	private TridentISTER(TridentModel model) {
+		this.model = model;
+	}
 
-    @Override
-    public void onResourceManagerReload(@NotNull ResourceManager resourceManager) {
-        this.tridentModel = new TridentModel(modelSet.bakeLayer(ModelLayers.TRIDENT));
-    }
+	@Override
+	public void submit(@Nullable Identifier texture, PoseStack poseStack, SubmitNodeCollector submitNodeCollector,
+			int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
+		Identifier location = texture != null ? texture : TridentModel.TEXTURE;
+		submitNodeCollector.submitModelPart(model.root(), poseStack, model.renderType(location), lightCoords, overlayCoords, null, false, hasFoil, -1, null,
+				outlineColor);
+	}
 
-    @Override
-    public void renderByItem(@NotNull ItemStack stack, @NotNull ItemDisplayContext displayContext, @NotNull PoseStack matrix, @NotNull MultiBufferSource renderer,
-          int light, int overlayLight) {
-        matrix.pushPose();
-        matrix.scale(1, -1, -1);
-        VertexConsumer builder = ItemRenderer.getFoilBufferDirect(renderer, tridentModel.renderType(getTexture(stack)), false, stack.hasFoil());
-        tridentModel.renderToBuffer(matrix, builder, light, overlayLight);
-        matrix.popPose();
-    }
+	@Override
+	public void getExtents(Consumer<Vector3fc> output) {
+		model.root().getExtentsForGui(new PoseStack(), output);
+	}
 
-    private static Identifier getTexture(ItemStack stack) {
-        //Fall back to vanilla's trident texture
-        return stack.getItem() instanceof PETrident trident ? getTexture(trident.getMatterTier()) : TridentModel.TEXTURE;
-    }
+	@Override
+	public Identifier extractArgument(ItemStack stack) {
+		return getTexture(stack);
+	}
 
-    public static Identifier getTexture(int matterTier) {
-        //Fall back to vanilla's trident texture
-        return TRIDENT_TEXTURES.getOrDefault(matterTier, TridentModel.TEXTURE);
-    }
+	private static Identifier getTexture(ItemStack stack) {
+		//Fall back to vanilla's trident texture
+		return stack.getItem() instanceof PETrident trident ? getTexture(trident.getMatterTier()) : TridentModel.TEXTURE;
+	}
+
+	public static Identifier getTexture(int matterTier) {
+		//Fall back to vanilla's trident texture
+		return TRIDENT_TEXTURES.getOrDefault(matterTier, TridentModel.TEXTURE);
+	}
+
+	public record Unbaked() implements SpecialModelRenderer.Unbaked<Identifier> {
+		public static final MapCodec<TridentISTER.Unbaked> MAP_CODEC = MapCodec.unit(new TridentISTER.Unbaked());
+
+		@Override
+		public MapCodec<TridentISTER.Unbaked> type() {
+			return MAP_CODEC;
+		}
+
+		@Override
+		public TridentISTER bake(SpecialModelRenderer.BakingContext context) {
+			return new TridentISTER(new TridentModel(context.entityModelSet().bakeLayer(ModelLayers.TRIDENT)));
+		}
+	}
 }

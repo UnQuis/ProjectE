@@ -1,12 +1,14 @@
 package moze_intel.projecte.rendering;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.blaze3d.vertex.PoseStack.Pose;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.Entity;
@@ -15,15 +17,13 @@ import org.jetbrains.annotations.NotNull;
 /**
  * Based on {@link net.minecraft.client.renderer.entity.DragonFireballRenderer}
  */
-public class EntitySpriteRenderer<ENTITY extends Entity> extends EntityRenderer<ENTITY> {
+public class EntitySpriteRenderer<ENTITY extends Entity> extends EntityRenderer<ENTITY, EntityRenderState> {
 
-	private final Identifier texture;
 	private final RenderType renderType;
 
 	public EntitySpriteRenderer(EntityRendererProvider.Context context, Identifier texture) {
 		super(context);
-		this.texture = texture;
-		this.renderType = PERenderType.SPRITE_RENDERER.apply(this.texture);
+		this.renderType = PERenderType.SPRITE_RENDERER.apply(texture);
 	}
 
 	@Override
@@ -31,28 +31,33 @@ public class EntitySpriteRenderer<ENTITY extends Entity> extends EntityRenderer<
 		return 15;
 	}
 
-	@NotNull
 	@Override
-	public Identifier getTextureLocation(@NotNull ENTITY entity) {
-		return texture;
+	public EntityRenderState createRenderState() {
+		return new EntityRenderState();
 	}
 
 	@Override
-	public void render(@NotNull ENTITY entity, float entityYaw, float partialTick, @NotNull PoseStack matrix, @NotNull MultiBufferSource renderer, int light) {
-		matrix.pushPose();
-		matrix.scale(0.5F, 0.5F, 0.5F);
-		matrix.mulPose(entityRenderDispatcher.cameraOrientation());
-		VertexConsumer builder = renderer.getBuffer(renderType);
-		Pose pose = matrix.last();
-		vertex(builder, pose, 0, 0, 0, 1);
-		vertex(builder, pose, 1, 0, 1, 1);
-		vertex(builder, pose, 1, 1, 1, 0);
-		vertex(builder, pose, 0, 1, 0, 0);
-		matrix.popPose();
+	public void submit(@NotNull EntityRenderState state, @NotNull PoseStack poseStack, @NotNull SubmitNodeCollector submitNodeCollector,
+			@NotNull CameraRenderState camera) {
+		poseStack.pushPose();
+		poseStack.scale(0.5F, 0.5F, 0.5F);
+		poseStack.mulPose(camera.orientation);
+		submitNodeCollector.submitCustomGeometry(poseStack, renderType, (pose, builder) -> {
+			vertex(builder, pose, state.lightCoords, 0, 0, 0, 1);
+			vertex(builder, pose, state.lightCoords, 1, 0, 1, 1);
+			vertex(builder, pose, state.lightCoords, 1, 1, 1, 0);
+			vertex(builder, pose, state.lightCoords, 0, 1, 0, 0);
+		});
+		poseStack.popPose();
+		super.submit(state, poseStack, submitNodeCollector, camera);
 	}
 
-	private static void vertex(VertexConsumer consumer, PoseStack.Pose pose, float x, int y, int u, int v) {
+	private static void vertex(VertexConsumer consumer, PoseStack.Pose pose, int lightCoords, float x, int y, int u, int v) {
 		consumer.addVertex(pose, x - 0.5F, y, 0)
-				.setUv(u, v);
+				.setColor(-1)
+				.setUv(u, v)
+				.setOverlay(OverlayTexture.NO_OVERLAY)
+				.setLight(lightCoords)
+				.setNormal(pose, 0, 1, 0);
 	}
 }

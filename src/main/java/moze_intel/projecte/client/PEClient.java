@@ -1,5 +1,6 @@
 package moze_intel.projecte.client;
 
+import com.mojang.serialization.MapCodec;
 import mezz.jei.api.runtime.IRecipesGui;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.client.rendering.PETridentRenderer;
@@ -43,19 +44,20 @@ import moze_intel.projecte.utils.ClientKeyHelper;
 import moze_intel.projecte.utils.PEKeybind;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.player.AbstractClientPlayer;
 import net.minecraft.client.renderer.entity.TippableArrowRenderer;
 import net.minecraft.client.renderer.entity.TntRenderer;
-import net.minecraft.client.renderer.entity.player.PlayerRenderer;
-import net.minecraft.client.renderer.item.ClampedItemPropertyFunction;
-import net.minecraft.client.renderer.item.ItemProperties;
-import net.minecraft.client.renderer.item.ItemPropertyFunction;
-import net.minecraft.client.resources.PlayerSkin;
+import net.minecraft.client.renderer.entity.player.AvatarRenderer;
+import net.minecraft.client.renderer.item.properties.numeric.RangeSelectItemModelProperty;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.Commands;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.ItemOwner;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.entity.player.PlayerModelType;
+import net.minecraft.world.item.ItemStack;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
@@ -64,14 +66,13 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.*;
-import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.gui.ConfigurationScreen;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+import org.jetbrains.annotations.Nullable;
 
 @Mod(value = PECore.MODID, dist = Dist.CLIENT)
 public class PEClient {
@@ -89,8 +90,8 @@ public class PEClient {
 		modEventBus.addListener(this::registerOverlays);
 		modEventBus.addListener(this::registerRenderers);
 		modEventBus.addListener(this::addLayers);
-		modEventBus.addListener(this::registerClientExtensions);
-		modEventBus.addListener(this::registerClientReloadListeners);
+		modEventBus.addListener(this::registerSpecialModelRenderers);
+		modEventBus.addListener(this::registerRangeSelectItemModelProperties);
 
 		NeoForge.EVENT_BUS.addListener(this::onEntityJoinWorld);
 		NeoForge.EVENT_BUS.addListener(this::registerClientCommands);
@@ -147,21 +148,6 @@ public class PEClient {
 				}
 			});
 		}
-
-		evt.enqueueWork(() -> {
-			//Property Overrides
-			addPropertyOverrides(ACTIVE_OVERRIDE, (stack, level, entity, seed) -> stack.getOrDefault(PEDataComponentTypes.ACTIVE, false) ? 1F : 0F,
-					PEItems.GEM_OF_ETERNAL_DENSITY, PEItems.VOID_RING, PEItems.ARCANA_RING, PEItems.ARCHANGEL_SMITE, PEItems.BLACK_HOLE_BAND, PEItems.BODY_STONE,
-					PEItems.HARVEST_GODDESS_BAND, PEItems.IGNITION_RING, PEItems.LIFE_STONE, PEItems.MIND_STONE, PEItems.SOUL_STONE, PEItems.WATCH_OF_FLOWING_TIME,
-					PEItems.ZERO_RING);
-			addPropertyOverrides(MODE_OVERRIDE, (stack, level, entity, seed) ->
-					stack.getOrDefault(PEDataComponentTypes.ARCANA_MODE, PEItems.ARCANA_RING.asItem().getDefaultMode()).ordinal(), PEItems.ARCANA_RING);
-			addPropertyOverrides(MODE_OVERRIDE, (stack, level, entity, seed) ->
-					stack.getOrDefault(PEDataComponentTypes.SWRG_MODE, PEItems.ARCANA_RING.asItem().getDefaultMode()).ordinal(), PEItems.SWIFTWOLF_RENDING_GALE);
-			ClampedItemPropertyFunction override = (stack, world, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F;
-			addPropertyOverrides(BLOCKING_OVERRIDE, override, PEItems.DARK_MATTER_SHIELD, PEItems.RED_MATTER_SHIELD);
-			addPropertyOverrides(THROWING_OVERRIDE, override, PEItems.DARK_MATTER_TRIDENT, PEItems.RED_MATTER_TRIDENT);
-		});
 	}
 
 	private void registerKeybindings(RegisterKeyMappingsEvent event) {
@@ -193,31 +179,24 @@ public class PEClient {
 	}
 
 	private void addLayers(EntityRenderersEvent.AddLayers event) {
-		for (PlayerSkin.Model model : event.getSkins()) {
-			if (event.getSkin(model) instanceof PlayerRenderer skin) {
-				skin.addLayer(new LayerYue(skin));
+		for (PlayerModelType modelType : event.getSkins()) {
+			AvatarRenderer<AbstractClientPlayer> renderer = event.getPlayerRenderer(modelType);
+			if (renderer != null) {
+				renderer.addLayer(new LayerYue(renderer));
 			}
 		}
 	}
 
-	private void registerClientReloadListeners(RegisterClientReloadListenersEvent event) {
-		event.registerReloadListener(ShieldISTER.RENDERER);
-		event.registerReloadListener(TridentISTER.RENDERER);
+	private void registerSpecialModelRenderers(RegisterSpecialModelRendererEvent event) {
+		event.register(PECore.rl("shield"), ShieldISTER.Unbaked.MAP_CODEC);
+		event.register(PECore.rl("trident"), TridentISTER.Unbaked.MAP_CODEC);
 	}
 
-	private void registerClientExtensions(RegisterClientExtensionsEvent event) {
-		event.registerItem(new IClientItemExtensions() {
-			@Override
-			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				return ShieldISTER.RENDERER;
-			}
-		}, PEItems.DARK_MATTER_SHIELD, PEItems.RED_MATTER_SHIELD);
-		event.registerItem(new IClientItemExtensions() {
-			@Override
-			public BlockEntityWithoutLevelRenderer getCustomRenderer() {
-				return TridentISTER.RENDERER;
-			}
-		}, PEItems.DARK_MATTER_TRIDENT, PEItems.RED_MATTER_TRIDENT);
+	private void registerRangeSelectItemModelProperties(RegisterRangeSelectItemModelPropertyEvent event) {
+		event.register(ACTIVE_OVERRIDE, ActiveProperty.MAP_CODEC);
+		event.register(MODE_OVERRIDE, ModeProperty.MAP_CODEC);
+		event.register(BLOCKING_OVERRIDE, UsingItemProperty.MAP_CODEC);
+		event.register(THROWING_OVERRIDE, UsingItemProperty.MAP_CODEC);
 	}
 
 	private void onDisconnect(ClientPlayerNetworkEvent.LoggingOut event) {
@@ -241,10 +220,49 @@ public class PEClient {
 		}
 	}
 
-	@SuppressWarnings("deprecation")
-	private static void addPropertyOverrides(Identifier override, ItemPropertyFunction propertyGetter, ItemLike... itemProviders) {
-		for (ItemLike itemProvider : itemProviders) {
-			ItemProperties.register(itemProvider.asItem(), override, propertyGetter);
+	private record ActiveProperty() implements RangeSelectItemModelProperty {
+		public static final MapCodec<ActiveProperty> MAP_CODEC = MapCodec.unit(new ActiveProperty());
+
+		@Override
+		public float get(ItemStack stack, @Nullable ClientLevel level, @Nullable ItemOwner owner, int seed) {
+			return stack.getOrDefault(PEDataComponentTypes.ACTIVE, false) ? 1F : 0F;
+		}
+
+		@Override
+		public MapCodec<ActiveProperty> type() {
+			return MAP_CODEC;
+		}
+	}
+
+	private record ModeProperty() implements RangeSelectItemModelProperty {
+		public static final MapCodec<ModeProperty> MAP_CODEC = MapCodec.unit(new ModeProperty());
+
+		@Override
+		public float get(ItemStack stack, @Nullable ClientLevel level, @Nullable ItemOwner owner, int seed) {
+			if (stack.is(PEItems.SWIFTWOLF_RENDING_GALE)) {
+				return stack.getOrDefault(PEDataComponentTypes.SWRG_MODE, PEItems.ARCANA_RING.asItem().getDefaultMode()).ordinal();
+			}
+			return stack.getOrDefault(PEDataComponentTypes.ARCANA_MODE, PEItems.ARCANA_RING.asItem().getDefaultMode()).ordinal();
+		}
+
+		@Override
+		public MapCodec<ModeProperty> type() {
+			return MAP_CODEC;
+		}
+	}
+
+	private record UsingItemProperty() implements RangeSelectItemModelProperty {
+		public static final MapCodec<UsingItemProperty> MAP_CODEC = MapCodec.unit(new UsingItemProperty());
+
+		@Override
+		public float get(ItemStack stack, @Nullable ClientLevel level, @Nullable ItemOwner owner, int seed) {
+			LivingEntity livingEntity = owner == null ? null : owner.asLivingEntity();
+			return livingEntity != null && livingEntity.isUsingItem() && livingEntity.getUseItem() == stack ? 1.0F : 0.0F;
+		}
+
+		@Override
+		public MapCodec<UsingItemProperty> type() {
+			return MAP_CODEC;
 		}
 	}
 }
