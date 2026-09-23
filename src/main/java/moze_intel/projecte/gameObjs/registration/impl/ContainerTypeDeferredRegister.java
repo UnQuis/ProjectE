@@ -50,7 +50,7 @@ public class ContainerTypeDeferredRegister extends PEDeferredRegister<MenuType<?
 				}
 			}
 			throw new IllegalArgumentException("Null packet buffer");
-		} else if (FMLEnvironment.dist.isDedicatedServer()) {
+		} else if (FMLEnvironment.getDist().isDedicatedServer()) {
 			throw new UnsupportedOperationException("This method is only supported on the client.");
 		}
 		BlockPos pos = buf.readBlockPos();

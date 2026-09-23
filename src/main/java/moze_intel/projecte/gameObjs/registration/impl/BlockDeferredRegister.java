@@ -1,11 +1,14 @@
 package moze_intel.projecte.gameObjs.registration.impl;
 
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import moze_intel.projecte.gameObjs.items.PEBlockItem;
 import moze_intel.projecte.gameObjs.registration.DoubleDeferredRegister;
 import moze_intel.projecte.gameObjs.registration.impl.BlockRegistryObject.WallOrFloorBlockRegistryObject;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.StandingAndWallBlockItem;
@@ -24,16 +27,17 @@ public class BlockDeferredRegister extends DoubleDeferredRegister<Block, Item> {
 	}
 
 	public <BLOCK extends Block> BlockRegistryObject<BLOCK, BlockItem> register(String name, Supplier<? extends BLOCK> blockSupplier) {
-		return register(name, blockSupplier, block -> new BlockItem(block, new Item.Properties()));
+		return register(name, blockSupplier, block -> PEBlockItem.of(block, new Item.Properties()));
 	}
 
 	public <BLOCK extends Block, WALL_BLOCK extends Block> WallOrFloorBlockRegistryObject<BLOCK, WALL_BLOCK, StandingAndWallBlockItem> registerWallOrFloorItem(String name,
 			Function<BlockBehaviour.Properties, BLOCK> blockSupplier, Function<BlockBehaviour.Properties, WALL_BLOCK> wallBlockSupplier,
 			BlockBehaviour.Properties baseProperties) {
 		DeferredHolder<Block, BLOCK> primaryObject = primaryRegister.register(name, () -> blockSupplier.apply(baseProperties));
-		DeferredHolder<Block, WALL_BLOCK> wallObject = primaryRegister.register("wall_" + name, () -> wallBlockSupplier.apply(baseProperties.lootFrom(primaryObject)));
+		DeferredHolder<Block, WALL_BLOCK> wallObject = primaryRegister.register("wall_" + name, () -> wallBlockSupplier.apply(baseProperties.overrideLootTable(
+				Optional.of(ResourceKey.create(Registries.LOOT_TABLE, primaryObject.getKey().identifier())))));
 		return new WallOrFloorBlockRegistryObject<>(primaryObject, wallObject, secondaryRegister.register(name, () -> new StandingAndWallBlockItem(primaryObject.get(), wallObject.get(),
-				new Item.Properties(), Direction.DOWN)));
+				Direction.DOWN, new Item.Properties())));
 	}
 
 	public <BLOCK extends Block, ITEM extends BlockItem> BlockRegistryObject<BLOCK, ITEM> register(String name, Supplier<? extends BLOCK> blockSupplier,

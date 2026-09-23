@@ -8,8 +8,6 @@ import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import moze_intel.projecte.utils.text.TextComponentUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -24,6 +22,8 @@ import net.minecraft.world.level.block.BarrelBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.ContainerOpenersCounter;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
@@ -46,7 +46,7 @@ public class AlchemicalBarrelBlockEntity extends EmcBlockEntity implements MenuP
 
 		private void playSound(@NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState state, SoundEvent sound) {
 			Vec3 soundPos = pos.getCenter().relative(state.getValue(BarrelBlock.FACING), 0.5);
-			level.playSound(null, soundPos.x(), soundPos.y(), soundPos.z(), sound, SoundSource.BLOCKS, 0.5F, level.random.nextFloat() * 0.1F + 0.9F);
+			level.playSound(null, soundPos.x(), soundPos.y(), soundPos.z(), sound, SoundSource.BLOCKS, 0.5F, level.getRandom().nextFloat() * 0.1F + 0.9F);
 		}
 
 		@Override
@@ -54,7 +54,7 @@ public class AlchemicalBarrelBlockEntity extends EmcBlockEntity implements MenuP
 		}
 
 		@Override
-		protected boolean isOwnContainer(Player player) {
+		public boolean isOwnContainer(Player player) {
 			return player.containerMenu instanceof AlchemicalBarrelContainer container && container.blockEntityMatches(AlchemicalBarrelBlockEntity.this);
 		}
 	};
@@ -92,20 +92,20 @@ public class AlchemicalBarrelBlockEntity extends EmcBlockEntity implements MenuP
 	}
 
 	@Override
-	public void loadAdditional(@NotNull CompoundTag nbt, @NotNull HolderLookup.Provider registries) {
-		super.loadAdditional(nbt, registries);
-		inventory.deserializeNBT(registries, nbt);
+	public void loadAdditional(@NotNull ValueInput input) {
+		super.loadAdditional(input);
+		input.readChild("inventory", inventory);
 	}
 
 	@Override
-	protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-		super.saveAdditional(tag, registries);
-		tag.merge(inventory.serializeNBT(registries));
+	protected void saveAdditional(@NotNull ValueOutput output) {
+		super.saveAdditional(output);
+		output.putChild("inventory", inventory);
 	}
 
 	public void startOpen(Player player) {
 		if (!isRemoved() && !player.isSpectator() && level != null) {
-			openersCounter.incrementOpeners(player, level, getBlockPos(), getBlockState());
+			openersCounter.incrementOpeners(player, level, getBlockPos(), getBlockState(), player.getContainerInteractionRange());
 		}
 	}
 
@@ -146,7 +146,7 @@ public class AlchemicalBarrelBlockEntity extends EmcBlockEntity implements MenuP
 		@Override
 		public void onContentsChanged(int slot) {
 			super.onContentsChanged(slot);
-			if (level != null && !level.isClientSide) {
+			if (level != null && !level.isClientSide()) {
 				inventoryChanged = true;
 			}
 		}

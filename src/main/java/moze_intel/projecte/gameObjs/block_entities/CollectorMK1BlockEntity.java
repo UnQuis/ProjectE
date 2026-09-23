@@ -17,10 +17,9 @@ import moze_intel.projecte.utils.WorldHelper;
 import moze_intel.projecte.utils.text.TextComponentUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
+import net.minecraft.world.attribute.EnvironmentAttributes;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -28,6 +27,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
@@ -35,19 +36,21 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
 import net.neoforged.neoforge.items.wrapper.RangedWrapper;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
 public class CollectorMK1BlockEntity extends EmcBlockEntity implements MenuProvider {
 
-	public static final ICapabilityProvider<CollectorMK1BlockEntity, @Nullable Direction, IItemHandler> INVENTORY_PROVIDER = (collector, side) -> {
+	public static final ICapabilityProvider<CollectorMK1BlockEntity, @Nullable Direction, ResourceHandler<ItemResource>> INVENTORY_PROVIDER = (collector, side) -> {
 		if (side == null) {
-			return collector.joined;
+			return ItemHandlerResourceAdapter.of(collector.joined);
 		} else if (side.getAxis().isVertical()) {
-			return collector.automationAuxSlots;
+			return ItemHandlerResourceAdapter.of(collector.automationAuxSlots);
 		}
-		return collector.automationInput;
+		return ItemHandlerResourceAdapter.of(collector.automationInput);
 	};
 
 	private final ItemStackHandler input = new StackHandler(getInvSize()) {
@@ -289,7 +292,7 @@ public class CollectorMK1BlockEntity extends EmcBlockEntity implements MenuProvi
 	}
 
 	public static int getSunLevel(@NotNull Level level, @NotNull BlockPos pos) {
-		if (level.dimensionType().ultraWarm()) {
+		if (level.environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, pos)) {
 			return 16;
 		}
 		return level.getMaxLocalRawBrightness(pos.above()) + 1;
@@ -321,19 +324,19 @@ public class CollectorMK1BlockEntity extends EmcBlockEntity implements MenuProvi
 	}
 
 	@Override
-	public void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-		super.loadAdditional(tag, registries);
-		unprocessedEMC = tag.getDouble("unprocessed_emc");
-		input.deserializeNBT(registries, tag.getCompound("input"));
-		auxSlots.deserializeNBT(registries, tag.getCompound("aux_slots"));
+	public void loadAdditional(@NotNull ValueInput input) {
+		super.loadAdditional(input);
+		unprocessedEMC = input.getDoubleOr("unprocessed_emc", 0.0D);
+		input.readChild("input", this.input);
+		input.readChild("aux_slots", auxSlots);
 	}
 
 	@Override
-	protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-		super.saveAdditional(tag, registries);
-		tag.putDouble("unprocessed_emc", unprocessedEMC);
-		tag.put("input", input.serializeNBT(registries));
-		tag.put("aux_slots", auxSlots.serializeNBT(registries));
+	protected void saveAdditional(@NotNull ValueOutput output) {
+		super.saveAdditional(output);
+		output.putDouble("unprocessed_emc", unprocessedEMC);
+		output.putChild("input", this.input);
+		output.putChild("aux_slots", auxSlots);
 	}
 
 	private static void sendRelayBonus(@NotNull Level level, @NotNull BlockPos pos) {

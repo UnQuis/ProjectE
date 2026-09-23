@@ -12,8 +12,6 @@ import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
 import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
@@ -22,23 +20,27 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class RelayMK1BlockEntity extends EmcBlockEntity implements MenuProvider, IRelay {
 
-	public static final ICapabilityProvider<RelayMK1BlockEntity, @Nullable Direction, IItemHandler> INVENTORY_PROVIDER = (relay, side) -> {
+	public static final ICapabilityProvider<RelayMK1BlockEntity, @Nullable Direction, ResourceHandler<ItemResource>> INVENTORY_PROVIDER = (relay, side) -> {
 		if (side == null) {
-			return relay.joined;
+			return ItemHandlerResourceAdapter.of(relay.joined);
 		} else if (side.getAxis().isVertical()) {
-			return relay.automationOutput;
+			return ItemHandlerResourceAdapter.of(relay.automationOutput);
 		}
-		return relay.automationInput;
+		return ItemHandlerResourceAdapter.of(relay.automationInput);
 	};
 
 	private final CompactableStackHandler input;
@@ -173,19 +175,19 @@ public class RelayMK1BlockEntity extends EmcBlockEntity implements MenuProvider,
 	}
 
 	@Override
-	public void loadAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-		super.loadAdditional(tag, registries);
-		input.deserializeNBT(registries, tag.getCompound("input"));
-		output.deserializeNBT(registries, tag.getCompound("output"));
-		bonusEMC = tag.getDouble("bonus_emc");
+	public void loadAdditional(@NotNull ValueInput input) {
+		super.loadAdditional(input);
+		input.readChild("input", this.input);
+		input.readChild("output", this.output);
+		bonusEMC = input.getDoubleOr("bonus_emc", 0.0D);
 	}
 
 	@Override
-	protected void saveAdditional(@NotNull CompoundTag tag, @NotNull HolderLookup.Provider registries) {
-		super.saveAdditional(tag, registries);
-		tag.put("input", input.serializeNBT(registries));
-		tag.put("output", output.serializeNBT(registries));
-		tag.putDouble("bonus_emc", bonusEMC);
+	protected void saveAdditional(@NotNull ValueOutput output) {
+		super.saveAdditional(output);
+		output.putChild("input", this.input);
+		output.putChild("output", this.output);
+		output.putDouble("bonus_emc", bonusEMC);
 	}
 
 	@Override
