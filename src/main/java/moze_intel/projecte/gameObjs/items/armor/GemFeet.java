@@ -1,7 +1,7 @@
 package moze_intel.projecte.gameObjs.items.armor;
 
 import com.google.common.base.Suppliers;
-import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
@@ -11,7 +11,9 @@ import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
@@ -21,16 +23,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
-import net.minecraft.world.level.Level;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.fml.loading.FMLEnvironment;
 import org.jetbrains.annotations.NotNull;
-import net.minecraft.world.item.component.TooltipDisplay;
-import java.util.function.Consumer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EquipmentSlot;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.world.item.equipment.ArmorType;
 
 public class GemFeet extends GemArmorBase {
 
@@ -42,22 +40,16 @@ public class GemFeet extends GemArmorBase {
 
 	public GemFeet(Properties props) {
 		super(ArmorType.BOOTS, props.component(PEDataComponentTypes.STEP_ASSIST, STEP_ASSIST_DEFAULT));
-		this.defaultModifiers = Suppliers.memoize(() -> super.getDefaultAttributeModifiers().withModifierAdded(
+		this.defaultModifiers = Suppliers.memoize(() -> super.getDefaultAttributeModifiers(ItemStack.EMPTY).withModifierAdded(
 				Attributes.MOVEMENT_SPEED,
 				new AttributeModifier(PECore.rl("armor"), 1.0, Operation.ADD_MULTIPLIED_TOTAL),
 				EquipmentSlotGroup.FEET
 		));
-		this.defaultWithStepAssistModifiers = Suppliers.memoize(() -> getDefaultAttributeModifiers().withModifierAdded(
+		this.defaultWithStepAssistModifiers = Suppliers.memoize(() -> getDefaultAttributeModifiers(ItemStack.EMPTY).withModifierAdded(
 				Attributes.STEP_HEIGHT,
 				new AttributeModifier(PECore.rl("gem_step_assist"), 0.4, Operation.ADD_VALUE),
 				EquipmentSlotGroup.FEET
 		));
-	}
-
-	@NotNull
-	@Override
-	public ItemAttributeModifiers getDefaultAttributeModifiers() {
-		return this.defaultModifiers.get();
 	}
 
 	@NotNull
@@ -73,8 +65,8 @@ public class GemFeet extends GemArmorBase {
 	}
 
 	private static boolean isJumpPressed(Player player) {
-		if (FMLEnvironment.dist.isClient() && player instanceof LocalPlayer clientPlayer) {
-			return clientPlayer.input.jumping;
+		if (FMLEnvironment.getDist().isClient() && player instanceof LocalPlayer clientPlayer) {
+			return clientPlayer.input.keyPresses.jump();
 		}
 		return false;
 	}

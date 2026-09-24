@@ -10,10 +10,12 @@ import moze_intel.projecte.utils.PlayerHelper;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemCooldowns;
 import net.minecraft.world.item.ItemStack;
@@ -25,8 +27,6 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityTeleportEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EquipmentSlot;
 import org.jetbrains.annotations.Nullable;
 
 public class VoidRing extends GemEternalDensity implements IPedestalItem, IExtraFunction {
@@ -56,7 +56,7 @@ public class VoidRing extends GemEternalDensity implements IPedestalItem, IExtra
 	@Override
 	public boolean doExtraFunction(@NotNull Player player, @NotNull ItemStack stack, InteractionHand hand) {
 		ItemCooldowns cooldowns = player.getCooldowns();
-		if (cooldowns.isOnCooldown(this)) {
+		if (cooldowns.isOnCooldown(stack)) {
 			return false;
 		}
 		BlockHitResult lookingAt = PlayerHelper.getBlockLookingAt(player, 64);
@@ -66,7 +66,7 @@ public class VoidRing extends GemEternalDensity implements IPedestalItem, IExtra
 		} else {
 			c = lookingAt.getBlockPos();
 		}
-		EntityTeleportEvent event = new EntityTeleportEvent(player, c.getX(), c.getY(), c.getZ());
+		EntityTeleportEvent event = new EntityTeleportEvent(player, (ServerLevel) player.level(), c.getX(), c.getY(), c.getZ());
 		if (!NeoForge.EVENT_BUS.post(event).isCanceled()) {
 			if (player.isPassenger()) {
 				player.stopRiding();
@@ -74,7 +74,7 @@ public class VoidRing extends GemEternalDensity implements IPedestalItem, IExtra
 			player.resetFallDistance();
 			player.teleportTo(event.getTargetX(), event.getTargetY(), event.getTargetZ());
 			player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1, 1);
-			cooldowns.addCooldown(this, SharedConstants.TICKS_PER_SECOND / 2);
+			cooldowns.addCooldown(stack, SharedConstants.TICKS_PER_SECOND / 2);
 			return true;
 		}
 		return false;

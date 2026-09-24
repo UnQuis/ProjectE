@@ -159,7 +159,7 @@ public final class PlayerHelper {
 	}
 
 	public static boolean hasEditPermission(Player player, Level level, BlockPos pos) {
-		if (!player.mayInteract(level, pos)) {
+		if (!level.mayInteract(player, pos)) {
 			return false;
 		}
 		for (Direction e : Constants.DIRECTIONS) {
@@ -178,7 +178,7 @@ public final class PlayerHelper {
 	public static void swingItem(Player player, InteractionHand hand) {
 		if (player.level() instanceof ServerLevel level) {
 			int action = hand == InteractionHand.MAIN_HAND ? ClientboundAnimatePacket.SWING_MAIN_HAND : ClientboundAnimatePacket.SWING_OFF_HAND;
-			level.getChunkSource().broadcastAndSend(player, new ClientboundAnimatePacket(player, action));
+			level.getChunkSource().sendToTrackingPlayersAndSelf(player, new ClientboundAnimatePacket(player, action));
 		}
 	}
 
@@ -187,7 +187,7 @@ public final class PlayerHelper {
 	}
 
 	public static void updateScore(ServerPlayer player, ObjectiveCriteria objective, int value) {
-		player.getScoreboard().forAllObjectives(objective, player, score -> score.set(value));
+		player.level().getScoreboard().forAllObjectives(objective, player, score -> score.set(value));
 	}
 
 	public static boolean checkFeedCooldown(Player player) {
@@ -200,14 +200,14 @@ public final class PlayerHelper {
 
 	public static boolean checkCooldown(Player player, Item item, IntSupplier cooldownSupplier) {
 		ItemCooldowns cooldowns = player.getCooldowns();
-		if (cooldowns.isOnCooldown(item)) {
+		if (cooldowns.isOnCooldown(item.getDefaultInstance())) {
 			return false;
 		}
 		int cooldown = cooldownSupplier.getAsInt();
 		if (cooldown == -1) {
 			return false;
 		} else if (cooldown > 0) {
-			cooldowns.addCooldown(item, cooldown);
+			cooldowns.addCooldown(item.getDefaultInstance(), cooldown);
 		}
 		return true;
 	}

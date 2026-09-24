@@ -6,6 +6,7 @@ import moze_intel.projecte.gameObjs.registries.PEItems;
 import moze_intel.projecte.utils.PlayerHelper;
 import moze_intel.projecte.utils.WorldHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.FluidTags;
@@ -16,7 +17,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.storage.LevelData;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import org.jetbrains.annotations.NotNull;
@@ -58,9 +58,8 @@ public class EntityLavaProjectile extends NoGravityThrowableProjectile {
 					}
 				}
 			}
-			if (getY() > level.getMaxBuildHeight()) {
-				LevelData worldInfo = level.getLevelData();
-				worldInfo.setRaining(false);
+			if (getY() > level.getMaxY()) {
+				((ServerLevel) level).getWeatherData().setRaining(false);
 				discard();
 			}
 		}
@@ -84,7 +83,7 @@ public class EntityLavaProjectile extends NoGravityThrowableProjectile {
 			ItemStack found = PlayerHelper.findFirstItem(player, PEItems.VOLCANITE_AMULET);
 			if (!found.isEmpty() && ItemPE.consumeFuel(player, found, 32, true)) {
 				Entity ent = result.getEntity();
-				if (ent.hurt(level().damageSources().inFire(), 5)) {
+				if (ent.hurtOrSimulate(level().damageSources().inFire(), 5)) {
 					ent.igniteForSeconds(5);
 				}
 			}

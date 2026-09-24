@@ -19,7 +19,7 @@ public abstract class NoGravityThrowableProjectile extends ThrowableProjectile {
 	}
 
 	protected NoGravityThrowableProjectile(EntityType<? extends ThrowableProjectile> type, LivingEntity shooter, Level level) {
-		super(type, shooter, level);
+		super(type, shooter.getX(), shooter.getEyeY() - 0.1D, shooter.getZ(), level);
 		setNoGravity(true);
 	}
 

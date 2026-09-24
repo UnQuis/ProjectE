@@ -5,6 +5,7 @@ import moze_intel.projecte.api.capabilities.item.IItemEmcHolder;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
 import moze_intel.projecte.integration.IntegrationHelper;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -12,7 +13,6 @@ import net.neoforged.fml.loading.FMLEnvironment;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
-import net.minecraft.world.InteractionResult;
 
 public class KleinStar extends ItemPE implements IItemEmcHolder, IBarHelper, ICapabilityAware {
 
@@ -51,7 +51,7 @@ public class KleinStar extends ItemPE implements IItemEmcHolder, IBarHelper, ICa
 	@Override
 	public InteractionResult use(Level level, Player player, @NotNull InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
-		if (!level.isClientSide() && !FMLEnvironment.production && player.isCreative()) {
+		if (!level.isClientSide() && !FMLEnvironment.isProduction() && player.isCreative()) {
 			stack.set(PEDataComponentTypes.STORED_EMC, getMaximumEmc(stack));
 			return InteractionResult.SUCCESS;
 		}

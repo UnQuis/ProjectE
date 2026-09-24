@@ -1,5 +1,6 @@
 package moze_intel.projecte.network;
 
+import java.net.URI;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.utils.text.PELang;
 import moze_intel.projecte.utils.text.TextComponentUtil;
@@ -65,7 +66,7 @@ public class ThreadCheckUpdate extends Thread {
 			hasSentMessage = true;
 			player.sendSystemMessage(PELang.UPDATE_AVAILABLE.translate(target));
 			player.sendSystemMessage(PELang.UPDATE_GET_IT.translate());
-			player.sendSystemMessage(TextComponentUtil.build(new ClickEvent(ClickEvent.Action.OPEN_URL, curseURL), curseURL));
+			player.sendSystemMessage(TextComponentUtil.build(new ClickEvent.OpenUrl(URI.create(curseURL)), curseURL));
 		}
 	}
 }

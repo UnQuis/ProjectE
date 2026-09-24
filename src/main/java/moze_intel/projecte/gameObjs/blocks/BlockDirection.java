@@ -1,7 +1,6 @@
 package moze_intel.projecte.gameObjs.blocks;
 
 import moze_intel.projecte.gameObjs.registries.PEItems;
-import moze_intel.projecte.utils.WorldHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
@@ -15,8 +14,6 @@ import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
-import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 
 public abstract class BlockDirection extends Block {
@@ -37,16 +34,6 @@ public abstract class BlockDirection extends Block {
 	@Override
 	public BlockState getStateForPlacement(BlockPlaceContext ctx) {
 		return defaultBlockState().setValue(FACING, ctx.getHorizontalDirection().getOpposite());
-	}
-
-	@Override
-	@Deprecated
-	public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
-		if (state.getBlock() != newState.getBlock()) {
-			IItemHandler handler = IItemHandler.of(WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, state, null, null));
-			WorldHelper.dropInventory(handler, level, pos);
-			super.onRemove(state, level, pos, newState, isMoving);
-		}
 	}
 
 	@Override

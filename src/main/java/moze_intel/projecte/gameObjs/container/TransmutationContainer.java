@@ -24,8 +24,9 @@ import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 
 public class TransmutationContainer extends PEHandContainer {
@@ -137,7 +138,7 @@ public class TransmutationContainer extends PEHandContainer {
 						transmutationInventory.removeEmc(BigInteger.valueOf(itemEmc));
 					}
 					stack.setCount(1);
-					ItemHandlerHelper.insertItemStacked(player.getCapability(Capabilities.Item.ENTITY), stack, false);
+					ItemHandlerHelper.insertItemStacked(IItemHandler.of(player.getCapability(Capabilities.Item.ENTITY)), stack, false);
 				} else if (itemsRoomFor > 1) {
 					BigInteger availableEMC = transmutationInventory.getAvailableEmc();
 					BigInteger emc = BigInteger.valueOf(itemEmc);
@@ -158,7 +159,7 @@ public class TransmutationContainer extends PEHandContainer {
 					}
 					//Set the stack size to what we found the max value is we have room for (capped at the stack's own max size)
 					stack.setCount(itemsRoomFor);
-					ItemHandlerHelper.insertItemStacked(player.getCapability(Capabilities.Item.ENTITY), stack, false);
+					ItemHandlerHelper.insertItemStacked(IItemHandler.of(player.getCapability(Capabilities.Item.ENTITY)), stack, false);
 				}
 			}
 		} else if (slotIndex > 26) {
@@ -195,7 +196,7 @@ public class TransmutationContainer extends PEHandContainer {
 		if (player.level().isClientSide() && transmutationInventory.getHandlerForSlot(slotIndex) == transmutationInventory.outputs) {
 			Slot slot = tryGetSlot(slotIndex);
 			if (slot != null) {
-				PacketDistributor.sendToServer(new SearchUpdatePKT(transmutationInventory.getIndexFromSlot(slotIndex), slot.getItem()));
+				ClientPacketDistributor.sendToServer(new SearchUpdatePKT(transmutationInventory.getIndexFromSlot(slotIndex), slot.getItem()));
 			}
 		}
 		super.clickPostValidate(slotIndex, dragType, clickType, player);

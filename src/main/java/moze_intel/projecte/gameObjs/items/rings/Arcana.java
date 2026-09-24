@@ -6,6 +6,7 @@ import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import java.util.function.Supplier;
 import moze_intel.projecte.PECore;
@@ -34,6 +35,7 @@ import net.minecraft.core.component.DataComponentType;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -43,17 +45,20 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.entity.projectile.Snowball;
+import net.minecraft.world.entity.projectile.throwableitemprojectile.Snowball;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -62,10 +67,6 @@ import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.ItemAbility;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import org.jetbrains.annotations.NotNull;
-import net.minecraft.world.item.component.TooltipDisplay;
-import java.util.function.Consumer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EquipmentSlot;
 import org.jetbrains.annotations.Nullable;
 
 public class Arcana extends ItemPE implements IItemMode<ArcanaMode>, IFireProtector, IExtraFunction, IProjectileShooter, ICapabilityAware, IExposesCurioAttributes {
@@ -83,27 +84,9 @@ public class Arcana extends ItemPE implements IItemMode<ArcanaMode>, IFireProtec
 				.build());
 	}
 
-	@NotNull
-	@Override
-	@Deprecated
-	public ItemAttributeModifiers getDefaultAttributeModifiers() {
-		return this.defaultModifiers.get();
-	}
-
 	@Override
 	public void addAttributes(Multimap<Holder<Attribute>, AttributeModifier> attributes) {
 		attributes.put(NeoForgeMod.CREATIVE_FLIGHT, FLIGHT);
-	}
-
-	@Override
-	public boolean hasCraftingRemainingItem(@NotNull ItemStack stack) {
-		return true;
-	}
-
-	@NotNull
-	@Override
-	public ItemStack getCraftingRemainingItem(ItemStack stack) {
-		return stack.copy();
 	}
 
 	private void tick(ItemStack stack, Level level, ServerPlayer player) {
@@ -192,7 +175,7 @@ public class Arcana extends ItemPE implements IItemMode<ArcanaMode>, IFireProtec
 		Projectile projectile = switch (getMode(stack)) {
 			case ZERO -> {
 				sound = SoundEvents.SNOWBALL_THROW;
-				yield new Snowball(level, player);
+				yield new Snowball(level, player, ItemStack.EMPTY);
 			}
 			case IGNITION -> {
 				sound = PESoundEvents.POWER.get();
@@ -213,8 +196,8 @@ public class Arcana extends ItemPE implements IItemMode<ArcanaMode>, IFireProtec
 	}
 
 	@Override
-	public boolean canPerformAction(@NotNull ItemStack stack, @NotNull ItemAbility action) {
-		if (action == ItemAbilities.FIRESTARTER_LIGHT && getMode(stack) == ArcanaMode.IGNITION) {
+	public boolean canPerformAction(@NotNull ItemInstance stack, @NotNull ItemAbility action) {
+		if (action == ItemAbilities.FIRESTARTER_LIGHT && getMode((ItemStack) stack) == ArcanaMode.IGNITION) {
 			return true;
 		}
 		return super.canPerformAction(stack, action);

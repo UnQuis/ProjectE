@@ -8,6 +8,7 @@ import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
 import moze_intel.projecte.gameObjs.registries.PEBlockTypes;
 import moze_intel.projecte.utils.WorldHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
@@ -51,18 +52,8 @@ public class MatterFurnace extends AbstractFurnaceBlock implements IMatterBlock,
 
 	@Override
 	@Deprecated
-	public void onRemove(BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
-		if (state.getBlock() != newState.getBlock()) {
-			IItemHandler handler = IItemHandler.of(WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, state, null, null));
-			WorldHelper.dropInventory(handler, level, pos);
-			super.onRemove(state, level, pos, newState, isMoving);
-		}
-	}
-
-	@Override
-	@Deprecated
-	public int getAnalogOutputSignal(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos) {
-		return ItemHandlerHelper.calcRedstoneFromInventory(WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, state, null, null));
+	public int getAnalogOutputSignal(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Direction direction) {
+		return ItemHandlerHelper.calcRedstoneFromInventory(IItemHandler.of(WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, state, null, null)));
 	}
 
 	@Override

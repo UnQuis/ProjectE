@@ -10,7 +10,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -20,16 +19,16 @@ import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -98,10 +97,12 @@ public class PETridentEntity extends ThrownTrident {
         // Vanilla only lets loyal tridents return after dealing damage or hitting the ground,
         // so a trident thrown into the void never comes back. Once it is past the bottom of the
         // world, recall it above the owner and let the vanilla loyalty logic fly it back to hand.
-        if (!level().isClientSide() && getMatterTier() > 0 && getY() < level().getMinBuildHeight() - 32
+        if (!level().isClientSide() && getMatterTier() > 0 && getY() < level().getMinY() - 32
               && getOwner() != null && entityData.get(ID_LOYALTY) > 0) {
             Entity owner = getOwner();
-            moveTo(owner.getX(), owner.getBoundingBox().maxY + 2.0, owner.getZ(), owner.getYRot(), owner.getXRot());
+            setPos(owner.getX(), owner.getBoundingBox().maxY + 2.0, owner.getZ());
+            setYRot(owner.getYRot());
+            setXRot(owner.getXRot());
             setDeltaMovement(Vec3.ZERO);
             //isNoPhysics() lets a loyal trident return without gravity and without hitting blocks/entities
             setNoPhysics(true);
@@ -124,7 +125,7 @@ public class PETridentEntity extends ThrownTrident {
         float volume = 1.0F;
         SoundEvent sound = SoundEvents.TRIDENT_HIT;
         dealtDamage = true;
-        if (hitEntity.hurt(damageSource, damage)) {
+        if (hitEntity.hurtOrSimulate(damageSource, damage)) {
             //Vanilla's trident exits on endermen here, we allow hitting them instead
 
             if (level() instanceof ServerLevel serverLevel) {
@@ -161,7 +162,7 @@ public class PETridentEntity extends ThrownTrident {
             if (mode == TridentMode.SHOCKWAVE) {
                 BlockPos hitPos = hitResult.getBlockPos();
                 createShockwave(level, charge, hitTarget, PETrident.getAttackDamage(tridentStack), thrower instanceof LivingEntity living ? living : null,
-                      new BlockParticleOption(ParticleTypes.BLOCK, level.getBlockState(hitPos)).setPos(hitPos));
+                      new BlockParticleOption(ParticleTypes.BLOCK, level.getBlockState(hitPos)));
                 playSoundLouder = true;
             } else if (mode == TridentMode.CHANNELING) {
                 //Note: Channeling explicitly checks for it happening on vanilla's trident entity, so we have to handle it manually here
@@ -199,7 +200,7 @@ public class PETridentEntity extends ThrownTrident {
                 EntityType.LIGHTNING_BOLT.spawn(level, lightning -> {
                     //Note: Unlike vanilla in SummonEntityEffect, we do this in the consumer,
                     // so that it has the proper values set before adding it to the level
-                    lightning.moveTo(hitTarget);
+                    lightning.setPos(hitTarget);
                     lightning.setCause(thrower);
                 }, hitPos, EntitySpawnReason.TRIGGERED, false, false);
                 if (!hasPlayed) {
@@ -271,7 +272,7 @@ public class PETridentEntity extends ThrownTrident {
     }
 
     @Override
-    public ItemStack getPickedResult(@NotNull HitResult target) {
+    public ItemStack getPickResult() {
         return getPickupItem();
     }
 }

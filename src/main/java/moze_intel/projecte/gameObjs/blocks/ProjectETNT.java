@@ -5,6 +5,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.dispenser.BlockSource;
 import net.minecraft.core.dispenser.DefaultDispenseItemBehavior;
 import net.minecraft.core.dispenser.DispenseItemBehavior;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
@@ -35,11 +36,13 @@ public class ProjectETNT extends TntBlock {
 	}
 
 	@Override
-	public void onCaughtFire(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @Nullable Direction side, @Nullable LivingEntity igniter) {
+	public boolean onCaughtFire(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @Nullable Direction side, @Nullable LivingEntity igniter) {
 		if (!level.isClientSide()) {
 			createAndAddEntity(level, pos, igniter);
 			level.gameEvent(igniter, GameEvent.PRIME_FUSE, pos);
+			return true;
 		}
+		return false;
 	}
 
 	public void createAndAddEntity(@NotNull Level level, @NotNull BlockPos pos, @Nullable LivingEntity igniter) {
@@ -64,7 +67,7 @@ public class ProjectETNT extends TntBlock {
 	}
 
 	@Override
-	public void wasExploded(Level level, @NotNull BlockPos pos, @NotNull Explosion explosion) {
+	public void wasExploded(ServerLevel level, @NotNull BlockPos pos, @NotNull Explosion explosion) {
 		if (!level.isClientSide()) {
 			PrimedTnt tnt = tntEntityCreator.create(level, (float) pos.getX() + 0.5F, pos.getY(), (float) pos.getZ() + 0.5F, explosion.getIndirectSourceEntity());
 			int fuse = tnt.getFuse();

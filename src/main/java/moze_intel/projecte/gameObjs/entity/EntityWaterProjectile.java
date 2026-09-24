@@ -5,6 +5,7 @@ import moze_intel.projecte.gameObjs.registries.PEEntityTypes;
 import moze_intel.projecte.utils.PlayerHelper;
 import moze_intel.projecte.utils.WorldHelper;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.Entity;
@@ -17,7 +18,6 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
-import net.minecraft.world.level.storage.LevelData;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.neoforged.neoforge.common.NeoForge;
@@ -68,9 +68,8 @@ public class EntityWaterProjectile extends NoGravityThrowableProjectile {
 					}
 				}
 			}
-			if (getY() > level.getMaxBuildHeight()) {
-				LevelData worldInfo = level.getLevelData();
-				worldInfo.setRaining(true);
+			if (getY() > level.getMaxY()) {
+				((ServerLevel) level).getWeatherData().setRaining(true);
 				discard();
 			}
 		}

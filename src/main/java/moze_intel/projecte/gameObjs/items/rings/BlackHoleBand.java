@@ -17,11 +17,13 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -39,8 +41,6 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EquipmentSlot;
 import org.jetbrains.annotations.Nullable;
 
 public class BlackHoleBand extends PEToggleItem implements IAlchBagItem, IAlchChestItem, IPedestalItem, ICapabilityAware {
@@ -107,7 +107,7 @@ public class BlackHoleBand extends PEToggleItem implements IAlchBagItem, IAlchCh
 					//Cache the item handlers in various spots so that we only query each neighboring position once
 					IItemHandler inv = nearbyHandlers[i];
 					if (inv == null) {
-						inv = WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos.relative(dir), dir);
+						inv = IItemHandler.of(WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos.relative(dir), dir));
 						nearbyHandlers[i] = inv;
 					}
 					ItemStack result = ItemHandlerHelper.insertItemStacked(inv, item.getItem(), false);

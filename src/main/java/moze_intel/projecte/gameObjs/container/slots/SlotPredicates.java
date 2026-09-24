@@ -5,9 +5,16 @@ import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.emc.FuelMapper;
 import moze_intel.projecte.utils.ItemHelper;
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.FuelValues;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import org.jetbrains.annotations.Nullable;
 
 public final class SlotPredicates {
 
@@ -26,7 +33,7 @@ public final class SlotPredicates {
 	// slotrelayinput
 	public static final Predicate<ItemStack> RELAY_INV = input -> EMC_HOLDER.test(input) || HAS_EMC.test(input);
 
-	public static final Predicate<ItemStack> FURNACE_FUEL = input -> EMC_HOLDER.test(input) || input.getBurnTime(RecipeType.SMELTING) > 0;
+	public static final Predicate<ItemStack> FURNACE_FUEL = input -> EMC_HOLDER.test(input) || getBurnTime(input) > 0;
 
 	public static final Predicate<ItemStack> MERCURIAL_TARGET = input -> {
 		if (input.isEmpty()) {
@@ -35,6 +42,26 @@ public final class SlotPredicates {
 		BlockState state = ItemHelper.stackToState(input, null);
 		return state != null && !state.hasBlockEntity() && IEMCProxy.INSTANCE.hasValue(input);
 	};
+
+	private static int getBurnTime(ItemStack input) {
+		FuelValues fuelValues = getFuelValues();
+		return fuelValues == null ? 0 : input.getBurnTime(RecipeType.SMELTING, fuelValues);
+	}
+
+	@Nullable
+	private static FuelValues getFuelValues() {
+		MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+		if (server != null) {
+			return server.overworld().fuelValues();
+		}
+		if (FMLEnvironment.getDist().isClient()) {
+			Level level = Minecraft.getInstance().level;
+			if (level != null) {
+				return level.fuelValues();
+			}
+		}
+		return null;
+	}
 
 	private SlotPredicates() {
 	}

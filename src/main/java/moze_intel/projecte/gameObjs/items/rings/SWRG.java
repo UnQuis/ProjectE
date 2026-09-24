@@ -24,12 +24,16 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.ByIdMap;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.TamableAnimal;
@@ -40,9 +44,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.InteractionResult;
 
 public class SWRG extends ItemPE implements IPedestalItem, IProjectileShooter, ICapabilityAware {
 
@@ -139,9 +140,9 @@ public class SWRG extends ItemPE implements IPedestalItem, IProjectileShooter, I
 			if (pedestal.getActivityCooldown() <= 0) {
 				for (Mob living : level.getEntitiesOfClass(Mob.class, pedestal.getEffectBounds(),
 						ent -> !ent.isSpectator() && (!(ent instanceof TamableAnimal tamableAnimal) || !tamableAnimal.isTame()))) {
-					LightningBolt lightning = EntityType.LIGHTNING_BOLT.create(level);
+					LightningBolt lightning = EntityType.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
 					if (lightning != null) {
-						lightning.moveTo(living.position());
+						lightning.snapTo(living.position());
 						level.addFreshEntity(lightning);
 					}
 				}

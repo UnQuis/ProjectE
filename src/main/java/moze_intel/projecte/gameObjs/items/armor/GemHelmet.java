@@ -1,6 +1,6 @@
 package moze_intel.projecte.gameObjs.items.armor;
 
-import java.util.List;
+import java.util.function.Consumer;
 import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
 import moze_intel.projecte.utils.ClientKeyHelper;
@@ -11,26 +11,26 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
+import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
-import net.minecraft.world.item.component.TooltipDisplay;
-import java.util.function.Consumer;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EquipmentSlot;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.world.item.equipment.ArmorType;
 
 public class GemHelmet extends GemArmorBase {
 
@@ -87,9 +87,9 @@ public class GemHelmet extends GemArmorBase {
 			if (strikeResult.getType() != HitResult.Type.MISS) {
 				BlockPos strikePos = strikeResult.getBlockPos();
 				Level level = player.level();
-				LightningBolt lightning = EntityType.LIGHTNING_BOLT.create(level);
+				LightningBolt lightning = EntityType.LIGHTNING_BOLT.create(level, EntitySpawnReason.TRIGGERED);
 				if (lightning != null) {
-					lightning.moveTo(strikePos.getCenter());
+					lightning.setPos(strikePos.getCenter());
 					lightning.setCause((ServerPlayer) player);
 					level.addFreshEntity(lightning);
 				}

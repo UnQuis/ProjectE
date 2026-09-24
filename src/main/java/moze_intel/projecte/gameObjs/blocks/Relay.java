@@ -1,6 +1,6 @@
 package moze_intel.projecte.gameObjs.blocks;
 
-import java.util.List;
+import java.util.function.Consumer;
 import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.gameObjs.EnumRelayTier;
 import moze_intel.projecte.gameObjs.block_entities.RelayMK1BlockEntity;
@@ -12,6 +12,7 @@ import moze_intel.projecte.utils.WorldHelper;
 import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -23,7 +24,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.util.function.Consumer;
 
 public class Relay extends BlockDirection implements PEEntityBlock<RelayMK1BlockEntity>, IBlockTooltip {
 
@@ -85,7 +85,7 @@ public class Relay extends BlockDirection implements PEEntityBlock<RelayMK1Block
 
 	@Override
 	@Deprecated
-	public int getAnalogOutputSignal(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos) {
+	public int getAnalogOutputSignal(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Direction direction) {
 		RelayMK1BlockEntity relay = WorldHelper.getBlockEntity(RelayMK1BlockEntity.class, level, pos, true);
 		if (relay == null) {
 			return 0;

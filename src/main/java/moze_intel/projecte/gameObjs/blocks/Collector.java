@@ -1,6 +1,6 @@
 package moze_intel.projecte.gameObjs.blocks;
 
-import java.util.List;
+import java.util.function.Consumer;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.capabilities.item.IItemEmcHolder;
 import moze_intel.projecte.config.ProjectEConfig;
@@ -28,7 +28,6 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import java.util.function.Consumer;
 
 public class Collector extends BlockDirection implements PEEntityBlock<CollectorMK1BlockEntity>, IBlockTooltip {
 
@@ -90,16 +89,16 @@ public class Collector extends BlockDirection implements PEEntityBlock<Collector
 
 	@Override
 	@Deprecated
-	public int getAnalogOutputSignal(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos) {
+	public int getAnalogOutputSignal(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Direction direction) {
 		CollectorMK1BlockEntity collector = WorldHelper.getBlockEntity(CollectorMK1BlockEntity.class, level, pos, true);
 		if (collector == null) {
 			//If something went wrong fallback to default implementation
-			return super.getAnalogOutputSignal(state, level, pos);
+			return super.getAnalogOutputSignal(state, level, pos, direction);
 		}
 		IItemHandler handler = IItemHandler.of(WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, state, collector, Direction.UP));
 		if (handler == null) {
 			//If something went wrong fallback to default implementation
-			return super.getAnalogOutputSignal(state, level, pos);
+			return super.getAnalogOutputSignal(state, level, pos, direction);
 		}
 		ItemStack charging = handler.getStackInSlot(CollectorMK1BlockEntity.UPGRADING_SLOT);
 		if (charging.isEmpty()) {
@@ -110,18 +109,5 @@ public class Collector extends BlockDirection implements PEEntityBlock<Collector
 			return MathUtils.scaleToRedstone(emcHolder.getStoredEmc(charging), emcHolder.getMaximumEmc(charging));
 		}
 		return MathUtils.scaleToRedstone(collector.getStoredEmc(), collector.getEmcToNextGoal());
-	}
-
-	@Override
-	@Deprecated
-	public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
-		if (state.getBlock() != newState.getBlock()) {
-			CollectorMK1BlockEntity ent = WorldHelper.getBlockEntity(CollectorMK1BlockEntity.class, level, pos);
-			if (ent != null) {
-				//Clear the ghost slot so calling super doesn't drop the item in it
-				ent.clearLocked();
-			}
-			super.onRemove(state, level, pos, newState, isMoving);
-		}
 	}
 }

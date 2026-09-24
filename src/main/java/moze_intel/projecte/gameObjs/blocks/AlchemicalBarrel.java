@@ -70,19 +70,9 @@ public class AlchemicalBarrel extends DirectionalBlock implements PEEntityBlock<
 		if (barrel != null) {
 			player.openMenu(barrel, pos);
 			player.awardStat(Stats.OPEN_BARREL);
-			PiglinAi.angerNearbyPiglins(player, true);
+			PiglinAi.angerNearbyPiglins((ServerLevel) level, player, true);
 		}
 		return InteractionResult.CONSUME;
-	}
-
-	@Override
-	@Deprecated
-	public void onRemove(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull BlockState newState, boolean isMoving) {
-		if (state.getBlock() != newState.getBlock()) {
-			IItemHandler handler = IItemHandler.of(WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, state, null, null));
-			WorldHelper.dropInventory(handler, level, pos);
-			super.onRemove(state, level, pos, newState, isMoving);
-		}
 	}
 
 	@Override
@@ -126,8 +116,8 @@ public class AlchemicalBarrel extends DirectionalBlock implements PEEntityBlock<
 
 	@Override
 	@Deprecated
-	public int getAnalogOutputSignal(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos) {
-		return ItemHandlerHelper.calcRedstoneFromInventory(WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, null));
+	public int getAnalogOutputSignal(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Direction direction) {
+		return ItemHandlerHelper.calcRedstoneFromInventory(IItemHandler.of(WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, null)));
 	}
 
 	@NotNull

@@ -2,19 +2,20 @@ package moze_intel.projecte.utils;
 
 import com.google.common.collect.ImmutableBiMap;
 import com.mojang.blaze3d.platform.InputConstants;
+import moze_intel.projecte.PECore;
 import moze_intel.projecte.network.packets.to_server.KeyPressPKT;
-import moze_intel.projecte.utils.text.PELang;
 import moze_intel.projecte.utils.text.TextComponentUtil;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.network.chat.Component;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyModifier;
-import net.neoforged.neoforge.network.PacketDistributor;
 import org.lwjgl.glfw.GLFW;
 
 public class ClientKeyHelper {
 
+	private static final KeyMapping.Category PROJECTE_CATEGORY = KeyMapping.Category.register(PECore.rl("projecte"));
 	private static ImmutableBiMap<PEKeybind, KeyMapping> peToMc = ImmutableBiMap.of();
 
 	public static void registerKeyBindings(RegisterKeyMappingsEvent event) {
@@ -50,7 +51,9 @@ public class ClientKeyHelper {
 		private boolean lastState;
 
 		PEKeyMapping(PEKeybind keybind, KeyModifier keyModifier, int keyCode) {
-			super(keybind.getTranslationKey(), KeyConflictContext.IN_GAME, keyModifier, InputConstants.Type.KEYSYM, keyCode, PELang.PROJECTE.getTranslationKey());
+			super(keybind.getTranslationKey(), InputConstants.Type.KEYSYM, keyCode, PROJECTE_CATEGORY);
+			setKeyConflictContext(KeyConflictContext.IN_GAME);
+			setKeyModifierAndCode(keyModifier, InputConstants.Type.KEYSYM.getOrCreate(keyCode));
 			this.keybind = keybind;
 		}
 
@@ -61,7 +64,7 @@ public class ClientKeyHelper {
 			boolean state = isDown();
 			if (state != lastState) {
 				if (state) {
-					PacketDistributor.sendToServer(new KeyPressPKT(keybind));
+					ClientPacketDistributor.sendToServer(new KeyPressPKT(keybind));
 				}
 				lastState = state;
 			}

@@ -1,14 +1,16 @@
 package moze_intel.projecte.world_transmutation;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
 import com.mojang.serialization.DataResult;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectLinkedOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMap;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectMaps;
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -16,6 +18,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.SequencedSet;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.function.Function;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.api.world_transmutation.IWorldTransmutation;
@@ -24,22 +28,26 @@ import moze_intel.projecte.api.world_transmutation.SimpleWorldTransmutation;
 import moze_intel.projecte.api.world_transmutation.WorldTransmutation;
 import moze_intel.projecte.api.world_transmutation.WorldTransmutationFile;
 import moze_intel.projecte.network.packets.to_client.SyncWorldTransmutations;
-import net.minecraft.resources.RegistryOps;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
+import net.minecraft.server.packs.resources.Resource;
 import net.minecraft.server.packs.resources.ResourceManager;
-import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.StrictJsonParser;
+import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.common.conditions.ConditionalOps;
 import net.neoforged.neoforge.common.conditions.WithConditions;
+import net.neoforged.neoforge.resource.ContextAwareReloadListener;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class WorldTransmutationManager extends SimpleJsonResourceReloadListener {
+public class WorldTransmutationManager extends ContextAwareReloadListener {
 
-	//Copy of gson settings from RecipeManager's gson instance
-	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create();
+	private static final FileToIdConverter CONVERTER = FileToIdConverter.json("pe_world_transmutations");
 	public static final WorldTransmutationManager INSTANCE = new WorldTransmutationManager();
 	//Note: Assume we will only have one element for it, but allow it to grow if need be
 	private static final Function<Block, SequencedSet<IWorldTransmutation>> SET_BUILDER = origin -> new LinkedHashSet<>(1);
@@ -49,7 +57,6 @@ public class WorldTransmutationManager extends SimpleJsonResourceReloadListener 
 	private Reference2ObjectMap<Block, SequencedSet<IWorldTransmutation>> modifiedEntries = null;
 
 	private WorldTransmutationManager() {
-		super(GSON, "pe_world_transmutations");
 	}
 
 	public static SyncWorldTransmutations getSyncPacket() {
@@ -63,9 +70,32 @@ public class WorldTransmutationManager extends SimpleJsonResourceReloadListener 
 	}
 
 	@Override
+	public CompletableFuture<Void> reload(@NotNull PreparableReloadListener.SharedState currentReload, @NotNull Executor taskExecutor,
+										  @NotNull PreparableReloadListener.PreparationBarrier preparationBarrier, @NotNull Executor reloadExecutor) {
+		ResourceManager resourceManager = currentReload.resourceManager();
+		return CompletableFuture.<Map<Identifier, JsonElement>>supplyAsync(() -> prepare(resourceManager, Profiler.get()), taskExecutor)
+				.thenCompose(preparationBarrier::wait)
+				.thenAcceptAsync(preparations -> apply(preparations, resourceManager, Profiler.get()), reloadExecutor);
+	}
+
+	@NotNull
+	private Map<Identifier, JsonElement> prepare(@NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profiler) {
+		Map<Identifier, JsonElement> parsed = new HashMap<>();
+		for (Entry<Identifier, Resource> entry : CONVERTER.listMatchingResources(resourceManager).entrySet()) {
+			Identifier location = entry.getKey();
+			Identifier id = CONVERTER.fileToId(location);
+			try (Reader reader = entry.getValue().openAsReader()) {
+				parsed.put(id, StrictJsonParser.parse(reader));
+			} catch (IllegalArgumentException | IOException | JsonParseException e) {
+				PECore.LOGGER.error("Parsing error loading world transmutation file {}: {}", location, e.getMessage());
+			}
+		}
+		return parsed;
+	}
+
 	protected void apply(@NotNull Map<Identifier, JsonElement> object, @NotNull ResourceManager resourceManager, @NotNull ProfilerFiller profiler) {
 		//Ensure we are interacting with the condition context
-		RegistryOps<JsonElement> registryOps = makeConditionalOps();
+		ConditionalOps<JsonElement> registryOps = makeConditionalOps();
 		Reference2ObjectMap<Block, SequencedSet<IWorldTransmutation>> builder = new Reference2ObjectLinkedOpenHashMap<>();
 
 		// Find all data/<domain>/pe_world_transmutations/foo/bar.json

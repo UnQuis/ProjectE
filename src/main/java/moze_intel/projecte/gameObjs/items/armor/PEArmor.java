@@ -23,16 +23,6 @@ public abstract class PEArmor extends Item {
 	}
 
 	@Override
-	public boolean isEnchantable(@NotNull ItemStack stack) {
-		return false;
-	}
-
-	@Override
-	public boolean isBookEnchantable(@NotNull ItemStack stack, @NotNull ItemStack book) {
-		return false;
-	}
-
-	@Override
 	public boolean isPrimaryItemFor(@NotNull ItemStack stack, @NotNull Holder<Enchantment> enchantment) {
 		return false;
 	}

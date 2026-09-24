@@ -203,12 +203,12 @@ public class SearchQueryParser {
 			@Override
 			public boolean matches(@Nullable Level level, @Nullable Player player, String key, ItemStack stack) {
 				Item item = stack.getItem();
-				String modid = item.getCreatorModId(stack);
-				if (modid == null) {
+				Identifier modId = BuiltInRegistries.ITEM.getKey(item);
+				if (modId == null) {
 					PECore.LOGGER.error("Unexpected null registry name for item of class type: {}", item.getClass().getSimpleName());
 					return false;
 				}
-				return modid.toLowerCase(Locale.ROOT).contains(key);
+				return modId.getNamespace().toLowerCase(Locale.ROOT).contains(key);
 			}
 		},
 		TOOLTIP('$') {
@@ -223,10 +223,10 @@ public class SearchQueryParser {
 				return false;
 			}
 		},
-        TAG('#') {
+		TAG('#') {
 			@Override
 			public boolean matches(@Nullable Level level, @Nullable Player player, String key, ItemStack stack) {
-				return stack.getTags().anyMatch(tag -> tag.location().toString().toLowerCase(Locale.ROOT).contains(key));
+				return stack.getItem().builtInRegistryHolder().tags().anyMatch(tag -> tag.location().toString().toLowerCase(Locale.ROOT).contains(key));
 			}
 		},
 		IDENTIFIER('&') {

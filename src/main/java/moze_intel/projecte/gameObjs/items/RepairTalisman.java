@@ -19,7 +19,9 @@ import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -29,8 +31,6 @@ import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.EquipmentSlot;
 
 public class RepairTalisman extends ItemPE implements IAlchBagItem, IAlchChestItem, IPedestalItem, ICapabilityAware {
 
@@ -111,7 +111,7 @@ public class RepairTalisman extends ItemPE implements IAlchBagItem, IAlchChestIt
 	}
 
 	private static void repairAllItems(Player player) {
-		repairAllItems(player.getCapability(Capabilities.Item.ENTITY), player, CAN_REPAIR_PLAYER_ITEM);
+		repairAllItems(IItemHandler.of(player.getCapability(Capabilities.Item.ENTITY)), player, CAN_REPAIR_PLAYER_ITEM);
 		repairAllItems(player.getCapability(IntegrationHelper.CURIO_ITEM_HANDLER), player, CAN_REPAIR_PLAYER_ITEM);
 	}
 

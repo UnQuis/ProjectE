@@ -6,14 +6,18 @@ import moze_intel.projecte.gameObjs.PETags;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.animal.rabbit.Rabbit;
 import net.minecraft.world.entity.animal.rabbit.Rabbit.Variant;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,8 +26,8 @@ public class EntityRandomizerHelper {
 	@Nullable
 	public static Mob getRandomEntity(Level level, Mob toRandomize) {
 		EntityType<?> entType = toRandomize.getType();
-		boolean isPeaceful = entType.is(PETags.Entities.RANDOMIZER_PEACEFUL);
-		boolean isHostile = entType.is(PETags.Entities.RANDOMIZER_HOSTILE);
+		boolean isPeaceful = entType.builtInRegistryHolder().is(PETags.Entities.RANDOMIZER_PEACEFUL);
+		boolean isHostile = entType.builtInRegistryHolder().is(PETags.Entities.RANDOMIZER_HOSTILE);
 		if (isPeaceful && isHostile) {
 			//If it is in both lists do some extra checks to see if it really is peaceful
 			// currently this only includes our special casing for killer rabbits
@@ -37,7 +41,10 @@ public class EntityRandomizerHelper {
 		} else if (isHostile) {
 			Mob ent = createRandomEntity(level, toRandomize, PETags.Entities.RANDOMIZER_HOSTILE);
 			if (ent instanceof Rabbit rabbit) {
-				rabbit.setVariant(Variant.EVIL);
+				//Rabbit's variant setter is private in 26.1, so apply the killer bunny variant via the entity component system (same path as spawn eggs)
+				ItemStack stack = new ItemStack(Items.RABBIT_SPAWN_EGG);
+				stack.set(DataComponents.RABBIT_VARIANT, Rabbit.Variant.EVIL);
+				rabbit.applyComponentsFromItemStack(stack);
 			}
 			return ent;
 		}
@@ -52,7 +59,7 @@ public class EntityRandomizerHelper {
 			//If the type is identical return null so that nothing happens
 			return null;
 		}
-		Entity newEntity = newType.create(level);
+		Entity newEntity = newType.create(level, EntitySpawnReason.TRIGGERED);
 		if (newEntity instanceof Mob) {
 			return (Mob) newEntity;
 		} else if (newEntity != null) {
@@ -73,7 +80,7 @@ public class EntityRandomizerHelper {
 		}
 		HolderSet.Named<EntityType<?>> tag = optionalTag.get();
 		int size = tag.size();
-		if (size == 0 || size == 1 && toExclude.is(tagKey)) {
+		if (size == 0 || size == 1 && toExclude.builtInRegistryHolder().is(tagKey)) {
 			return toExclude;
 		}
 		Optional<EntityType<?>> obj;
