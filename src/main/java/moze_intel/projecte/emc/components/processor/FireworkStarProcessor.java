@@ -23,7 +23,7 @@ import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.FireworkExplosion;
-import net.minecraft.world.item.crafting.FireworkStarRecipe;
+import net.minecraft.world.item.crafting.Ingredient;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
@@ -39,6 +39,13 @@ public class FireworkStarProcessor extends PersistentComponentProcessor<Firework
 			reverseLookup.putIfAbsent(color.getFireworkColor(), color);
 		}
 	});
+	//The static SHAPE_BY_ITEM/TRAIL/TWINKLE constants were removed from FireworkStarRecipe, so we define them ourselves based on the vanilla crafting recipes
+	private static final Map<Item, FireworkExplosion.Shape> SHAPE_BY_ITEM = Map.of(
+			Items.FIRE_CHARGE, FireworkExplosion.Shape.LARGE_BALL,
+			Items.GOLD_NUGGET, FireworkExplosion.Shape.STAR,
+			Items.CREEPER_HEAD, FireworkExplosion.Shape.CREEPER,
+			Items.FEATHER, FireworkExplosion.Shape.BURST
+	);
 
 	@NotNull
 	private Reference2LongMap<FireworkExplosion.Shape> shapeEmcLookup = Reference2LongMaps.emptyMap();
@@ -132,7 +139,7 @@ public class FireworkStarProcessor extends PersistentComponentProcessor<Firework
 		}
 		//Note: We subtract one from the length, as SMALL_BALL does not require any, and won't be processed or stored
 		shapeEmcLookup = new Reference2LongOpenHashMap<>(FireworkExplosion.Shape.values().length - 1);
-		for (Map.Entry<Item, FireworkExplosion.Shape> entry : FireworkStarRecipe.SHAPE_BY_ITEM.entrySet()) {
+		for (Map.Entry<Item, FireworkExplosion.Shape> entry : SHAPE_BY_ITEM.entrySet()) {
 			FireworkExplosion.Shape shape = entry.getValue();
 			if (shape != FireworkExplosion.Shape.SMALL_BALL) {
 				long emc = emcLookup.applyAsLong(ItemInfo.fromItem(entry.getKey()));
@@ -141,8 +148,8 @@ public class FireworkStarProcessor extends PersistentComponentProcessor<Firework
 				}
 			}
 		}
-		trailEmc = IComponentProcessorHelper.INSTANCE.getMinEmcFor(emcLookup, FireworkStarRecipe.TRAIL_INGREDIENT);
-		twinkleEmc = IComponentProcessorHelper.INSTANCE.getMinEmcFor(emcLookup, FireworkStarRecipe.TWINKLE_INGREDIENT);
+		trailEmc = IComponentProcessorHelper.INSTANCE.getMinEmcFor(emcLookup, Ingredient.of(Items.DIAMOND));
+		twinkleEmc = IComponentProcessorHelper.INSTANCE.getMinEmcFor(emcLookup, Ingredient.of(Items.GLOWSTONE_DUST));
 	}
 
 	@Override

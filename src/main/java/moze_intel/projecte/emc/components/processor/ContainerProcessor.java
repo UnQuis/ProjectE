@@ -1,11 +1,13 @@
 package moze_intel.projecte.emc.components.processor;
 
+import java.util.stream.StreamSupport;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.components.DataComponentProcessor;
 import moze_intel.projecte.config.PEConfigTranslations;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.component.ItemContainerContents;
 import org.jetbrains.annotations.NotNull;
 
@@ -39,6 +41,6 @@ public class ContainerProcessor extends SimpleContainerProcessor<ItemContainerCo
 
 	@Override
 	protected Iterable<ItemStack> getStoredItems(ItemContainerContents component) {
-		return component.nonEmptyItems();
+		return StreamSupport.stream(component.nonEmptyItems().spliterator(), false).map(ItemStackTemplate::create).toList();
 	}
 }
