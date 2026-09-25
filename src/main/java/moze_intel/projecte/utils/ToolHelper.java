@@ -249,16 +249,14 @@ public class ToolHelper {
 
 	private static BlockState getModifiedState(UseOnContext context, BlockState state, ResourceKey<BlockTransformer> transformerKey, Holder<SoundEvent> sound) {
 		BlockTransformer transformer = context.getLevel().registryAccess().lookupOrThrow(Registries.BLOCK_TRANSFORMER).getValueOrThrow(transformerKey);
-		Function<BlockState, BlockState> dataMapProvider = transformerKey.equals(BlockTransformers.AXE)
-				? DataMapHooks.axeBlockTransformer(context.getItemInHand()) : ignored -> null;
-		for (BlockTransformer.BlockTransformData transformData : transformer.transforms()) {
+		//Since NeoForge 26.3.0.16, the axe data map transformations are appended to the tool's own transformations instead of being provided separately
+		Iterable<BlockTransformer.BlockTransformData> transforms = transformerKey.equals(BlockTransformers.AXE)
+				? DataMapHooks.appendDatamapTransformers(context.getItemInHand(), transformer.transforms()) : transformer.transforms();
+		for (BlockTransformer.BlockTransformData transformData : transforms) {
 			if (!transformData.sound().value().equals(sound.value()) || transformData.disallowedFaces().contains(context.getClickedFace())) {
 				continue;
 			}
-			BlockState modifiedState = dataMapProvider.apply(state);
-			if (modifiedState == null) {
-				modifiedState = transformData.blockStateProvider().value().getOptionalState(context.getLevel(), context.getLevel().getRandom(), context.getClickedPos());
-			}
+			BlockState modifiedState = transformData.blockStateProvider().value().getOptionalState(context.getLevel(), context.getLevel().getRandom(), context.getClickedPos());
 			if (modifiedState != null) {
 				return transformData.updateFromNeighbors() ? Block.updateFromNeighbourShapes(modifiedState, context.getLevel(), context.getClickedPos()) : modifiedState;
 			}
