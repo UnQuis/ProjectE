@@ -75,6 +75,9 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import org.jetbrains.annotations.Nullable;
 import moze_intel.projecte.network.packets.to_client.knowledge.KnowledgeSyncPKT;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import moze_intel.projecte.gameObjs.items.armor.GemFeet;
+import moze_intel.projecte.gameObjs.items.armor.GemLegs;
+import net.minecraft.client.player.LocalPlayer;
 
 @Mod(value = PECore.MODID, dist = Dist.CLIENT)
 public class PEClient {
@@ -220,6 +223,12 @@ public class PEClient {
 	private void onClientTick(ClientTickEvent.Post event) {
 		//Safety net in case the client player was created without the logging in event firing before the first tick
 		KnowledgeSyncPKT.applyPendingData(Minecraft.getInstance().player);
+		//26.3: item ticks are only run on the server, so the client side movement of the gem armor has to be handled here
+		LocalPlayer player = Minecraft.getInstance().player;
+		if (player != null) {
+			GemFeet.clientTick(player);
+			GemLegs.clientTick(player);
+		}
 	}
 
 	private void tooltipEvent(ItemTooltipEvent event) {

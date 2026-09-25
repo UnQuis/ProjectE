@@ -1,17 +1,23 @@
 package moze_intel.projecte.gameObjs.items.armor;
 
+import java.util.function.UnaryOperator;
 import moze_intel.projecte.gameObjs.registries.PEArmorMaterials;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.equipment.ArmorMaterial;
 import net.minecraft.world.item.equipment.ArmorType;
 
 public abstract class GemArmorBase extends PEArmor {
 
 	public GemArmorBase(ArmorType armorType, Properties props) {
-		super(PEArmorMaterials.GEM_ARMOR, armorType, props);
+		this(PEArmorMaterials.GEM_ARMOR, armorType, UnaryOperator.identity(), props);
+	}
+
+	protected GemArmorBase(ArmorMaterial material, ArmorType armorType, UnaryOperator<Properties> postProcess, Properties props) {
+		super(material, armorType, postProcess, props);
 	}
 
 	@Override

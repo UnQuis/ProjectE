@@ -19,6 +19,7 @@ import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import org.jetbrains.annotations.NotNull;
 import net.minecraft.world.item.component.TooltipDisplay;
 import java.util.function.Consumer;
+import moze_intel.projecte.gameObjs.registries.PEItems;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.EquipmentSlot;
 import org.jetbrains.annotations.Nullable;
@@ -39,7 +40,7 @@ public class GemLegs extends GemArmorBase {
 		tooltip.accept(PELang.GEM_LORE_LEGS.translate());
 	}
 
-	private final Int2LongMap lastJumpTracker = new Int2LongOpenHashMap();
+	private static final Int2LongMap lastJumpTracker = new Int2LongOpenHashMap();
 
 	private void onJump(LivingEvent.LivingJumpEvent evt) {
 		if (evt.getEntity() instanceof Player player && player.level().isClientSide()) {
@@ -47,28 +48,31 @@ public class GemLegs extends GemArmorBase {
 		}
 	}
 
-	private boolean jumpedRecently(Player player) {
+	private static boolean jumpedRecently(Player player) {
 		return lastJumpTracker.containsKey(player.getId()) && player.level().getGameTime() - lastJumpTracker.get(player.getId()) < 5;
+	}
+
+	/**
+	 * Client side fall prediction of the gravity greaves, as since 26.3 item ticks are only run on the server.
+	 */
+	public static void clientTick(Player player) {
+		if (player.level().isClientSide() && player.getItemBySlot(EquipmentSlot.LEGS).is(PEItems.GEM_LEGGINGS) &&
+				player.isSecondaryUseActive() && !player.onGround() && player.getDeltaMovement().y() > -8 && !jumpedRecently(player)) {
+			player.addDeltaMovement(DOWNWARD_MOVEMENT);
+		}
 	}
 
 	@Override
 	public void inventoryTick(@NotNull ItemStack stack, @NotNull ServerLevel level, @NotNull Entity entity, @Nullable EquipmentSlot slot) {
 		super.inventoryTick(stack, level, entity, slot);
-		if (isArmorSlot(slot) && entity instanceof Player player) {
-			if (level.isClientSide()) {
-				if (player.isSecondaryUseActive() && !player.onGround() && player.getDeltaMovement().y() > -8 && !jumpedRecently(player)) {
-					player.addDeltaMovement(DOWNWARD_MOVEMENT);
-				}
-			}
-			if (player.isSecondaryUseActive()) {
-				WorldHelper.repelEntitiesSWRG(level, player.getBoundingBox().inflate(3.5), player);
-				if (!level.isClientSide() && player.getDeltaMovement().y() < -0.08) {
-					for (Entity e : player.level().getEntities(player,
-							player.getBoundingBox().move(player.getDeltaMovement()).inflate(2.0D),
-							ent -> ent.isAlive() && ent.isPickable() && ent instanceof LivingEntity
-					)) {
-						e.hurt(level.damageSources().playerAttack(player), (float) -player.getDeltaMovement().y() * 6F);
-					}
+		if (isArmorSlot(slot) && entity instanceof Player player && player.isSecondaryUseActive()) {
+			WorldHelper.repelEntitiesSWRG(level, player.getBoundingBox().inflate(3.5), player);
+			if (player.getDeltaMovement().y() < -0.08) {
+				for (Entity e : player.level().getEntities(player,
+						player.getBoundingBox().move(player.getDeltaMovement()).inflate(2.0D),
+						ent -> ent.isAlive() && ent.isPickable() && ent instanceof LivingEntity
+				)) {
+					e.hurt(level.damageSources().playerAttack(player), (float) -player.getDeltaMovement().y() * 6F);
 				}
 			}
 		}

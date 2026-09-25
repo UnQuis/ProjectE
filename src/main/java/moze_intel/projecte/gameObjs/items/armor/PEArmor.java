@@ -1,6 +1,7 @@
 package moze_intel.projecte.gameObjs.items.armor;
 
 import java.util.function.Consumer;
+import java.util.function.UnaryOperator;
 import net.minecraft.core.Holder;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -18,7 +19,18 @@ public abstract class PEArmor extends Item {
 	protected final ArmorType type;
 
 	protected PEArmor(ArmorMaterial material, ArmorType armorPiece, Properties props) {
-		super(props.humanoidArmor(material, armorPiece).durability(Integer.MAX_VALUE));
+		this(material, armorPiece, UnaryOperator.identity(), props);
+	}
+
+	/**
+	 * @param postProcess Applied to the properties after the armor material has set up the base armor attributes.
+	 *                    Used by armor pieces that need to add or replace attribute modifiers, as since 26.3 the
+	 *                    modifiers of an armor piece come from the attribute_modifiers component set by
+	 *                    {@link Properties#humanoidArmor}, which means per stack overrides of
+	 *                    {@link #getDefaultAttributeModifiers(ItemStack)} are never consulted for armor.
+	 */
+	protected PEArmor(ArmorMaterial material, ArmorType armorPiece, UnaryOperator<Properties> postProcess, Properties props) {
+		super(postProcess.apply(props.humanoidArmor(material, armorPiece)).durability(Integer.MAX_VALUE));
 		this.type = armorPiece;
 	}
 
