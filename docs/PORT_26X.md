@@ -6,8 +6,8 @@ Minecraft 26.x / NeoForge. Целевые версии:
 | Ветка | Minecraft | NeoForge | Java | Статус |
 |---|---|---|---|---|
 | `mc26.1` | 26.1.2 | 26.1.2.109 | 25 | ✅ `build` зелёный, запушен |
-| `mc26.2` | 26.2 | 26.2.0.88 | 25 | ⏳ |
-| `mc26.3` | 26.3 | 26.3.0.8-beta | 25 | ⏳ план |
+| `mc26.2` | 26.2 | 26.2.0.88 | 25 | ✅ `build` зелёный (159 тестов), запушен |
+| `mc26.3` | 26.3 | 26.3.0.16-beta | 25 | ✅ `build` зелёный (159 тестов), запушен |
 
 Интеграции, удалённые в 26.x: EMI и CraftTweaker убраны; Jade переведён на
 Modrinth Maven; Parchment отключён; GameStages остались как legacy `compileOnly`
@@ -80,11 +80,64 @@ Modrinth Maven; Parchment отключён; GameStages остались как l
 - `key.category.projecte` добавлен в датаген-lang, но в существующих языковых
   файлах перевода может не быть.
 
+## mc26.2 — дельта 26.1 → 26.2 (коммиты `10af9487`, `34917bf6`, `a9ac2191`)
+
+Шаг между 26.1 и 26.2 оказался небольшим: **31 ошибка в 16 файлах** плюс датаген
+(344 ошибки) и один тест. Ключевые изменения:
+
+- `BlockPos.getCenter()` удалён → `Vec3.atCenterOf(pos)` (11 мест).
+- Встроенные типы сущностей переехали в `net.minecraft.world.entity.EntityTypes`
+  (`LIGHTNING_BOLT`, `PLAYER` для capability игрока).
+- `CriteriaTriggers` → `net.minecraft.advancements.triggers`; новые пакеты
+  `advancements.triggers` / `advancements.predicates` в датагене.
+- `Options.hideGui` → `mc.gui.hud.isHidden()`, новый четырёхпараметрический
+  custom-renderer в оверлее трансмутации.
+- `LivingEntity#knockback` — новый overload с `DamageSource`.
+- Цветные баннеры в 26.2 **не** слиты: `Items.BANNER` — это `ColorCollection<Item>`,
+  баннер для EMC берётся через `Items.BANNER.pick(baseColor)`.
+- Цветные блоки в датагене (`ColorCollection`), `TagAppender<T>` с `ResourceKey`,
+  `Potions.LUCK` → `PotionIds.LUCK`, удалён `FurnaceFuel` data map провайдера.
+
+## mc26.3 — дельта 26.2 → 26.3 (коммиты `95315596` … `ec16f187`)
+
+Основная работа: **полная миграция на transfer-API** (71 файл) — NeoForge 26.3
+удалил пакет `net.neoforged.neoforge.items` целиком.
+
+- `IItemHandler`/`ItemStackHandler`/`ItemHandlerHelper`/fluid-хендлеры заменены на
+  `ResourceHandler<ItemResource>` / `<FluidResource>` + `Transaction`; все
+  контейнеры и слоты — через новый транзакционный слот, redstone — через
+  `ResourceHandlerUtil.getRedstoneSignalFromResourceHandler`.
+- Публичный API (`IAlchBagItem`, `IAlchBagProvider`, `IKnowledgeProvider`)
+  переведён на `ResourceHandler<ItemResource>` (breaking, мажорный порт).
+- Инструменты: `AxeItem`/`HoeItem`/`ShovelItem` удалены → `Item` с
+  `Properties#axe/hoe/shovel`, AOE через `BlockTransformer`.
+- `BrewingMapper`: `PotionBrewing` удалён → `RecipeManager`/`BrewingRecipe`.
+- Реестр `BLOCK_TYPE` выпилен; `PushReaction.DESTROY` → `POPPED`.
+- **Топливо**: data map `furnace_fuels` больше не существует — шесть fuel-предметов
+  и блоков получили `minecraft:cooking_fuel` через item-определения ( burn-time
+  как в 1.21.1: 6400/25600/102400, блоки ×9). Кодом константу задать нельзя.
+- **Датагенерация**: run-тип `data` разделён на `serverData`/`clientData`, причём
+  каждый прогон чистит свой выходной каталог — клиентский вывод вынесен в
+  `src/datagen/generated-client` (добавлен в resources). Провайдеры больше не
+  создают `ItemStack` на этапе бутстрапа (только `ItemStackTemplate` или
+  `NSSItem`+`DataComponentPatch`: компоненты в 26.3 ещё не привязаны), `save()`
+  не принимает дефолтный id, `PEBlockLootTable` снова ограничивает
+  `getKnownBlocks()` своими блоками, damage type определяется файлом в ресурсах.
+- Ресурсы advancements перегенерированы: старый формат наград (`{"recipe": ...}`)
+  и критерий `has_the_recipe` в 26.3 не парсятся — из-за них реестр advancements
+  падал бы и в реальной игре.
+- Интеграции **TOP и WTHIT удалены** (на 26.3 не портированы): классы, IMC-хук,
+  зависимости; остаётся только Jade.
+- Ветка доведена до NeoForge 26.3.0.16-beta; `build` зелёный, 159 тестов.
+
 ## Порядок дальнейших портов
 
-1. `mc26.2`: создать ветку от `mc26.1`, поднять NeoForge до 26.2.0.88 (MC 26.2),
-   пересобрать, разобрать дельту API (26.2 — небольшой шаг от 26.1), перенести
-   TOP/Bookshelf/WTHIT.
-2. `mc26.3`: NeoForge 26.3.0.8-beta, удалить TOP/Bookshelf/WTHIT, поправить
-   beta-API.
-3. Каждую ветку пушить в `origin`, когда `./gradlew build` зелёный.
+Все три ветки (`mc26.1`, `mc26.2`, `mc26.3`) собраны, протестированы и запушены
+в `origin`. Дальнейшие шаги — по желанию:
+
+1. Обновить docs при выходе новых версий NeoForge 26.x.
+2. Проверка в игре по спискам «известные риски» выше (EMC щитов с баннером,
+   сумки/сундуки/бочка, Curios, трансмутации, инструменты, фейерверки).
+3. Косметика: ключ `key.category.projecte` есть в датаген-ланге, но не во всех
+   переводах; модель `assets/projecte/item/manual.json` — рудимент (самого
+   руководства в моде нет).
