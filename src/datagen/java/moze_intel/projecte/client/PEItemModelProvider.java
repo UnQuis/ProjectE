@@ -1,5 +1,7 @@
 package moze_intel.projecte.client;
 
+import com.mojang.math.Transformation;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -11,6 +13,7 @@ import moze_intel.projecte.gameObjs.registration.INamedEntry;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import moze_intel.projecte.utils.Constants;
+import org.joml.Matrix4f;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
@@ -46,6 +49,8 @@ public class PEItemModelProvider extends ModelProvider {
 	private static final RangeSelectItemModelProperty ACTIVE_PROPERTY = loadProperty("ActiveProperty");
 	private static final RangeSelectItemModelProperty MODE_PROPERTY = loadProperty("ModeProperty");
 	private static final RangeSelectItemModelProperty USING_ITEM_PROPERTY = loadProperty("UsingItemProperty");
+	//Same transformation vanilla uses for the shield and trident, so our versions are not rendered upside down or mirrored in hand
+	private static final Transformation HAND_TRANSFORMATION = new Transformation(new Matrix4f().scale(1, -1, -1));
 
 	public PEItemModelProvider(PackOutput output) {
 		super(output, PECore.MODID);
@@ -215,10 +220,11 @@ public class PEItemModelProvider extends ModelProvider {
 	}
 
 	private void generateShieldModel(ItemModelGenerators models, ItemLike item) {
-		//Since 26.3 the special model element requires a base model that exists, our renderer draws the shield itself, so vanilla's shield item model is used as the base
+		//Since 26.3 the special model element requires a base model that exists, our renderer draws the shield itself, so vanilla's shield item model is used as the base.
+		//The hand transformation flips the model like vanilla does for the shield and trident, otherwise they render upside down/mirrored
 		Identifier base = Identifier.withDefaultNamespace("item/shield");
-		ItemModel.Unbaked normal = ItemModelUtils.specialModel(base, new ShieldISTER.Unbaked());
-		ItemModel.Unbaked blocking = ItemModelUtils.specialModel(base, new ShieldISTER.Unbaked());
+		ItemModel.Unbaked normal = ItemModelUtils.specialModel(base, HAND_TRANSFORMATION, new ShieldISTER.Unbaked());
+		ItemModel.Unbaked blocking = ItemModelUtils.specialModel(base, HAND_TRANSFORMATION, new ShieldISTER.Unbaked());
 		models.itemModelOutput.accept(item.asItem(), ItemModelUtils.rangeSelect(USING_ITEM_PROPERTY, normal,
 				ItemModelUtils.override(normal, 0), ItemModelUtils.override(blocking, 1)));
 	}
@@ -231,8 +237,8 @@ public class PEItemModelProvider extends ModelProvider {
 	private void generateTridentModel(ItemModelGenerators models, ItemLike item) {
 		Identifier flat = ModelTemplates.FLAT_ITEM.create(ModelLocationUtils.getModelLocation(item.asItem()),
 				TextureMapping.layer0(material("item/" + itemName(item))), models.modelOutput);
-		ItemModel.Unbaked normal = ItemModelUtils.specialModel(flat, new TridentISTER.Unbaked());
-		ItemModel.Unbaked throwingModel = ItemModelUtils.specialModel(flat, new TridentISTER.Unbaked());
+		ItemModel.Unbaked normal = ItemModelUtils.specialModel(flat, HAND_TRANSFORMATION, new TridentISTER.Unbaked());
+		ItemModel.Unbaked throwingModel = ItemModelUtils.specialModel(flat, HAND_TRANSFORMATION, new TridentISTER.Unbaked());
 		ItemModel.Unbaked inHand = ItemModelUtils.rangeSelect(USING_ITEM_PROPERTY, normal,
 				ItemModelUtils.override(normal, 0), ItemModelUtils.override(throwingModel, 1));
 		ItemModel.Unbaked dispatched = ItemModelUtils.select(new net.minecraft.client.renderer.item.properties.select.DisplayContext(), inHand,

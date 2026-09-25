@@ -28,12 +28,15 @@ import moze_intel.projecte.gameObjs.items.PEBlockItem;
 import moze_intel.projecte.gameObjs.registration.impl.BlockDeferredRegister;
 import moze_intel.projecte.gameObjs.registration.impl.BlockRegistryObject.WallOrFloorBlockRegistryObject;
 import moze_intel.projecte.gameObjs.registration.impl.BlockRegistryObject;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.StandingAndWallBlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProvider;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
@@ -85,8 +88,11 @@ public class PEBlocks {
 			));
 
 	private static BlockRegistryObject<Block, BlockItem> registerFuelBlock(String name, MapColor mapColor) {
+		//Since 26.3 the fuel block items need the minecraft:cooking_fuel component referencing our context int provider for the burn time
+		ResourceKey<ContextIntProvider> cookingTime = ResourceKey.create(Registries.CONTEXT_INT_PROVIDER, PECore.rl("cooking/time_" + name));
 		return BLOCKS.register(name, properties -> new Block(properties.mapColor(mapColor).instrument(NoteBlockInstrument.BASEDRUM)
-				.requiresCorrectToolForDrops().strength(0.5F, 1.5F)));
+				.requiresCorrectToolForDrops().strength(0.5F, 1.5F)),
+				(block, itemProperties) -> PEBlockItem.of(block, itemProperties.cookingFuel(cookingTime)));
 	}
 
 	private static BlockRegistryObject<Collector, BlockItem> registerCollector(String name, EnumCollectorTier collectorTier, ToIntFunction<BlockState> lightLevel) {

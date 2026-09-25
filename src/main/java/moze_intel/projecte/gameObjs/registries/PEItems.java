@@ -50,10 +50,13 @@ import moze_intel.projecte.gameObjs.items.tools.PETrident;
 import moze_intel.projecte.gameObjs.items.tools.RedMatterSword;
 import moze_intel.projecte.gameObjs.registration.impl.ItemDeferredRegister;
 import moze_intel.projecte.gameObjs.registration.impl.ItemRegistryObject;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.equipment.ArmorType;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntProvider;
 
 public class PEItems {
 
@@ -94,9 +97,10 @@ public class PEItems {
 	public static final ItemRegistryObject<KleinStar> KLEIN_STAR_SPHERE = registerKleinStar(KleinTier.SPHERE);
 	public static final ItemRegistryObject<KleinStar> KLEIN_STAR_OMEGA = registerKleinStar(KleinTier.OMEGA);
 
-	public static final ItemRegistryObject<Item> ALCHEMICAL_COAL = ITEMS.register("alchemical_coal");
-	public static final ItemRegistryObject<Item> MOBIUS_FUEL = ITEMS.register("mobius_fuel");
-	public static final ItemRegistryObject<Item> AETERNALIS_FUEL = ITEMS.registerSimple("aeternalis_fuel", properties -> new Item(properties.rarity(Rarity.RARE)));
+	//Since 26.3 furnace fuels are defined through the minecraft:cooking_fuel component, which references a context int provider for the burn time
+	public static final ItemRegistryObject<Item> ALCHEMICAL_COAL = ITEMS.registerSimple("alchemical_coal", properties -> new Item(properties.cookingFuel(cookingTime("time_alchemical_coal"))));
+	public static final ItemRegistryObject<Item> MOBIUS_FUEL = ITEMS.registerSimple("mobius_fuel", properties -> new Item(properties.cookingFuel(cookingTime("time_mobius_fuel"))));
+	public static final ItemRegistryObject<Item> AETERNALIS_FUEL = ITEMS.registerSimple("aeternalis_fuel", properties -> new Item(properties.rarity(Rarity.RARE).cookingFuel(cookingTime("time_aeternalis_fuel"))));
 	public static final ItemRegistryObject<Item> DARK_MATTER = ITEMS.registerFireImmune("dark_matter");
 	public static final ItemRegistryObject<Item> RED_MATTER = ITEMS.registerFireImmune("red_matter");
 
@@ -199,6 +203,10 @@ public class PEItems {
 			case RED -> RED_ALCHEMICAL_BAG;
 			case BLACK -> BLACK_ALCHEMICAL_BAG;
 		};
+	}
+
+	private static ResourceKey<ContextIntProvider> cookingTime(String name) {
+		return ResourceKey.create(Registries.CONTEXT_INT_PROVIDER, PECore.rl("cooking/" + name));
 	}
 
 	public static ItemRegistryObject<KleinStar> getStar(KleinTier tier) {
