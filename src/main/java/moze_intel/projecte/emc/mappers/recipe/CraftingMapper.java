@@ -30,7 +30,7 @@ import moze_intel.projecte.api.nss.NormalizedSimpleStack;
 import moze_intel.projecte.config.PEConfigTranslations;
 import moze_intel.projecte.utils.AnnotationHelper;
 import moze_intel.projecte.utils.EMCHelper;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.Identifier;
@@ -74,7 +74,7 @@ public class CraftingMapper implements IEMCMapper<NormalizedSimpleStack, Long> {
 
 	@Override
 	public void addMappings(IMappingCollector<NormalizedSimpleStack, Long> mapper, ReloadableServerResources serverResources,
-			RegistryAccess registryAccess, ResourceManager resourceManager) {
+			HolderLookup.Provider registryAccess, ResourceManager resourceManager) {
 		NSSFake.setCurrentNamespace("craftingMapper");
 		try {
 			addMappingsInternal(mapper, serverResources, registryAccess);
@@ -85,7 +85,7 @@ public class CraftingMapper implements IEMCMapper<NormalizedSimpleStack, Long> {
 
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	private void addMappingsInternal(IMappingCollector<NormalizedSimpleStack, Long> mapper, ReloadableServerResources serverResources,
-			RegistryAccess registryAccess) {
+			HolderLookup.Provider registryAccess) {
 		Reference2ObjectMap<ResourceKey<RecipeType<?>>, RecipeCountInfo> recipeCount = new Reference2ObjectOpenHashMap<>();
 		Set<ResourceKey<RecipeType<?>>> canNotMap = new ReferenceOpenHashSet<>();
 		RecipeManager recipeManager = serverResources.getRecipeManager();
@@ -176,7 +176,7 @@ public class CraftingMapper implements IEMCMapper<NormalizedSimpleStack, Long> {
 		}
 	}
 
-	private String getExpectedUnhandledReason(RecipeType<?> recipeType, RecipeHolder<?> recipeHolder, RegistryAccess registryAccess) {
+	private String getExpectedUnhandledReason(RecipeType<?> recipeType, RecipeHolder<?> recipeHolder, HolderLookup.Provider registryAccess) {
 		for (IRecipeTypeMapper recipeMapper : recipeMappers) {
 			if (isRecipeMapperEnabled(recipeMapper)) {
 				try {

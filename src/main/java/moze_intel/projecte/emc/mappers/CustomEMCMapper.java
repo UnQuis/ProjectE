@@ -11,7 +11,7 @@ import moze_intel.projecte.api.nss.NSSItem;
 import moze_intel.projecte.api.nss.NormalizedSimpleStack;
 import moze_intel.projecte.config.CustomEMCParser;
 import moze_intel.projecte.config.PEConfigTranslations;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.resources.ResourceManager;
 
@@ -20,7 +20,7 @@ public class CustomEMCMapper implements IEMCMapper<NormalizedSimpleStack, Long> 
 
 	@Override
 	public void addMappings(IMappingCollector<NormalizedSimpleStack, Long> mapper, ReloadableServerResources serverResources,
-			RegistryAccess registryAccess, ResourceManager resourceManager) {
+			HolderLookup.Provider registryAccess, ResourceManager resourceManager) {
 		for (Iterator<Object2LongMap.Entry<NSSItem>> iterator = Object2LongSortedMaps.fastIterator(CustomEMCParser.currentEntries.entries()); iterator.hasNext(); ) {
 			Object2LongMap.Entry<NSSItem> entry = iterator.next();
 			NSSItem item = entry.getKey();

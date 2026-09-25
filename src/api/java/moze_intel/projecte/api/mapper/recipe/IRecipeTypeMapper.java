@@ -3,7 +3,7 @@ package moze_intel.projecte.api.mapper.recipe;
 import moze_intel.projecte.api.config.IConfigurableElement;
 import moze_intel.projecte.api.mapper.collector.IMappingCollector;
 import moze_intel.projecte.api.nss.NormalizedSimpleStack;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -16,7 +16,7 @@ public interface IRecipeTypeMapper extends IConfigurableElement {
 
 	/**
 	 * {@inheritDoc} If this returns {@code false} {@link #canHandle(RecipeType)} and
-	 * {@link #handleRecipe(IMappingCollector, RecipeHolder, RegistryAccess, INSSFakeGroupManager)} will not be called.
+	 * {@link #handleRecipe(IMappingCollector, RecipeHolder, HolderLookup.Provider, INSSFakeGroupManager)} will not be called.
 	 */
 	@Override
 	default boolean isAvailable() {
@@ -48,7 +48,7 @@ public interface IRecipeTypeMapper extends IConfigurableElement {
 	 * @implNote Due to how the fakeGroupManager works, {@link moze_intel.projecte.api.nss.NSSFake} implementations should only be created in this method with
 	 * descriptions that are more complex than a single integer, as otherwise they may intersect with {@link NormalizedSimpleStack}s created by the fakeGroupManager.
 	 */
-	boolean handleRecipe(IMappingCollector<NormalizedSimpleStack, Long> mapper, RecipeHolder<?> recipeHolder, RegistryAccess registryAccess, INSSFakeGroupManager fakeGroupManager);
+	boolean handleRecipe(IMappingCollector<NormalizedSimpleStack, Long> mapper, RecipeHolder<?> recipeHolder, HolderLookup.Provider registryAccess, INSSFakeGroupManager fakeGroupManager);
 
 	/**
 	 * Describes why a recipe that was not handled by any enabled recipe mapper is intentionally left unmapped. This is intended for dynamic or stateful recipes
@@ -62,7 +62,7 @@ public interface IRecipeTypeMapper extends IConfigurableElement {
 	 * @apiNote This method is diagnostic only. Returning a reason does not add a conversion or mark the recipe as handled.
 	 */
 	@Nullable
-	default String getExpectedUnhandledReason(RecipeHolder<?> recipeHolder, RegistryAccess registryAccess) {
+	default String getExpectedUnhandledReason(RecipeHolder<?> recipeHolder, HolderLookup.Provider registryAccess) {
 		return null;
 	}
 }

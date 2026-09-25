@@ -10,7 +10,7 @@ import moze_intel.projecte.api.nss.NormalizedSimpleStack;
 import moze_intel.projecte.config.PEConfigTranslations;
 import moze_intel.projecte.utils.EMCHelper;
 import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.ReloadableServerResources;
@@ -25,8 +25,8 @@ public class WaxableMapper implements IEMCMapper<NormalizedSimpleStack, Long> {
 
 	@Override
 	public void addMappings(IMappingCollector<NormalizedSimpleStack, Long> mapper, ReloadableServerResources serverResources,
-			RegistryAccess registryAccess, ResourceManager resourceManager) {
-		Registry<Block> blocks = registryAccess.lookupOrThrow(Registries.BLOCK);
+			HolderLookup.Provider registryAccess, ResourceManager resourceManager) {
+		var blocks = registryAccess.lookupOrThrow(Registries.BLOCK);
 		NSSItem wax = NSSItem.createItem(Items.HONEYCOMB);
 		int recipeCount = 0;
 		for (Map.Entry<ResourceKey<Block>, Waxable> entry : blocks.getDataMap(NeoForgeDataMaps.WAXABLES).entrySet()) {

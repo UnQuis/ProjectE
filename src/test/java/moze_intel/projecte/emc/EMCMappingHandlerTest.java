@@ -127,7 +127,7 @@ class EMCMappingHandlerTest {
 
 		@Override
 		public void addMappings(IMappingCollector<NormalizedSimpleStack, Long> mapper, net.minecraft.server.ReloadableServerResources serverResources,
-				net.minecraft.core.RegistryAccess registryAccess, net.minecraft.server.packs.resources.ResourceManager resourceManager) {
+				net.minecraft.core.HolderLookup.Provider registryAccess, net.minecraft.server.packs.resources.ResourceManager resourceManager) {
 			action.accept(mapper);
 		}
 	}

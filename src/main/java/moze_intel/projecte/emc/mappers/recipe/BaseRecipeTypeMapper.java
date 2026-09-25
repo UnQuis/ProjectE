@@ -16,7 +16,7 @@ import moze_intel.projecte.api.mapper.recipe.IRecipeTypeMapper;
 import moze_intel.projecte.api.nss.NSSItem;
 import moze_intel.projecte.api.nss.NormalizedSimpleStack;
 import moze_intel.projecte.utils.Constants;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
@@ -48,7 +48,7 @@ import org.jetbrains.annotations.VisibleForTesting;
 public abstract class BaseRecipeTypeMapper implements IRecipeTypeMapper {
 
 	@Override
-	public boolean handleRecipe(IMappingCollector<NormalizedSimpleStack, Long> mapper, RecipeHolder<?> recipeHolder, RegistryAccess registryAccess,
+	public boolean handleRecipe(IMappingCollector<NormalizedSimpleStack, Long> mapper, RecipeHolder<?> recipeHolder, HolderLookup.Provider registryAccess,
 			INSSFakeGroupManager fakeGroupManager) {
 		Recipe<?> recipe = recipeHolder.value();
 		if (recipe.isSpecial()) {

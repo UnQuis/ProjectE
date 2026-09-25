@@ -37,7 +37,7 @@ import moze_intel.projecte.gameObjs.container.TransmutationContainer;
 import moze_intel.projecte.impl.capability.KnowledgeImpl;
 import moze_intel.projecte.network.packets.to_client.SyncEmcPKT;
 import moze_intel.projecte.utils.AnnotationHelper;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.level.ServerPlayer;
@@ -70,7 +70,7 @@ public final class EMCMappingHandler {
 		}
 	}
 
-	public static void map(ReloadableServerResources serverResources, RegistryAccess registryAccess, ResourceManager resourceManager) {
+	public static void map(ReloadableServerResources serverResources, HolderLookup.Provider registryAccess, ResourceManager resourceManager) {
 		//Keep the current values available until a complete replacement is ready. updateEmcValues swaps the entire map,
 		// so values removed by the remap still disappear without exposing a temporary empty map or losing the last good map if remapping fails.
 		SimpleGraphMapper<NormalizedSimpleStack, BigFraction, IValueArithmetic<BigFraction>> mapper = MappingConfig.recoverMissingItemEmc()
@@ -117,7 +117,7 @@ public final class EMCMappingHandler {
 
 	static void collectMappings(Iterable<IEMCMapper<NormalizedSimpleStack, Long>> mapperList,
 			Predicate<IEMCMapper<NormalizedSimpleStack, Long>> isEnabled, IMappingCollector<NormalizedSimpleStack, Long> mappingCollector,
-			ReloadableServerResources serverResources, RegistryAccess registryAccess, ResourceManager resourceManager) {
+			ReloadableServerResources serverResources, HolderLookup.Provider registryAccess, ResourceManager resourceManager) {
 		for (IEMCMapper<NormalizedSimpleStack, Long> emcMapper : mapperList) {
 			if (!isEnabled.test(emcMapper)) {
 				continue;
@@ -137,7 +137,7 @@ public final class EMCMappingHandler {
 		}
 	}
 
-	static void finishCollection(IMappingCollector<NormalizedSimpleStack, Long> mappingCollector, RegistryAccess registryAccess) {
+	static void finishCollection(IMappingCollector<NormalizedSimpleStack, Long> mappingCollector, HolderLookup.Provider registryAccess) {
 		DumpToFileCollector.currentGroupName = "NSSHelper";
 		try {
 			mappingCollector.finishCollection(registryAccess);

@@ -9,7 +9,7 @@ import moze_intel.projecte.api.nss.NSSItem;
 import moze_intel.projecte.api.nss.NormalizedSimpleStack;
 import moze_intel.projecte.config.PEConfigTranslations;
 import moze_intel.projecte.utils.EMCHelper;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -30,7 +30,7 @@ public class BrewingMapper implements IEMCMapper<NormalizedSimpleStack, Long> {
 
 	@Override
 	public void addMappings(IMappingCollector<NormalizedSimpleStack, Long> mapper, ReloadableServerResources serverResources,
-			RegistryAccess registryAccess, ResourceManager resourceManager) {
+			HolderLookup.Provider registryAccess, ResourceManager resourceManager) {
 		MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
 		if (server == null) {
 			PECore.LOGGER.error("Failed to get server and potion data when trying to map potions");

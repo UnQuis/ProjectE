@@ -23,7 +23,7 @@ import moze_intel.projecte.api.nss.NSSFake;
 import moze_intel.projecte.api.nss.NormalizedSimpleStack;
 import moze_intel.projecte.config.PEConfigTranslations;
 import moze_intel.projecte.impl.codec.PECodecHelper;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.resources.Identifier;
@@ -57,12 +57,12 @@ public class CustomConversionMapper implements IEMCMapper<NormalizedSimpleStack,
 
 	@Override
 	public void addMappings(IMappingCollector<NormalizedSimpleStack, Long> mapper, ReloadableServerResources serverResources,
-			RegistryAccess registryAccess, ResourceManager resourceManager) {
+			HolderLookup.Provider registryAccess, ResourceManager resourceManager) {
 		Map<Identifier, CustomConversionFile> files = load(registryAccess, resourceManager);
 		addMappingsFromFiles(files, mapper);
 	}
 
-	private static Map<Identifier, CustomConversionFile> load(RegistryAccess registryAccess, ResourceManager resourceManager) {
+	private static Map<Identifier, CustomConversionFile> load(HolderLookup.Provider registryAccess, ResourceManager resourceManager) {
 		Map<Identifier, CustomConversionFile> loading = new HashMap<>();
 
 		RegistryOps<JsonElement> serializationContext = registryAccess.createSerializationContext(JsonOps.INSTANCE);

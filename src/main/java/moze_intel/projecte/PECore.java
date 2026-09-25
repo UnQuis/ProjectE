@@ -60,6 +60,7 @@ import net.minecraft.core.dispenser.DispenseItemBehavior;
 import net.minecraft.core.dispenser.OptionalDispenseItemBehavior;
 import net.minecraft.core.dispenser.ShearsDispenseItemBehavior;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ReloadableServerResources;
@@ -280,9 +281,9 @@ public class PECore {
 			long start = System.currentTimeMillis();
 			//Clear the cached created tags
 			AbstractNSSTag.clearCreatedTags();
-			CustomEMCParser.init(emcUpdateResourceManager.registryAccess());
+			CustomEMCParser.init(emcUpdateResourceManager.registryLookup());
 			try {
-				EMCMappingHandler.map(emcUpdateResourceManager.serverResources(), emcUpdateResourceManager.registryAccess(), emcUpdateResourceManager.resourceManager());
+				EMCMappingHandler.map(emcUpdateResourceManager.serverResources(), emcUpdateResourceManager.registryLookup(), emcUpdateResourceManager.resourceManager());
 				PECore.LOGGER.info("Registered {} EMC values. (took {} ms)", EMCMappingHandler.getEmcMapSize(), System.currentTimeMillis() - start);
 			} catch (Throwable t) {
 				PECore.LOGGER.error("Error calculating EMC values", t);
@@ -313,21 +314,18 @@ public class PECore {
 	}
 
 	private void addReloadListeners(AddServerReloadListenersEvent event) {
-		//26.1: addListener now requires a unique Identifier key for each mod-added listener
+		//26.1: addListener requires a unique Identifier key for each mod-added listener.
+		//Since 26.3 the server is not available through ServerLifecycleHooks while the server resources are created,
+		//so everything is taken from the event's server resources, and the event is skipped on the client where there are none
 		ReloadableServerResources resources = event.getServerResources();
 		if (resources == null) {
-			//The event can be fired without server resources (on the client for example), in which case there is nothing to map
 			return;
 		}
-		event.addListener(rl("emc_data"), (ResourceManagerReloadListener) manager -> {
-			//The registry access is only resolvable once the server resources are actually being reloaded
-			MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-			if (server != null) {
-				emcUpdateResourceManager = new EmcUpdateData(resources, server.registryAccess(), manager);
-			}
-		});
+		HolderLookup.Provider registryLookup = resources.getRegistryLookup();
+		event.addListener(rl("emc_data"), (ResourceManagerReloadListener) manager -> emcUpdateResourceManager = new EmcUpdateData(resources, registryLookup, manager));
 		event.addListener(rl("world_transmutation"), WorldTransmutationManager.INSTANCE);
 	}
+
 
 	private void addBlacklistReloadListeners(AddServerReloadListenersEvent event) {
 		if (GameStagesHelper.gameStagesLoaded) {
@@ -409,6 +407,6 @@ public class PECore {
 		BuiltInRegistries.BLOCK.addCallback((ClearCallback<Block>) (registry, full) -> WorldHelper.clearCachedAgeProperties());
 	}
 
-	private record EmcUpdateData(ReloadableServerResources serverResources, RegistryAccess registryAccess, ResourceManager resourceManager) {
+	private record EmcUpdateData(ReloadableServerResources serverResources, HolderLookup.Provider registryLookup, ResourceManager resourceManager) {
 	}
 }

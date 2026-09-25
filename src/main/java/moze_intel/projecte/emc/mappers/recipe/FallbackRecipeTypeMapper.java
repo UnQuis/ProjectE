@@ -5,7 +5,7 @@ import moze_intel.projecte.api.mapper.recipe.INSSFakeGroupManager;
 import moze_intel.projecte.api.mapper.recipe.RecipeTypeMapper;
 import moze_intel.projecte.api.nss.NormalizedSimpleStack;
 import moze_intel.projecte.config.PEConfigTranslations;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.crafting.AbstractCookingRecipe;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.Recipe;
@@ -40,7 +40,7 @@ public class FallbackRecipeTypeMapper extends BaseRecipeTypeMapper {
 	}
 
 	@Override
-	public boolean handleRecipe(IMappingCollector<NormalizedSimpleStack, Long> mapper, RecipeHolder<?> recipeHolder, RegistryAccess registryAccess, INSSFakeGroupManager fakeGroupManager) {
+	public boolean handleRecipe(IMappingCollector<NormalizedSimpleStack, Long> mapper, RecipeHolder<?> recipeHolder, HolderLookup.Provider registryAccess, INSSFakeGroupManager fakeGroupManager) {
 		Recipe<?> recipe = recipeHolder.value();
 		if (recipe instanceof CraftingRecipe || recipe instanceof AbstractCookingRecipe || recipe instanceof SingleItemRecipe ||
 			//Note: Ingredients are retrieved via placementInfo() which already includes the optional smithing ingredients

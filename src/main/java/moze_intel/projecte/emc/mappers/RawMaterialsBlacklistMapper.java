@@ -9,7 +9,7 @@ import moze_intel.projecte.api.nss.NormalizedSimpleStack;
 import moze_intel.projecte.config.PEConfigTranslations;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet.Named;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -24,7 +24,7 @@ public class RawMaterialsBlacklistMapper implements IEMCMapper<NormalizedSimpleS
 
 	@Override
 	public void addMappings(IMappingCollector<NormalizedSimpleStack, Long> mapper, ReloadableServerResources serverResources,
-			RegistryAccess registryAccess, ResourceManager resourceManager) {
+			HolderLookup.Provider registryAccess, ResourceManager resourceManager) {
 		Optional<Named<Item>> tag = BuiltInRegistries.ITEM.get(Tags.Items.RAW_MATERIALS);
 		if (tag.isPresent()) {
 			for (Holder<Item> holder : tag.get()) {

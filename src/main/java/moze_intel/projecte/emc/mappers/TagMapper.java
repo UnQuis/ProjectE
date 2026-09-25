@@ -7,7 +7,7 @@ import moze_intel.projecte.api.nss.NSSTag;
 import moze_intel.projecte.api.nss.NormalizedSimpleStack;
 import moze_intel.projecte.config.PEConfigTranslations;
 import moze_intel.projecte.utils.EMCHelper;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.resources.ResourceManager;
 
@@ -15,7 +15,7 @@ public class TagMapper implements IEMCMapper<NormalizedSimpleStack, Long> {
 
 	@Override
 	public void addMappings(IMappingCollector<NormalizedSimpleStack, Long> mapper, ReloadableServerResources serverResources,
-			RegistryAccess registryAccess, ResourceManager resourceManager) {
+			HolderLookup.Provider registryAccess, ResourceManager resourceManager) {
 		for (NSSTag stack : AbstractNSSTag.getAllCreatedTags()) {
 			stack.forEachElement(mapper, stack, (collector, normalizedSimpleStack, tag) -> {
 				//Tag -> element

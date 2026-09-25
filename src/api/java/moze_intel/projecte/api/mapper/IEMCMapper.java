@@ -2,7 +2,7 @@ package moze_intel.projecte.api.mapper;
 
 import moze_intel.projecte.api.config.IConfigurableElement;
 import moze_intel.projecte.api.mapper.collector.IMappingCollector;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.packs.resources.ResourceManager;
 
@@ -25,5 +25,5 @@ public interface IEMCMapper<T, V extends Comparable<V>> extends IConfigurableEle
 	/**
 	 * The method that allows the {@link IEMCMapper} to contribute to the EMC Mapping. Use the methods provided by the {@link IMappingCollector}.
 	 */
-	void addMappings(IMappingCollector<T, V> mapper, ReloadableServerResources serverResources, RegistryAccess registryAccess, ResourceManager resourceManager);
+	void addMappings(IMappingCollector<T, V> mapper, ReloadableServerResources serverResources, HolderLookup.Provider registryAccess, ResourceManager resourceManager);
 }

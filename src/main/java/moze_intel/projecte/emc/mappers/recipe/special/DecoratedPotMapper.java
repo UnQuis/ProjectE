@@ -16,7 +16,7 @@ import moze_intel.projecte.utils.Constants;
 import moze_intel.projecte.utils.EMCHelper;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet.Named;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -39,7 +39,7 @@ public class DecoratedPotMapper extends SpecialRecipeMapper<DecoratedPotRecipe> 
 	}
 
 	@Override
-	protected boolean handleRecipe(IMappingCollector<NormalizedSimpleStack, Long> mapper, RegistryAccess registryAccess, INSSFakeGroupManager fakeGroupManager) {
+	protected boolean handleRecipe(IMappingCollector<NormalizedSimpleStack, Long> mapper, HolderLookup.Provider registryAccess, INSSFakeGroupManager fakeGroupManager) {
 		Optional<Named<Item>> tag = BuiltInRegistries.ITEM.get(ItemTags.DECORATED_POT_INGREDIENTS);
 		if (tag.isEmpty()) {
 			return false;

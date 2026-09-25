@@ -15,7 +15,7 @@ import moze_intel.projecte.emc.components.processor.FireworkStarProcessor;
 import moze_intel.projecte.emc.components.processor.MapScaleProcessor;
 import moze_intel.projecte.gameObjs.customRecipes.PhiloStoneSmeltingRecipe;
 import moze_intel.projecte.gameObjs.customRecipes.RecipesCovalenceRepair;
-import net.minecraft.core.RegistryAccess;
+import net.minecraft.core.HolderLookup;
 import net.minecraft.world.item.crafting.BannerDuplicateRecipe;
 import net.minecraft.world.item.crafting.BookCloningRecipe;
 import net.minecraft.world.item.crafting.CustomRecipe;
@@ -39,7 +39,7 @@ public class SpecialRecipeMarkHandledMapper implements IRecipeTypeMapper {
 	static final String ARMOR_DYE_SKIP_REASON = "Output color is calculated from and preserves the input item's data components.";
 
 	@Override
-	public final boolean handleRecipe(IMappingCollector<NormalizedSimpleStack, Long> mapper, RecipeHolder<?> recipeHolder, RegistryAccess registryAccess,
+	public final boolean handleRecipe(IMappingCollector<NormalizedSimpleStack, Long> mapper, RecipeHolder<?> recipeHolder, HolderLookup.Provider registryAccess,
 			INSSFakeGroupManager fakeGroupManager) {
 		Recipe<?> recipe = recipeHolder.value();
 		if (recipe instanceof CustomRecipe) {
@@ -72,7 +72,7 @@ public class SpecialRecipeMarkHandledMapper implements IRecipeTypeMapper {
 	}
 
 	@Override
-	public final String getExpectedUnhandledReason(RecipeHolder<?> recipeHolder, RegistryAccess registryAccess) {
+	public final String getExpectedUnhandledReason(RecipeHolder<?> recipeHolder, HolderLookup.Provider registryAccess) {
 		//26.1: the armor dye recipe no longer exists as code, nothing needs a special unhandled reason
 		return null;
 	}
