@@ -13,7 +13,8 @@ import moze_intel.projecte.gameObjs.registration.INamedEntry;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import moze_intel.projecte.utils.Constants;
-import org.joml.Matrix4f;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 import net.minecraft.client.data.models.BlockModelGenerators;
 import net.minecraft.client.data.models.ItemModelGenerators;
 import net.minecraft.client.data.models.ModelProvider;
@@ -50,7 +51,7 @@ public class PEItemModelProvider extends ModelProvider {
 	private static final RangeSelectItemModelProperty MODE_PROPERTY = loadProperty("ModeProperty");
 	private static final RangeSelectItemModelProperty USING_ITEM_PROPERTY = loadProperty("UsingItemProperty");
 	//Same transformation vanilla uses for the shield and trident, so our versions are not rendered upside down or mirrored in hand
-	private static final Transformation HAND_TRANSFORMATION = new Transformation(new Matrix4f().scale(1, -1, -1));
+	private static final Transformation HAND_TRANSFORMATION = new Transformation(new Vector3f(), new Quaternionf(), new Vector3f(1, -1, -1), new Quaternionf());
 
 	public PEItemModelProvider(PackOutput output) {
 		super(output, PECore.MODID);
