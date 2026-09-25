@@ -195,8 +195,10 @@ public class PEClient {
 	private void registerRangeSelectItemModelProperties(RegisterRangeSelectItemModelPropertyEvent event) {
 		event.register(ACTIVE_OVERRIDE, ActiveProperty.MAP_CODEC);
 		event.register(MODE_OVERRIDE, ModeProperty.MAP_CODEC);
+		//Note: The id mapper requires a distinct codec instance per registration, so the second property gets its own codec.
+		//The shared MAP_CODEC has to stay registered as it is the one returned by UsingItemProperty#type, which the item model generator resolves it by
 		event.register(BLOCKING_OVERRIDE, UsingItemProperty.MAP_CODEC);
-		event.register(THROWING_OVERRIDE, UsingItemProperty.MAP_CODEC);
+		event.register(THROWING_OVERRIDE, MapCodec.unit(new UsingItemProperty()));
 	}
 
 	private void onDisconnect(ClientPlayerNetworkEvent.LoggingOut event) {

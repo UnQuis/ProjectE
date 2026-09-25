@@ -1,0 +1,35 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "entries": [
+      {
+        "model": {
+          "type": "minecraft:special",
+          "base": "projecte:shield",
+          "model": {
+            "type": "projecte:shield"
+          }
+        },
+        "threshold": 0.0
+      },
+      {
+        "model": {
+          "type": "minecraft:special",
+          "base": "projecte:shield",
+          "model": {
+            "type": "projecte:shield"
+          }
+        },
+        "threshold": 1.0
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:special",
+      "base": "projecte:shield",
+      "model": {
+        "type": "projecte:shield"
+      }
+    },
+    "property": "projecte:blocking"
+  }
+}

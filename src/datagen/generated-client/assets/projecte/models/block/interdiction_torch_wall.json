@@ -1,0 +1,9 @@
+{
+  "parent": "minecraft:block/template_torch_wall",
+  "textures": {
+    "torch": {
+      "force_translucent": true,
+      "sprite": "projecte:block/interdiction_torch"
+    }
+  }
+}

@@ -91,7 +91,8 @@ public class PEBlockStateProvider extends ModelProvider {
 		models.blockStateOutput.accept(MultiVariantGenerator.dispatch(PEBlocks.ALCHEMICAL_BARREL.getBlock(),
 				BlockModelGenerators.plainVariant(open))
 				.with(modelDispatch(BlockStateProperties.OPEN, false, closed, true, open))
-				.with(BlockModelGenerators.ROTATION_HORIZONTAL_FACING));
+				//Since 26.3 the barrel's FACING is the 6-value DirectionalBlock.FACING, so the generic facing rotation has to be used
+				.with(BlockModelGenerators.ROTATION_FACING));
 	}
 
 	private void registerInterdictionLantern(BlockModelGenerators models) {

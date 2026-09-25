@@ -80,7 +80,7 @@ public class PEItemModelProvider extends ModelProvider {
 		generateShields(itemModels);
 		generateTridents(itemModels);
 		activeDispatch(itemModels, PEItems.GEM_OF_ETERNAL_DENSITY, material("item/dense_gem_off"),
-				() -> ItemModelUtils.plainModel(generatedModel(itemModels, PEItems.GEM_OF_ETERNAL_DENSITY, material("item/dense_gem_on"), ModelTemplates.FLAT_ITEM)));
+				() -> ItemModelUtils.plainModel(generatedModel(itemModels, "gem_of_eternal_density_on", material("item/dense_gem_on"), ModelTemplates.FLAT_ITEM)));
 		//Note: We don't actually have a manual, but I moved this model over to data gen anyways
 		Identifier manual = ModelTemplates.FLAT_ITEM.create(Identifier.fromNamespaceAndPath(PECore.MODID, "item/manual"),
 				TextureMapping.layer0(material("item/book")), itemModels.modelOutput);
@@ -269,7 +269,8 @@ public class PEItemModelProvider extends ModelProvider {
 			String suffix = trim.palette().suffix();
 			Identifier trimModel = ModelLocationUtils.getModelLocation(item.asItem()).withSuffix("_" + suffix + "_trim");
 			Material trimTexture = new Material(ItemModelGenerators.prefixForSlotTrim(armorType.getName()).withSuffix("_" + suffix));
-			ModelTemplates.THREE_LAYERED_ITEM.create(trimModel, TextureMapping.layered(armorTexture, trimTexture), models.modelOutput);
+			//Since 26.3 trimmable armor without a dye layer uses a two layered item (armor + trim), same as vanilla
+			models.generateLayeredItem(trimModel, armorTexture, trimTexture);
 			cases.add(ItemModelUtils.when(trim.materialKey(), ItemModelUtils.plainModel(trimModel)));
 		}
 		models.itemModelOutput.accept(item.asItem(), ItemModelUtils.select(new TrimMaterialProperty(),
