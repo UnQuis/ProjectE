@@ -3,6 +3,7 @@ package moze_intel.projecte.emc.mappers.recipe.special;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.BannerDuplicateRecipe;
@@ -22,7 +23,7 @@ class SpecialRecipeMarkHandledMapperTest {
 		SpecialRecipeMarkHandledMapper mapper = new SpecialRecipeMarkHandledMapper();
 		RecipeHolder<?> bannerRecipe = new RecipeHolder<>(ResourceKey.create(Registries.RECIPE,
 				Identifier.fromNamespaceAndPath("projecte", "banner_duplicate_test")),
-				new BannerDuplicateRecipe(Ingredient.of(Items.WHITE_BANNER), new ItemStackTemplate(Items.WHITE_BANNER)));
+				new BannerDuplicateRecipe(Ingredient.of(Items.BANNER.pick(DyeColor.WHITE)), new ItemStackTemplate(Items.BANNER.pick(DyeColor.WHITE))));
 		RecipeHolder<?> bookRecipe = new RecipeHolder<>(ResourceKey.create(Registries.RECIPE,
 				Identifier.fromNamespaceAndPath("projecte", "book_clone_test")),
 				new BookCloningRecipe(Ingredient.of(Items.WRITABLE_BOOK), Ingredient.of(Items.PAPER),

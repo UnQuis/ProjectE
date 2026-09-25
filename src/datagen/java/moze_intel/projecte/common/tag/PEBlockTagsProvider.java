@@ -10,6 +10,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagAppender;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
@@ -25,41 +26,41 @@ public class PEBlockTagsProvider extends BlockTagsProvider {
 
 	@Override
 	protected void addTags(HolderLookup.Provider provider) {
-		tag(PETags.Blocks.FARMING_OVERRIDE).add(Blocks.PINK_PETALS);
-		TagAppender<Block, Block> blacklistHarvest = tag(PETags.Blocks.BLACKLIST_HARVEST);
+		tag(PETags.Blocks.FARMING_OVERRIDE).add(vanillaBlock(Blocks.PINK_PETALS));
+		TagAppender<Block> blacklistHarvest = tag(PETags.Blocks.BLACKLIST_HARVEST);
 		//Add blocks that sometimes return false from isValidBonemealTarget, but that we don't actually want to be broken
 		blacklistHarvest.add(
 				//If there is no neighboring nylium we don't want to cause the netherrack to be broken
-				Blocks.NETHERRACK,
+				vanillaBlock(Blocks.NETHERRACK),
 				//If it doesn't have air above it
-				Blocks.BAMBOO_SAPLING,
+				vanillaBlock(Blocks.BAMBOO_SAPLING),
 				//If it doesn't have air below it
-				Blocks.ROOTED_DIRT,
+				vanillaBlock(Blocks.ROOTED_DIRT),
 				//If it has a fluid above it
-				Blocks.AZALEA,
-				Blocks.FLOWERING_AZALEA,
+				vanillaBlock(Blocks.AZALEA),
+				vanillaBlock(Blocks.FLOWERING_AZALEA),
 				//If it doesn't have air
-				Blocks.BIG_DRIPLEAF,
-				Blocks.BIG_DRIPLEAF_STEM
+				vanillaBlock(Blocks.BIG_DRIPLEAF),
+				vanillaBlock(Blocks.BIG_DRIPLEAF_STEM)
 		);
-		TagAppender<Block, Block> overridePlantable = tag(PETags.Blocks.OVERRIDE_PLANTABLE);
+		TagAppender<Block> overridePlantable = tag(PETags.Blocks.OVERRIDE_PLANTABLE);
 		addTags(overridePlantable,
 				BlockTags.LEAVES,
 				//Note: All vanilla tall flowers are bonemealable, so will get handled before being used by this tag
 				// but if a mod adds a tall flower that doesn't inherit the class hierarchy, having this could be useful
 				BlockTags.FLOWERS,
 				Tags.Blocks.PUMPKINS_NORMAL);
-		overridePlantable.add(Blocks.MELON);
+		overridePlantable.add(vanillaBlock(Blocks.MELON));
 		for (Block block : BuiltInRegistries.BLOCK) {
 			if (WorldHelper.isPlantableImplementation(block)) {
-				overridePlantable.add(block);
+				overridePlantable.add(vanillaBlock(block));
 			}
 			if (WorldHelper.isUnharvestableImplementation(block)) {
-				blacklistHarvest.add(block);
+				blacklistHarvest.add(vanillaBlock(block));
 			}
 		}
 		tag(PETags.Blocks.BLACKLIST_TIME_WATCH);
-		tag(PETags.Blocks.VEIN_SHOVEL).add(Blocks.CLAY).addTag(Tags.Blocks.GRAVELS);
+		tag(PETags.Blocks.VEIN_SHOVEL).add(vanillaBlock(Blocks.CLAY)).addTag(Tags.Blocks.GRAVELS);
 		//Vanilla/Forge Tags
 		tag(Tags.Blocks.BARRELS).add(projecteBlock(PEBlocks.ALCHEMICAL_BARREL));
 		tag(Tags.Blocks.CHESTS).add(projecteBlock(PEBlocks.ALCHEMICAL_CHEST));
@@ -115,11 +116,11 @@ public class PEBlockTagsProvider extends BlockTagsProvider {
 		//MINEABLE_WITH_PE_SHEARS
 		addTags(tag(PETags.Blocks.MINEABLE_WITH_PE_HAMMER), PETags.Blocks.MINEABLE_WITH_HAMMER,
 				BlockTags.MINEABLE_WITH_PICKAXE);
-		tag(PETags.Blocks.MINEABLE_WITH_PE_SHEARS).add(Blocks.COBWEB);
-		tag(PETags.Blocks.MINEABLE_WITH_PE_SWORD).add(Blocks.COBWEB);
+		tag(PETags.Blocks.MINEABLE_WITH_PE_SHEARS).add(vanillaBlock(Blocks.COBWEB));
+		tag(PETags.Blocks.MINEABLE_WITH_PE_SWORD).add(vanillaBlock(Blocks.COBWEB));
 		addTags(tag(PETags.Blocks.MINEABLE_WITH_PE_KATAR), PETags.Blocks.MINEABLE_WITH_KATAR,
 				BlockTags.MINEABLE_WITH_AXE, BlockTags.MINEABLE_WITH_HOE, PETags.Blocks.MINEABLE_WITH_PE_SHEARS,
-				PETags.Blocks.MINEABLE_WITH_PE_SWORD).add(Blocks.COBWEB);
+				PETags.Blocks.MINEABLE_WITH_PE_SWORD).add(vanillaBlock(Blocks.COBWEB));
 		addTags(tag(PETags.Blocks.MINEABLE_WITH_PE_MORNING_STAR), PETags.Blocks.MINEABLE_WITH_MORNING_STAR,
 				PETags.Blocks.MINEABLE_WITH_PE_HAMMER, BlockTags.MINEABLE_WITH_SHOVEL);
 
@@ -133,11 +134,15 @@ public class PEBlockTagsProvider extends BlockTagsProvider {
 				projecteBlock(PEBlocks.RED_MATTER_FURNACE), projecteBlock(PEBlocks.CONDENSER_MK2));
 	}
 
-	private static Block projecteBlock(BlockRegistryObject<?, ?> block) {
-		return block.getBlock();
+	private static ResourceKey<Block> projecteBlock(BlockRegistryObject<?, ?> block) {
+		return vanillaBlock(block.getBlock());
 	}
 
-	private static TagAppender<Block, Block> addTags(TagAppender<Block, Block> appender, TagKey<Block>... tags) {
+	private static ResourceKey<Block> vanillaBlock(Block block) {
+		return BuiltInRegistries.BLOCK.getResourceKey(block).orElseThrow();
+	}
+
+	private static TagAppender<Block> addTags(TagAppender<Block> appender, TagKey<Block>... tags) {
 		for (TagKey<Block> tag : tags) {
 			appender.addTag(tag);
 		}

@@ -14,6 +14,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagAppender;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
@@ -46,15 +47,15 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 		tag(ItemTags.BOOKSHELF_BOOKS).add(projecteItem(PEItems.TOME_OF_KNOWLEDGE));
 		tag(ItemTags.FREEZE_IMMUNE_WEARABLES).add(projecteItem(PEItems.GEM_CHESTPLATE));
 		tag(PETags.Items.COLLECTOR_FUEL).add(
-				Items.CHARCOAL,
-				Items.REDSTONE,
-				Items.REDSTONE_BLOCK,
-				Items.COAL,
-				Items.COAL_BLOCK,
-				Items.GUNPOWDER,
-				Items.GLOWSTONE_DUST,
-				Items.BLAZE_POWDER,
-				Items.GLOWSTONE,
+				itemKey(Items.CHARCOAL),
+				itemKey(Items.REDSTONE),
+				itemKey(Items.REDSTONE_BLOCK),
+				itemKey(Items.COAL),
+				itemKey(Items.COAL_BLOCK),
+				itemKey(Items.GUNPOWDER),
+				itemKey(Items.GLOWSTONE_DUST),
+				itemKey(Items.BLAZE_POWDER),
+				itemKey(Items.GLOWSTONE),
 				projecteItem(PEItems.ALCHEMICAL_COAL),
 				projecteItem(PEBlocks.ALCHEMICAL_COAL),
 				projecteItem(PEItems.MOBIUS_FUEL),
@@ -87,7 +88,7 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 				projecteItem(PEBlocks.DARK_MATTER_FURNACE),
 				projecteItem(PEBlocks.RED_MATTER_FURNACE)
 		);
-		TagAppender<Item, Item> kleinStars = tag(PETags.Items.KLEIN_STARS);
+		TagAppender<Item> kleinStars = tag(PETags.Items.KLEIN_STARS);
 		for (KleinTier tier : KleinTier.values()) {
 			kleinStars.add(projecteItem(PEItems.getStar(tier)));
 		}
@@ -132,35 +133,35 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 	}
 
 	private void addIgnoreMissing() {
-		TagAppender<Item, Item> ignoreMissingEMC = tag(PETags.Items.IGNORE_MISSING_EMC).add(
-				Items.DEBUG_STICK, Items.KNOWLEDGE_BOOK, Items.STRUCTURE_VOID, Items.FROGSPAWN,
-				Items.PETRIFIED_OAK_SLAB, Items.REINFORCED_DEEPSLATE, Items.SPAWNER, Items.TRIAL_SPAWNER,
-				Items.VAULT, Items.TRIAL_KEY, Items.OMINOUS_TRIAL_KEY, Items.ELYTRA,
-				Items.TOTEM_OF_UNDYING, Items.EXPERIENCE_BOTTLE, Items.OMINOUS_BOTTLE, Items.DRAGON_HEAD,
-				Items.PLAYER_HEAD, Items.WITHER_SKELETON_SKULL, Items.BEE_NEST, Items.FARMLAND,
-				Items.COMMAND_BLOCK_MINECART, Items.BUDDING_AMETHYST, Items.SMALL_AMETHYST_BUD,
-				Items.MEDIUM_AMETHYST_BUD, Items.LARGE_AMETHYST_BUD,
+		TagAppender<Item> ignoreMissingEMC = tag(PETags.Items.IGNORE_MISSING_EMC).add(
+				itemKey(Items.DEBUG_STICK), itemKey(Items.KNOWLEDGE_BOOK), itemKey(Items.STRUCTURE_VOID), itemKey(Items.FROGSPAWN),
+				itemKey(Items.PETRIFIED_OAK_SLAB), itemKey(Items.REINFORCED_DEEPSLATE), itemKey(Items.SPAWNER), itemKey(Items.TRIAL_SPAWNER),
+				itemKey(Items.VAULT), itemKey(Items.TRIAL_KEY), itemKey(Items.OMINOUS_TRIAL_KEY), itemKey(Items.ELYTRA),
+				itemKey(Items.TOTEM_OF_UNDYING), itemKey(Items.EXPERIENCE_BOTTLE), itemKey(Items.OMINOUS_BOTTLE), itemKey(Items.DRAGON_HEAD),
+				itemKey(Items.PLAYER_HEAD), itemKey(Items.WITHER_SKELETON_SKULL), itemKey(Items.BEE_NEST), itemKey(Items.FARMLAND),
+				itemKey(Items.COMMAND_BLOCK_MINECART), itemKey(Items.BUDDING_AMETHYST), itemKey(Items.SMALL_AMETHYST_BUD),
+				itemKey(Items.MEDIUM_AMETHYST_BUD), itemKey(Items.LARGE_AMETHYST_BUD),
 				//Blocks that have no emc because it is less than one:
-				Items.STONE_SLAB, Items.COBBLESTONE_SLAB, Items.SMOOTH_STONE_SLAB,
-				Items.STONE_BRICK_SLAB, Items.END_STONE_BRICK_SLAB, Items.GLASS_PANE,
-				Items.CYAN_STAINED_GLASS_PANE, Items.GREEN_STAINED_GLASS_PANE, Items.LIME_STAINED_GLASS_PANE,
-				Items.MAGENTA_STAINED_GLASS_PANE, Items.PINK_STAINED_GLASS_PANE
+				itemKey(Items.STONE_SLAB), itemKey(Items.COBBLESTONE_SLAB), itemKey(Items.SMOOTH_STONE_SLAB),
+				itemKey(Items.STONE_BRICK_SLAB), itemKey(Items.END_STONE_BRICK_SLAB), itemKey(Items.GLASS_PANE),
+				itemKey(Items.STAINED_GLASS_PANE.pick(DyeColor.CYAN)), itemKey(Items.STAINED_GLASS_PANE.pick(DyeColor.GREEN)), itemKey(Items.STAINED_GLASS_PANE.pick(DyeColor.LIME)),
+				itemKey(Items.STAINED_GLASS_PANE.pick(DyeColor.MAGENTA)), itemKey(Items.STAINED_GLASS_PANE.pick(DyeColor.PINK))
 		);
 		addTags(ignoreMissingEMC, Tags.Items.CLUSTERS, Tags.Items.HIDDEN_FROM_RECIPE_VIEWERS);
 		for (Item item : BuiltInRegistries.ITEM) {
 			if (item instanceof SpawnEggItem || item instanceof MobBucketItem) {
-				ignoreMissingEMC.add(item);
+				ignoreMissingEMC.add(itemKey(item));
 			} else if (item instanceof BlockItem blockItem) {
 				Block block = blockItem.getBlock();
 				if (block instanceof InfestedBlock || block instanceof HugeMushroomBlock) {
-					ignoreMissingEMC.add(item);
+					ignoreMissingEMC.add(itemKey(item));
 				}
 			}
 		}
 	}
 
 	private void addBags() {
-		TagAppender<Item, Item> alchemicalBags = tag(PETags.Items.ALCHEMICAL_BAGS);
+		TagAppender<Item> alchemicalBags = tag(PETags.Items.ALCHEMICAL_BAGS);
 		for (DyeColor color : Constants.COLORS) {
 			ItemRegistryObject<AlchemicalBag> bag = PEItems.getBagReference(color);
 			alchemicalBags.add(projecteItem(bag));
@@ -171,31 +172,31 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 	private void addGear() {
 		addArmor();
 		addTags(tag(Tags.Items.TOOLS), PETags.Items.TOOLS_HAMMERS, PETags.Items.TOOLS_KATARS, PETags.Items.TOOLS_MORNING_STARS);
-		addTool(ItemTags.SWORDS, new Item[]{
-				projecteItem(PEItems.DARK_MATTER_SWORD), projecteItem(PEItems.RED_MATTER_SWORD)},
+		addTool(ItemTags.SWORDS, keys(
+				projecteItem(PEItems.DARK_MATTER_SWORD), projecteItem(PEItems.RED_MATTER_SWORD)),
 				ItemTags.WEAPON_ENCHANTABLE, ItemTags.SHARP_WEAPON_ENCHANTABLE, ItemTags.DURABILITY_ENCHANTABLE);
-		addTool(ItemTags.AXES, new Item[]{
-				projecteItem(PEItems.DARK_MATTER_AXE), projecteItem(PEItems.RED_MATTER_AXE)},
+		addTool(ItemTags.AXES, keys(
+				projecteItem(PEItems.DARK_MATTER_AXE), projecteItem(PEItems.RED_MATTER_AXE)),
 				ItemTags.SHARP_WEAPON_ENCHANTABLE, ItemTags.MINING_ENCHANTABLE, ItemTags.MINING_LOOT_ENCHANTABLE,
 				ItemTags.DURABILITY_ENCHANTABLE);
-		addTool(ItemTags.PICKAXES, new Item[]{
-				projecteItem(PEItems.DARK_MATTER_PICKAXE), projecteItem(PEItems.RED_MATTER_PICKAXE)},
+		addTool(ItemTags.PICKAXES, keys(
+				projecteItem(PEItems.DARK_MATTER_PICKAXE), projecteItem(PEItems.RED_MATTER_PICKAXE)),
 				ItemTags.MINING_ENCHANTABLE, ItemTags.MINING_LOOT_ENCHANTABLE, ItemTags.DURABILITY_ENCHANTABLE);
-		addTool(ItemTags.SHOVELS, new Item[]{
-				projecteItem(PEItems.DARK_MATTER_SHOVEL), projecteItem(PEItems.RED_MATTER_SHOVEL)},
+		addTool(ItemTags.SHOVELS, keys(
+				projecteItem(PEItems.DARK_MATTER_SHOVEL), projecteItem(PEItems.RED_MATTER_SHOVEL)),
 				ItemTags.MINING_ENCHANTABLE, ItemTags.MINING_LOOT_ENCHANTABLE, ItemTags.DURABILITY_ENCHANTABLE);
-		addTool(ItemTags.HOES, new Item[]{
-				projecteItem(PEItems.DARK_MATTER_HOE), projecteItem(PEItems.RED_MATTER_HOE)},
+		addTool(ItemTags.HOES, keys(
+				projecteItem(PEItems.DARK_MATTER_HOE), projecteItem(PEItems.RED_MATTER_HOE)),
 				ItemTags.MINING_ENCHANTABLE, ItemTags.MINING_LOOT_ENCHANTABLE, ItemTags.DURABILITY_ENCHANTABLE);
 
 		//Note: For our tool types these aren't added to any of the enchantable tags, but we remove them just in case someone else adds the base tags to an enchantable one
-		addTool(PETags.Items.TOOLS_HAMMERS, new Item[]{
-				projecteItem(PEItems.DARK_MATTER_HAMMER), projecteItem(PEItems.RED_MATTER_HAMMER)},
+		addTool(PETags.Items.TOOLS_HAMMERS, keys(
+				projecteItem(PEItems.DARK_MATTER_HAMMER), projecteItem(PEItems.RED_MATTER_HAMMER)),
 				ItemTags.MINING_ENCHANTABLE, ItemTags.MINING_LOOT_ENCHANTABLE, ItemTags.DURABILITY_ENCHANTABLE);
-		addTool(PETags.Items.TOOLS_KATARS, new Item[]{projecteItem(PEItems.RED_MATTER_KATAR)},
+		addTool(PETags.Items.TOOLS_KATARS, keys(projecteItem(PEItems.RED_MATTER_KATAR)),
 				ItemTags.WEAPON_ENCHANTABLE, ItemTags.SHARP_WEAPON_ENCHANTABLE, ItemTags.MINING_ENCHANTABLE,
 				ItemTags.MINING_LOOT_ENCHANTABLE);
-		addTool(PETags.Items.TOOLS_MORNING_STARS, new Item[]{projecteItem(PEItems.RED_MATTER_MORNING_STAR)},
+		addTool(PETags.Items.TOOLS_MORNING_STARS, keys(projecteItem(PEItems.RED_MATTER_MORNING_STAR)),
 				ItemTags.MINING_ENCHANTABLE, ItemTags.MINING_LOOT_ENCHANTABLE, ItemTags.DURABILITY_ENCHANTABLE);
 
 		tag(Tags.Items.MELEE_WEAPON_TOOLS).addTag(PETags.Items.TOOLS_KATARS);
@@ -205,8 +206,8 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 		//Shields
 		tag(Tags.Items.TOOLS_SHIELD).add(projecteItem(PEItems.DARK_MATTER_SHIELD), projecteItem(PEItems.RED_MATTER_SHIELD));
 		//Tridents
-		Item darkTrident = projecteItem(PEItems.DARK_MATTER_TRIDENT);
-		Item redTrident = projecteItem(PEItems.RED_MATTER_TRIDENT);
+		ResourceKey<Item> darkTrident = projecteItem(PEItems.DARK_MATTER_TRIDENT);
+		ResourceKey<Item> redTrident = projecteItem(PEItems.RED_MATTER_TRIDENT);
 		tag(ItemTags.SPEARS).add(darkTrident, redTrident);
 		tag(ItemTags.BREAKS_DECORATED_POTS).add(darkTrident, redTrident);
 		tag(Tags.Items.MELEE_WEAPON_TOOLS).add(darkTrident, redTrident);
@@ -228,23 +229,32 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 				projecteItem(PEItems.GEM_BOOTS));
 	}
 
-	private void addTool(TagKey<Item> toolTag, Item[] items, TagKey<Item>... enchantableTags) {
+	private void addTool(TagKey<Item> toolTag, ResourceKey<Item>[] items, TagKey<Item>... enchantableTags) {
 		tag(toolTag).add(items);
 		for (TagKey<Item> enchantableTag : enchantableTags) {
 			tag(enchantableTag).add(items);
 		}
 	}
 
-	private void addArmor(TagKey<Item> armorTag, TagKey<Item> armorTagEnchantable, Item... items) {
+	private void addArmor(TagKey<Item> armorTag, TagKey<Item> armorTagEnchantable, ResourceKey<Item>... items) {
 		tag(armorTag).add(items);
 		tag(armorTagEnchantable).add(items);
 	}
 
-	private static Item projecteItem(ItemLike item) {
-		return item.asItem();
+	private static ResourceKey<Item> projecteItem(ItemLike item) {
+		return itemKey(item);
 	}
 
-	private static TagAppender<Item, Item> addTags(TagAppender<Item, Item> appender, TagKey<Item>... tags) {
+	private static ResourceKey<Item> itemKey(ItemLike item) {
+		return BuiltInRegistries.ITEM.getResourceKey(item.asItem()).orElseThrow();
+	}
+
+	@SafeVarargs
+	private static ResourceKey<Item>[] keys(ResourceKey<Item>... items) {
+		return items;
+	}
+
+	private static TagAppender<Item> addTags(TagAppender<Item> appender, TagKey<Item>... tags) {
 		for (TagKey<Item> tag : tags) {
 			appender.addTag(tag);
 		}

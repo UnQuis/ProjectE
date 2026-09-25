@@ -2,7 +2,7 @@ package moze_intel.projecte.common.loot;
 
 import java.util.Set;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
-import net.minecraft.advancements.criterion.StatePropertiesPredicate;
+import net.minecraft.advancements.predicates.StatePropertiesPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
