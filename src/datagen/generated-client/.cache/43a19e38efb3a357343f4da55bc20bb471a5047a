@@ -1,4 +1,4 @@
-// 26.3	2026-09-25T18:44:05.803479332	ProjectE Item Models
+// 26.3	2026-09-25T18:45:53.998109543	ProjectE Item Models
 47543cc40f0158c5ed9bc11f266a1b0d0f5fae57 assets/projecte/items/aeternalis_fuel.json
 c4caed748e6bcf7e20f3fc60fa4292f6adabe643 assets/projecte/items/aeternalis_fuel_block.json
 e2f6f677824ff1edae8164718301c546c7653dcc assets/projecte/items/alchemical_barrel.json
@@ -114,7 +114,7 @@ c454877be59c3758248569f6ca7daba06bae3868 assets/projecte/items/watch_of_flowing_
 f041b24f0c7121aee5742987651d8311393d44f9 assets/projecte/items/yellow_alchemical_bag.json
 2c7e72fbc619803642b2528bec105f6a88864e09 assets/projecte/items/zero_ring.json
 d7e717885e108643bb32cfe6879ba780d12f36d5 assets/projecte/models/item/aeternalis_fuel.json
-6403e66fca3c73ab4957dba3c7768b709f352c7f assets/projecte/models/item/alchemical_chest.json
+3f34aa24296e2cf5bc8fbfeeb13771bcb4f443e7 assets/projecte/models/item/alchemical_chest.json
 92e11ec6288a813f040ff167956a866a9cd39b3a assets/projecte/models/item/alchemical_coal.json
 8e9c2beb938b6787987af6be5d094ab50b6cf61c assets/projecte/models/item/arcana_harvest_off.json
 66c74b97a20afee2322aabd7fc49d1c57745df24 assets/projecte/models/item/arcana_harvest_on.json
@@ -133,8 +133,8 @@ a2be67bac499fccb2fa26819a07d3bc7ccffe663 assets/projecte/models/item/black_hole_
 0cb1d61d40266e3f694b31267edceb3c5642b703 assets/projecte/models/item/body_stone_on.json
 dc643a13ab8940980784c796ae5b7c24b48f5828 assets/projecte/models/item/brown_alchemical_bag.json
 3dc12575d56ece277a53a2ebf76840d384d7a959 assets/projecte/models/item/catalytic_lens.json
-0933a278516f8ad918ec697e86e59974a1b4f5a6 assets/projecte/models/item/condenser_mk1.json
-9fd9ecff50fbd25d939f414d53bf774a3b0d936a assets/projecte/models/item/condenser_mk2.json
+0062545021a7aa07985869f35dd3b8ddf3d588d1 assets/projecte/models/item/condenser_mk1.json
+6a97207d12db27d90915ce04edaca2154baf41a9 assets/projecte/models/item/condenser_mk2.json
 438ec2a4912e6a02bae1c21b242ddf3419cc81b4 assets/projecte/models/item/cyan_alchemical_bag.json
 b87644aa98f01cdaef60e1c41dc93e409fa7d336 assets/projecte/models/item/dark_matter.json
 c9572447cce3d2a13704438ca845eaabc72cc725 assets/projecte/models/item/dark_matter_trident.json

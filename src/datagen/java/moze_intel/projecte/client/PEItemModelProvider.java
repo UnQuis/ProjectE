@@ -114,8 +114,11 @@ public class PEItemModelProvider extends ModelProvider {
 		Identifier model = ExtendedModelTemplateBuilder.builder()
 				.parent(PECore.rl("block/base_chest"))
 				.requiredTextureSlot(CHEST)
+				//Since 26.3 item models need their own particle texture reference
+				.requiredTextureSlot(TextureSlot.PARTICLE)
 				.build().create(ModelLocationUtils.getModelLocation(block.asItem()),
-						TextureMapping.singleSlot(CHEST, material("block/" + block.getName())), models.modelOutput);
+						new TextureMapping().put(CHEST, material("block/" + block.getName()))
+								.put(TextureSlot.PARTICLE, material("block/" + block.getName())), models.modelOutput);
 		models.itemModelOutput.accept(block.asItem(), ItemModelUtils.plainModel(model));
 	}
 
