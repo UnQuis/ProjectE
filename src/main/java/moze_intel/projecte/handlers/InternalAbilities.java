@@ -23,6 +23,10 @@ import net.neoforged.neoforge.common.NeoForgeMod;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
 import net.neoforged.neoforge.transfer.item.ItemUtil;
+import moze_intel.projecte.gameObjs.items.armor.GemHelmet;
+import net.minecraft.SharedConstants;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 
 public class InternalAbilities {
 
@@ -88,6 +92,15 @@ public class InternalAbilities {
 		boolean hasGemHelmet = !helmet.isEmpty() && helmet.is(PEItems.GEM_HELMET);
 		ItemStack chestplate = player.getItemBySlot(EquipmentSlot.CHEST);
 		boolean hasGemChestplate = !chestplate.isEmpty() && chestplate.is(PEItems.GEM_CHESTPLATE);
+		//26.3: the gem helmet's night vision is applied here instead of in the item's tick, as item ticks are only run on the server
+		// and the toggle has to be respected independently of the order in which armor is ticked
+		if (hasGemHelmet && !player.level().isClientSide()) {
+			if (GemHelmet.hasNightVision(helmet)) {
+				player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 11 * SharedConstants.TICKS_PER_SECOND, 0, true, false));
+			} else {
+				player.removeEffect(MobEffects.NIGHT_VISION);
+			}
+		}
 
 		WalkOnType waterWalkOnType = hasEvertide ? WalkOnType.ABLE_WITH_SPEED : (hasGemHelmet ? WalkOnType.ABLE : WalkOnType.UNABLE);
 		WalkOnType lavaWalkOnType = hasVolcanite ? WalkOnType.ABLE_WITH_SPEED : (hasGemChestplate ? WalkOnType.ABLE : WalkOnType.UNABLE);

@@ -8,13 +8,10 @@ import moze_intel.projecte.utils.PEKeybind;
 import moze_intel.projecte.utils.PlayerHelper;
 import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.ChatFormatting;
-import net.minecraft.SharedConstants;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EntityTypes;
@@ -55,7 +52,7 @@ public class GemHelmet extends GemArmorBase {
 		tooltip.accept(getComponent(hasNightVision(stack)));
 	}
 
-	private static boolean hasNightVision(ItemStack stack) {
+	public static boolean hasNightVision(ItemStack stack) {
 		return stack.getOrDefault(PEDataComponentTypes.NIGHT_VISION, NIGHT_VISION_DEFAULT);
 	}
 
@@ -72,12 +69,6 @@ public class GemHelmet extends GemArmorBase {
 		if (isArmorSlot(slot) && !level.isClientSide() && entity instanceof Player player) {
 			if (PlayerHelper.checkHealCooldown(player)) {
 				player.heal(2.0F);
-			}
-
-			if (hasNightVision(stack)) {
-				player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 11 * SharedConstants.TICKS_PER_SECOND, 0, true, false));
-			} else {
-				player.removeEffect(MobEffects.NIGHT_VISION);
 			}
 		}
 	}
