@@ -1,6 +1,5 @@
 package moze_intel.projecte.common;
 
-import java.util.function.Consumer;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.gameObjs.PETags;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
@@ -13,29 +12,31 @@ import net.minecraft.advancements.AdvancementType;
 import net.minecraft.advancements.predicates.ItemPredicate;
 import net.minecraft.advancements.triggers.InventoryChangeTrigger;
 import net.minecraft.core.HolderGetter;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.advancements.AdvancementSubProvider;
+import net.minecraft.data.worldgen.BootstrapContext;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ItemLike;
 
-public class PEAdvancementsGenerator implements AdvancementSubProvider {
+public class PEAdvancementsGenerator extends AdvancementSubProvider {
 
-	private HolderGetter<Item> items;
-	private Consumer<AdvancementHolder> output;
+	private final HolderGetter<Item> items;
+
+	public PEAdvancementsGenerator(BootstrapContext<Advancement> output) {
+		super(output);
+		this.items = output.lookup(Registries.ITEM);
+	}
 
 	@Override
-	public void generate(HolderLookup.Provider registries, Consumer<AdvancementHolder> output) {
-		this.items = registries.lookupOrThrow(Registries.ITEM);
-		this.output = output;
-
+	public void generate() {
 		AdvancementHolder root = Advancement.Builder.advancement()
-				.display(PEItems.PHILOSOPHERS_STONE,
+				.rootDisplay(PEItems.PHILOSOPHERS_STONE.asItem(),
 						PELang.PROJECTE.translate(),
 						PELang.ADVANCEMENTS_PROJECTE_DESCRIPTION.translate(),
-						Identifier.withDefaultNamespace("textures/gui/advancements/backgrounds/stone.png"),
+						Identifier.withDefaultNamespace("gui/advancements/backgrounds/stone"),
 						AdvancementType.TASK,
 						false,
 						false,
@@ -50,7 +51,7 @@ public class PEAdvancementsGenerator implements AdvancementSubProvider {
 	private static Advancement.Builder childDisplay(AdvancementHolder parent, ItemLike icon, ILangEntry title, ILangEntry description) {
 		return Advancement.Builder.advancement()
 				.parent(parent)
-				.display(icon, title.translate(), description.translate(), null, AdvancementType.TASK, true, true, false);
+				.display(new ItemStackTemplate(icon.asItem()), title.translate(), description.translate(), AdvancementType.TASK, true, true, false);
 	}
 
 	private void addTransmutation(AdvancementHolder parent) {

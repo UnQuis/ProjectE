@@ -9,13 +9,17 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.RegistrySetBuilder;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.registries.RegistryPatchGenerator;
+import net.minecraft.resources.RegistryDataLoader;
 import net.minecraft.world.damagesource.DamageType;
 import net.neoforged.neoforge.common.data.DatapackBuiltinEntriesProvider;
 
 public class PEDatapackRegistryProvider extends DatapackBuiltinEntriesProvider {
 
-	public PEDatapackRegistryProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> registries) {
-		super(output, registries, BUILDER, Set.of(PECore.MODID));
+	public PEDatapackRegistryProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> worldRegistries,
+			CompletableFuture<HolderLookup.Provider> reloadableRegistries) {
+		super(output, "reloadable", RegistryDataLoader.RELOADABLE_REGISTRIES,
+				RegistryPatchGenerator.createReloadableLookup(worldRegistries, reloadableRegistries, BUILDER), Set.of(PECore.MODID));
 	}
 
 	private static final RegistrySetBuilder BUILDER = new RegistrySetBuilder()

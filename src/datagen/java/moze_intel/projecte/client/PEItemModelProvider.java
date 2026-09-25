@@ -266,9 +266,9 @@ public class PEItemModelProvider extends ModelProvider {
 				TextureMapping.layer0(armorTexture), models.modelOutput);
 		List<SelectItemModel.SwitchCase<ResourceKey<TrimMaterial>>> cases = new ArrayList<>();
 		for (ItemModelGenerators.TrimMaterialData trim : ItemModelGenerators.TRIM_MATERIAL_MODELS) {
-			String suffix = trim.assets().base().suffix();
+			String suffix = trim.palette().suffix();
 			Identifier trimModel = ModelLocationUtils.getModelLocation(item.asItem()).withSuffix("_" + suffix + "_trim");
-			Material trimTexture = new Material(Identifier.withDefaultNamespace("trims/items/" + armorType.getName() + "_" + suffix));
+			Material trimTexture = new Material(ItemModelGenerators.prefixForSlotTrim(armorType.getName()).withSuffix("_" + suffix));
 			ModelTemplates.THREE_LAYERED_ITEM.create(trimModel, TextureMapping.layered(armorTexture, trimTexture), models.modelOutput);
 			cases.add(ItemModelUtils.when(trim.materialKey(), ItemModelUtils.plainModel(trimModel)));
 		}
