@@ -33,7 +33,9 @@ import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
@@ -146,9 +148,14 @@ public class PERecipeProvider extends RecipeProvider {
 				.save(recipeOutput.withConditions(TomeEnabledCondition.INSTANCE, FullKleinStarsCondition.INSTANCE),
 						PECore.rl("full_star_" + name).toString());
 		//Tome enabled but should not use full stars
-		baseTomeRecipe(alternate)
-				.define('K', PEItems.KLEIN_STAR_OMEGA)
-				.save(recipeOutput.withConditions(TomeEnabledCondition.INSTANCE, new NotCondition(FullKleinStarsCondition.INSTANCE)), PECore.rl(name).toString());
+		//Note: Since 26.3 the id may not be passed to save when it is the default one, which is the result item's id
+		RecipeOutput plainTomeOutput = recipeOutput.withConditions(TomeEnabledCondition.INSTANCE, new NotCondition(FullKleinStarsCondition.INSTANCE));
+		ShapedRecipeBuilder plainTome = baseTomeRecipe(alternate).define('K', PEItems.KLEIN_STAR_OMEGA);
+		if (alternate) {
+			plainTome.save(plainTomeOutput, PECore.rl("tome_alt").toString());
+		} else {
+			plainTome.save(plainTomeOutput);
+		}
 	}
 
 	private ShapedRecipeBuilder baseTomeRecipe(boolean alternate) {
@@ -471,8 +478,8 @@ public class PERecipeProvider extends RecipeProvider {
 	}
 
 	private Ingredient getFullKleinStarIngredient(KleinTier tier) {
-		ItemStack star = PEItems.getStar(tier).asStack(1);
-		star.set(PEDataComponentTypes.STORED_EMC, tier.maxEmc);
+		//Since 26.3, item components are not bound yet while the recipe providers run, so an ItemStack can't be created here
+		ItemStackTemplate star = new ItemStackTemplate(PEItems.getStar(tier).asItem(), 1, DataComponentPatch.builder().set(PEDataComponentTypes.STORED_EMC.get(), tier.maxEmc).build());
 		return DataComponentIngredient.of(false, star);
 	}
 
@@ -482,9 +489,10 @@ public class PERecipeProvider extends RecipeProvider {
 				.requires(getFullKleinStarIngredient(KleinTier.OMEGA))
 				.save(recipeOutput.withConditions(FullKleinStarsCondition.INSTANCE), result.getId().withPrefix("full_star_").toString());
 		//Full stars should not be used
+		//Note: Since 26.3 the id may not be passed to save when it is the default one, which is the result item's id
 		builder.get()
 				.requires(PEItems.KLEIN_STAR_OMEGA)
-				.save(recipeOutput.withConditions(new NotCondition(FullKleinStarsCondition.INSTANCE)), result.getId().toString());
+				.save(recipeOutput.withConditions(new NotCondition(FullKleinStarsCondition.INSTANCE)));
 	}
 
 	private void fuelUpgradeRecipe(RecipeOutput recipeOutput, ItemLike input, ItemLike output) {

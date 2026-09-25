@@ -49,11 +49,8 @@ public class ProjectEDataGenerator {
 		DataGenerator gen = event.getGenerator();
 		PackOutput output = gen.getPackOutput();
 		RegistrySetBuilder registryEntries = new RegistrySetBuilder()
-				.add(Registries.DAMAGE_TYPE, context -> {
-					for (PEDamageTypes.PEDamageType damageType : PEDamageTypes.DAMAGE_TYPES.values()) {
-						context.register(damageType.key(), new DamageType(damageType.msgId(), damageType.exhaustion()));
-					}
-				})
+				//Note: Damage types are defined as data (src/datagen/generated/data/projecte/damage_type/player_attack.json) since 26.3 already
+				// provides the minecraft:damage_type registry through its own bootstrap, so registering them here would conflict
 				.add(RecipeProvider.asBootstrap(PERecipeProvider::new))
 				.add(Registries.ADVANCEMENT, new AdvancementProvider(List.of(PEAdvancementsGenerator::new)))
 				.add(Registries.LOOT_TABLE, new LootTableProvider(Set.of(), List.of(

@@ -1,0 +1,8 @@
+{
+  "components": {
+    "minecraft:cooking_fuel": {
+      "burn_time": 230400,
+      "speed_multiplier": 1.0
+    }
+  }
+}

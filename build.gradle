@@ -195,7 +195,8 @@ neoForge.runs {
         programArgument('--nogui')
     }
     data {
-        data()
+        //Since 26.3, the old single 'data' run type was split into serverData/clientData; our generator runs on the server-side data run
+        serverData()
         programArguments.addAll('--all', '--output', project.file('src/datagen/generated/').getAbsolutePath(),
                 '--mod', 'projecte', '--existing', project.file('src/main/resources/').getAbsolutePath())
 

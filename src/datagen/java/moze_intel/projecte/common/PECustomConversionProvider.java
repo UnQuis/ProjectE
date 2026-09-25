@@ -5,6 +5,9 @@ import moze_intel.projecte.PECore;
 import moze_intel.projecte.api.data.CustomConversionProvider;
 import moze_intel.projecte.api.nss.NSSFake;
 import moze_intel.projecte.api.nss.NSSItem;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.InstrumentComponent;
 import moze_intel.projecte.api.nss.NormalizedSimpleStack;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
@@ -48,7 +51,8 @@ public class PECustomConversionProvider extends CustomConversionProvider {
 				.conversion(ingotTag("cyanite"), 4).ingredient(ingotTag("uranium")).propagateTags().end()
 		;
 		NormalizedSimpleStack singleEMC = NSSFake.create("single_emc");
-		ItemStack waterBottle = PotionContents.createItemStack(Items.POTION, Potions.WATER);
+		//Since 26.3, item components are not bound yet while the providers run, so an ItemStack can't be created here
+		NSSItem waterBottle = NSSItem.createItem(Items.POTION, DataComponentPatch.builder().set(DataComponents.POTION_CONTENTS, new PotionContents(Potions.WATER)).build());
 		createConversionBuilder(PECore.rl("defaults"))
 				.comment("Default values for vanilla items.")
 				.group("default")
@@ -383,8 +387,9 @@ public class PECustomConversionProvider extends CustomConversionProvider {
 				;
 	}
 
-	private ItemStack horn(HolderLookup.Provider registries, ResourceKey<Instrument> instrument) {
-		return InstrumentItem.create(Items.GOAT_HORN, registries.holderOrThrow(instrument));
+	private NormalizedSimpleStack horn(HolderLookup.Provider registries, ResourceKey<Instrument> instrument) {
+		//Since 26.3, item components are not bound yet while the providers run, so an ItemStack can't be created here
+		return NSSItem.createItem(Items.GOAT_HORN, DataComponentPatch.builder().set(DataComponents.INSTRUMENT, new InstrumentComponent(registries.<Instrument>holderOrThrow(instrument))).build());
 	}
 
 	private static NormalizedSimpleStack ingotTag(String ingot) {

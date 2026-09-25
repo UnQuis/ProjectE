@@ -1,5 +1,6 @@
 package moze_intel.projecte.common.loot;
 
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import java.util.Set;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import net.minecraft.advancements.predicates.StatePropertiesPredicate;
@@ -17,6 +18,8 @@ import net.minecraft.world.level.storage.loot.providers.number.ints.ContextIntPr
 import org.jetbrains.annotations.NotNull;
 
 public class PEBlockLootTable extends BlockLootSubProvider {
+
+	private final Set<Block> knownBlocks = new ReferenceOpenHashSet<>();
 
 	public PEBlockLootTable(LootTableSubProvider.Context output) {
 		super(Set.of(
@@ -82,5 +85,19 @@ public class PEBlockLootTable extends BlockLootSubProvider {
 				.name("main")
 				.add(LootItem.lootTableItem(tnt).when(MatchBlock.blockMatches(blocks, tnt,
 						StatePropertiesPredicate.Builder.properties().hasProperty(TntBlock.UNSTABLE, false)))))));
+	}
+
+	@Override
+	protected void add(@NotNull Block block, @NotNull LootTable.Builder table) {
+		//Overwrite the core register method to add to our list of known blocks
+		//Since 26.3 vanilla blocks carry their loot table reference directly, so without this override the provider would demand a builder for every vanilla block
+		super.add(block, table);
+		knownBlocks.add(block);
+	}
+
+	@NotNull
+	@Override
+	protected Iterable<Block> getKnownBlocks() {
+		return knownBlocks;
 	}
 }
