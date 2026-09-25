@@ -21,7 +21,7 @@
         {
           "model": {
             "type": "minecraft:special",
-            "base": "projecte:item/red_matter_trident",
+            "base": "minecraft:item/trident_in_hand",
             "model": {
               "type": "projecte:trident"
             },
@@ -55,7 +55,7 @@
         {
           "model": {
             "type": "minecraft:special",
-            "base": "projecte:item/red_matter_trident",
+            "base": "minecraft:item/trident_throwing",
             "model": {
               "type": "projecte:trident"
             },
@@ -89,7 +89,7 @@
       ],
       "fallback": {
         "type": "minecraft:special",
-        "base": "projecte:item/red_matter_trident",
+        "base": "minecraft:item/trident_in_hand",
         "model": {
           "type": "projecte:trident"
         },

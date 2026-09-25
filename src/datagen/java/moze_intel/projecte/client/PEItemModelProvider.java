@@ -238,8 +238,9 @@ public class PEItemModelProvider extends ModelProvider {
 	private void generateTridentModel(ItemModelGenerators models, ItemLike item) {
 		Identifier flat = ModelTemplates.FLAT_ITEM.create(ModelLocationUtils.getModelLocation(item.asItem()),
 				TextureMapping.layer0(material("item/" + itemName(item))), models.modelOutput);
-		ItemModel.Unbaked normal = ItemModelUtils.specialModel(flat, HAND_TRANSFORMATION, new TridentISTER.Unbaked());
-		ItemModel.Unbaked throwingModel = ItemModelUtils.specialModel(flat, HAND_TRANSFORMATION, new TridentISTER.Unbaked());
+		//Since 26.3 the base model of a special model also provides the display transforms, so vanilla's in hand/throwing trident models are used as the base
+		ItemModel.Unbaked normal = ItemModelUtils.specialModel(Identifier.withDefaultNamespace("item/trident_in_hand"), HAND_TRANSFORMATION, new TridentISTER.Unbaked());
+		ItemModel.Unbaked throwingModel = ItemModelUtils.specialModel(Identifier.withDefaultNamespace("item/trident_throwing"), HAND_TRANSFORMATION, new TridentISTER.Unbaked());
 		ItemModel.Unbaked inHand = ItemModelUtils.rangeSelect(USING_ITEM_PROPERTY, normal,
 				ItemModelUtils.override(normal, 0), ItemModelUtils.override(throwingModel, 1));
 		ItemModel.Unbaked dispatched = ItemModelUtils.select(new net.minecraft.client.renderer.item.properties.select.DisplayContext(), inHand,

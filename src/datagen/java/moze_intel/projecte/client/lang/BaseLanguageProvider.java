@@ -37,6 +37,11 @@ public abstract class BaseLanguageProvider extends LanguageProvider {
 
 	protected void add(IHasTranslationKey key, String value) {
 		add(key.getTranslationKey(), value);
+		String translationKey = key.getTranslationKey();
+		if (translationKey.startsWith("block." + modid + ".")) {
+			//Since 26.3 the tooltip of a block item resolves the item.* translation key, so the block names need an item.* alias as well
+			add("item." + modid + "." + translationKey.substring(("block." + modid + ".").length()), value);
+		}
 	}
 
 	private String getConfigSectionTranslationPath(IPEConfig config) {
