@@ -415,6 +415,10 @@ public class TransmutationInventory extends CombinedResourceHandler<ItemResource
 	 * @apiNote Call on server only
 	 */
 	public void writeIntoOutputSlot(int slot, ItemStack item) {
+		if (slot < 0 || slot >= outputs.size()) {
+			//Ignore invalid indices so a bad packet cannot crash the output handling
+			return;
+		}
 		long emcValue = IEMCProxy.INSTANCE.getValue(item);
 		if (emcValue > 0 && emcValue <= getAvailableEmcAsLong() && provider.hasKnowledge(item)) {
 			outputs.setStackInSlot(slot, item);
@@ -537,16 +541,34 @@ public class TransmutationInventory extends CombinedResourceHandler<ItemResource
 		PlayerHelper.updateScore((ServerPlayer) player, PlayerHelper.SCOREBOARD_EMC, emc);
 	}
 
+	/**
+	 * @param slot Flat index of a transmutation inventory slot, meaning the inputs and locks, followed by the learning slots, followed by the output slots.
+	 * @return The handler the given flat slot index belongs to, or null if the index is not part of the transmutation inventory
+	 */
 	public ResourceHandler<ItemResource> getHandlerForSlot(int slot) {
-		int index = getIndexFromSlot(slot);
-		if (index < inputLocks.size()) {
+		if (slot < 0) {
+			return null;
+		}
+		if (slot < inputLocks.size()) {
 			return inputLocks;
 		}
-		index -= inputLocks.size();
-		return index < learning.size() ? learning : outputs;
+		slot -= inputLocks.size();
+		if (slot < learning.size()) {
+			return learning;
+		}
+		slot -= learning.size();
+		//Anything outside the output slots (like the player inventory) is not part of the transmutation inventory
+		return slot < outputs.size() ? outputs : null;
 	}
 
+	/**
+	 * @param slot Flat index of a transmutation inventory slot, see {@link #getHandlerForSlot(int)}
+	 * @return The index of the given flat slot index within the handler it belongs to, or -1 if the index is not part of the transmutation inventory
+	 */
 	public int getIndexFromSlot(int slot) {
+		if (slot < 0) {
+			return -1;
+		}
 		if (slot < inputLocks.size()) {
 			return slot;
 		}
@@ -554,7 +576,8 @@ public class TransmutationInventory extends CombinedResourceHandler<ItemResource
 		if (slot < learning.size()) {
 			return slot;
 		}
-		return slot - learning.size();
+		slot -= learning.size();
+		return slot < outputs.size() ? slot : -1;
 	}
 
 	/**

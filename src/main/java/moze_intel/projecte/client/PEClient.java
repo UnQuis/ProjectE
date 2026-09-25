@@ -73,6 +73,8 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityJoinLevelEvent;
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 import org.jetbrains.annotations.Nullable;
+import moze_intel.projecte.network.packets.to_client.knowledge.KnowledgeSyncPKT;
+import net.neoforged.neoforge.client.event.ClientTickEvent;
 
 @Mod(value = PECore.MODID, dist = Dist.CLIENT)
 public class PEClient {
@@ -96,6 +98,8 @@ public class PEClient {
 		NeoForge.EVENT_BUS.addListener(this::onEntityJoinWorld);
 		NeoForge.EVENT_BUS.addListener(this::registerClientCommands);
 		NeoForge.EVENT_BUS.addListener(this::onDisconnect);
+		NeoForge.EVENT_BUS.addListener(this::onClientPlayerLoggingIn);
+		NeoForge.EVENT_BUS.addListener(this::onClientTick);
 		NeoForge.EVENT_BUS.addListener(this::tooltipEvent);
 	}
 
@@ -206,6 +210,16 @@ public class PEClient {
 		if (event.getPlayer() != null && GameStagesHelper.gameStagesLoaded) {
 			BlacklistManager.clearBlacklist();
 		}
+	}
+
+	private void onClientPlayerLoggingIn(ClientPlayerNetworkEvent.LoggingIn event) {
+		//26.3: the knowledge sync packet can be processed before the client player exists, in which case the data is applied now
+		KnowledgeSyncPKT.applyPendingData(event.getPlayer());
+	}
+
+	private void onClientTick(ClientTickEvent.Post event) {
+		//Safety net in case the client player was created without the logging in event firing before the first tick
+		KnowledgeSyncPKT.applyPendingData(Minecraft.getInstance().player);
 	}
 
 	private void tooltipEvent(ItemTooltipEvent event) {
