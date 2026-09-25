@@ -212,8 +212,10 @@ public class PEItemModelProvider extends ModelProvider {
 	}
 
 	private void generateShieldModel(ItemModelGenerators models, ItemLike item) {
-		ItemModel.Unbaked normal = ItemModelUtils.specialModel(PECore.rl("shield"), new ShieldISTER.Unbaked());
-		ItemModel.Unbaked blocking = ItemModelUtils.specialModel(PECore.rl("shield"), new ShieldISTER.Unbaked());
+		//Since 26.3 the special model element requires a base model that exists, our renderer draws the shield itself, so vanilla's shield item model is used as the base
+		Identifier base = Identifier.withDefaultNamespace("item/shield");
+		ItemModel.Unbaked normal = ItemModelUtils.specialModel(base, new ShieldISTER.Unbaked());
+		ItemModel.Unbaked blocking = ItemModelUtils.specialModel(base, new ShieldISTER.Unbaked());
 		models.itemModelOutput.accept(item.asItem(), ItemModelUtils.rangeSelect(USING_ITEM_PROPERTY, normal,
 				ItemModelUtils.override(normal, 0), ItemModelUtils.override(blocking, 1)));
 	}
@@ -226,8 +228,8 @@ public class PEItemModelProvider extends ModelProvider {
 	private void generateTridentModel(ItemModelGenerators models, ItemLike item) {
 		Identifier flat = ModelTemplates.FLAT_ITEM.create(ModelLocationUtils.getModelLocation(item.asItem()),
 				TextureMapping.layer0(material("item/" + itemName(item))), models.modelOutput);
-		ItemModel.Unbaked normal = ItemModelUtils.specialModel(PECore.rl("trident"), new TridentISTER.Unbaked());
-		ItemModel.Unbaked throwingModel = ItemModelUtils.specialModel(PECore.rl("trident"), new TridentISTER.Unbaked());
+		ItemModel.Unbaked normal = ItemModelUtils.specialModel(flat, new TridentISTER.Unbaked());
+		ItemModel.Unbaked throwingModel = ItemModelUtils.specialModel(flat, new TridentISTER.Unbaked());
 		ItemModel.Unbaked inHand = ItemModelUtils.rangeSelect(USING_ITEM_PROPERTY, normal,
 				ItemModelUtils.override(normal, 0), ItemModelUtils.override(throwingModel, 1));
 		ItemModel.Unbaked dispatched = ItemModelUtils.select(new net.minecraft.client.renderer.item.properties.select.DisplayContext(), inHand,

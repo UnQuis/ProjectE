@@ -5,7 +5,7 @@
       {
         "model": {
           "type": "minecraft:special",
-          "base": "projecte:shield",
+          "base": "minecraft:item/shield",
           "model": {
             "type": "projecte:shield"
           }
@@ -15,7 +15,7 @@
       {
         "model": {
           "type": "minecraft:special",
-          "base": "projecte:shield",
+          "base": "minecraft:item/shield",
           "model": {
             "type": "projecte:shield"
           }
@@ -25,7 +25,7 @@
     ],
     "fallback": {
       "type": "minecraft:special",
-      "base": "projecte:shield",
+      "base": "minecraft:item/shield",
       "model": {
         "type": "projecte:shield"
       }

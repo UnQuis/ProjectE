@@ -140,7 +140,9 @@ public class PEBlockStateProvider extends ModelProvider {
 						.face(Direction.UP, face -> face.uvs(0.25F, 0.25F, 0.75F, 0).texture(CHEST))
 						.face(Direction.DOWN, face -> face.uvs(0.75F, 0.25F, 1.25F, 0).texture(CHEST)));
 		builder.build().create(Identifier.fromNamespaceAndPath(PECore.MODID, "block/base_chest"),
-				new TextureMapping().put(CHEST, material("block/alchemical_chest")), models.modelOutput);
+				new TextureMapping().put(CHEST, material("block/alchemical_chest"))
+						//Since 26.3 item models wrapping this block model need the particle texture to be present
+						.put(TextureSlot.PARTICLE, material("block/alchemical_chest")), models.modelOutput);
 	}
 
 	private void particleOnly(BlockModelGenerators models, moze_intel.projecte.gameObjs.registration.impl.BlockRegistryObject<?, ?> block) {

@@ -1,4 +1,4 @@
-// 26.3	2026-09-25T18:20:15.928208655	ProjectE Item Models
+// 26.3	2026-09-25T18:44:05.803479332	ProjectE Item Models
 47543cc40f0158c5ed9bc11f266a1b0d0f5fae57 assets/projecte/items/aeternalis_fuel.json
 c4caed748e6bcf7e20f3fc60fa4292f6adabe643 assets/projecte/items/aeternalis_fuel_block.json
 e2f6f677824ff1edae8164718301c546c7653dcc assets/projecte/items/alchemical_barrel.json
@@ -21,8 +21,8 @@ a579a082c4a7f4d0776a3e27d6405baba8113932 assets/projecte/items/brown_alchemical_
 bd2270887f862e17ca1cd3ef43136ff3ed3bc04d assets/projecte/items/cyan_alchemical_bag.json
 bc8d05fb2da4815d3c3515374a64d958f50bd1bf assets/projecte/items/dark_matter.json
 e07fcd89ec7188628669549db7d4ec34ad750366 assets/projecte/items/dark_matter_block.json
-f2ad367a2909927a19a915da224405c6239e1439 assets/projecte/items/dark_matter_shield.json
-0f59ce509ce9422bdceb5db956662f1abffaa8db assets/projecte/items/dark_matter_trident.json
+ec53e66f169884052e5683eac010aa4e805c54ce assets/projecte/items/dark_matter_shield.json
+9b33e3d17205842e0aeefdfac501f12b31d70852 assets/projecte/items/dark_matter_trident.json
 0e228e610bd0ce3525ea8fb8220d54512d925d4a assets/projecte/items/destruction_catalyst.json
 928ccbdd5a4b5ae93e9651f28ffd28c957eadf52 assets/projecte/items/divining_rod_1.json
 fa3a65033233853a67b6c7c44412b4669acba195 assets/projecte/items/divining_rod_2.json
@@ -82,8 +82,8 @@ e4f4fd05ef76f0405fec5b5d47241b8cec786ef1 assets/projecte/items/purple_alchemical
 7ea7c82c090ddc13bf64798dc1d5c69fa5efaa7d assets/projecte/items/red_alchemical_bag.json
 782b2e650f3e6b1f0944c1b6b2d36f01cec71e3c assets/projecte/items/red_matter.json
 c7fe919a7a089cfc10f43a8d5e125e743d0751bd assets/projecte/items/red_matter_block.json
-f2ad367a2909927a19a915da224405c6239e1439 assets/projecte/items/red_matter_shield.json
-1d75b1ab1085b3457ecdfebd20ac5409c65b368e assets/projecte/items/red_matter_trident.json
+ec53e66f169884052e5683eac010aa4e805c54ce assets/projecte/items/red_matter_shield.json
+7d45719ae08e175a0c56aa35016f02353d19b8f9 assets/projecte/items/red_matter_trident.json
 83159b28d1c7a61acc31f38cab73b09de077eb44 assets/projecte/items/relay_mk1.json
 494813a83f3cd48e2e79093ea314714b84e42fce assets/projecte/items/relay_mk2.json
 2db2015e88a72d18873c46e3a85024216fcd5658 assets/projecte/items/relay_mk3.json
