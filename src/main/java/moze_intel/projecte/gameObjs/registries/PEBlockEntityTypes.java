@@ -14,7 +14,6 @@ import moze_intel.projecte.gameObjs.block_entities.DMPedestalBlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.EmcChestBlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.InterdictionBlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.InterdictionLanternBlockEntity;
-import moze_intel.projecte.gameObjs.block_entities.ItemHandlerResourceAdapter;
 import moze_intel.projecte.gameObjs.block_entities.RMFurnaceBlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.RelayMK1BlockEntity;
 import moze_intel.projecte.gameObjs.block_entities.RelayMK2BlockEntity;
@@ -98,7 +97,7 @@ public class PEBlockEntityTypes {
 			.clientTicker(AlchemicalBarrelBlockEntity::tickClient)
 			.serverTicker(AlchemicalBarrelBlockEntity::tickServer)
 			.with(PECapabilities.EMC_STORAGE_CAPABILITY, (be, side) -> be)
-			.with(Capabilities.Item.BLOCK, (barrel, side) -> ItemHandlerResourceAdapter.of(barrel.getInventory(side)))
+			.with(Capabilities.Item.BLOCK, AlchemicalBarrelBlockEntity.INVENTORY_PROVIDER)
 			.build();
 	public static final BlockEntityTypeRegistryObject<InterdictionLanternBlockEntity> INTERDICTION_LANTERN = BLOCK_ENTITY_TYPES.builder(PEBlocks.INTERDICTION_LANTERN, InterdictionLanternBlockEntity::new)
 			.commonTicker(InterdictionLanternBlockEntity::tick)

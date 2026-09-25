@@ -34,7 +34,9 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.common.util.BlockSnapshot;
 import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.level.BlockEvent.EntityMultiPlaceEvent;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 /**
  * Helper class for player-related methods. Notice: Please try to keep methods tidy and alphabetically ordered. Thanks!
@@ -126,10 +128,10 @@ public final class PlayerHelper {
 		if (!offhand.isEmpty() && checker.test(player, offhand)) {
 			return true;
 		}
-		IItemHandler curios = player.getCapability(IntegrationHelper.CURIO_ITEM_HANDLER);
+		ResourceHandler<ItemResource> curios = player.getCapability(IntegrationHelper.CURIO_ITEM_HANDLER);
 		if (curios != null) {
-			for (int i = 0, slots = curios.getSlots(); i < slots; i++) {
-				ItemStack stack = curios.getStackInSlot(i);
+			for (int i = 0, slots = curios.size(); i < slots; i++) {
+				ItemStack stack = ItemUtil.getStack(curios, i);
 				if (!stack.isEmpty() && checker.test(player, stack)) {
 					return true;
 				}

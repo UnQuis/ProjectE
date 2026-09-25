@@ -9,7 +9,8 @@ import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 import org.jetbrains.annotations.NotNull;
 
 public final class PEStreamCodecs {
@@ -34,23 +35,25 @@ public final class PEStreamCodecs {
 			Vec3::new
 	);
 
-	public static StreamCodec<RegistryFriendlyByteBuf, ItemStackHandler> handlerStreamCodec(int handlerSize) {
+	public static StreamCodec<RegistryFriendlyByteBuf, ItemStacksResourceHandler> handlerStreamCodec(int handlerSize) {
 		return new StreamCodec<>() {
 			@Override
-			public void encode(@NotNull RegistryFriendlyByteBuf buffer, @NotNull ItemStackHandler handler) {
+			public void encode(@NotNull RegistryFriendlyByteBuf buffer, @NotNull ItemStacksResourceHandler handler) {
 				for (int slot = 0; slot < handlerSize; slot++) {
-					ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, handler.getStackInSlot(slot));
+					ItemResource resource = handler.getResource(slot);
+					ItemStack.OPTIONAL_STREAM_CODEC.encode(buffer, resource.isEmpty() ? ItemStack.EMPTY : resource.toStack(handler.getAmountAsInt(slot)));
 				}
 			}
 
 			@NotNull
 			@Override
-			public ItemStackHandler decode(@NotNull RegistryFriendlyByteBuf buffer) {
-				ItemStackHandler locks = new ItemStackHandler(handlerSize);
+			public ItemStacksResourceHandler decode(@NotNull RegistryFriendlyByteBuf buffer) {
+				ItemStacksResourceHandler handler = new ItemStacksResourceHandler(handlerSize);
 				for (int slot = 0; slot < handlerSize; slot++) {
-					locks.setStackInSlot(slot, ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer));
+					ItemStack stack = ItemStack.OPTIONAL_STREAM_CODEC.decode(buffer);
+					handler.set(slot, ItemResource.of(stack), stack.getCount());
 				}
-				return locks;
+				return handler;
 			}
 		};
 	}

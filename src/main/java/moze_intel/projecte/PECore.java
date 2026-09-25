@@ -100,10 +100,11 @@ import net.neoforged.neoforge.event.OnDatapackSyncEvent;
 import net.neoforged.neoforge.event.RegisterCommandsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
-import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import net.neoforged.neoforge.registries.ModifyRegistriesEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.callback.ClearCallback;
@@ -254,9 +255,12 @@ public class PECore {
 					Level level = source.level();
 					Direction direction = source.state().getValue(DispenserBlock.FACING);
 					BlockPos pos = source.pos().relative(direction);
-					IFluidHandler fluidHandler = IFluidHandler.of(WorldHelper.getCapability(level, Capabilities.Fluid.BLOCK, pos, direction.getOpposite()));
+					ResourceHandler<FluidResource> fluidHandler = WorldHelper.getCapability(level, Capabilities.Fluid.BLOCK, pos, direction.getOpposite());
 					if (fluidHandler != null) {
-						fluidHandler.fill(new FluidStack(Fluids.WATER, FluidType.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE);
+						try (Transaction transaction = Transaction.openRoot()) {
+							fluidHandler.insert(FluidResource.of(Fluids.WATER), FluidType.BUCKET_VOLUME, transaction);
+							transaction.commit();
+						}
 						return stack;
 					}
 					WorldHelper.placeFluid(null, level, pos, Fluids.WATER, !ProjectEConfig.server.items.opEvertide.get());

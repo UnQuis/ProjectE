@@ -33,8 +33,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.LevelResource;
 import net.neoforged.fml.util.thread.EffectiveSide;
 import net.neoforged.neoforge.attachment.AttachmentHolder;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.jetbrains.annotations.NotNull;
 
 public class TransmutationOffline {
@@ -96,7 +96,7 @@ public class TransmutationOffline {
 		final IKnowledgeProvider toCopy = KnowledgeImpl.wrapAttachment(attachment);
 		return new IKnowledgeProvider() {
 			final Set<ItemInfo> immutableKnowledge = Collections.unmodifiableSet(toCopy.getKnowledge());
-			final IItemHandlerModifiable immutableInputLocks = ItemHelper.immutableCopy(toCopy.getInputAndLocks());
+			final ResourceHandler<ItemResource> immutableInputLocks = ItemHelper.immutableCopy(toCopy.getInputAndLocks());
 
 			@Override
 			public boolean hasFullKnowledge() {
@@ -134,7 +134,7 @@ public class TransmutationOffline {
 
 			@NotNull
 			@Override
-			public IItemHandler getInputAndLocks() {
+			public ResourceHandler<ItemResource> getInputAndLocks() {
 				return immutableInputLocks;
 			}
 

@@ -6,7 +6,8 @@ import moze_intel.projecte.gameObjs.registries.PEContainerTypes;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.jetbrains.annotations.NotNull;
 
 public class AlchemicalBarrelContainer extends PEContainer {
@@ -17,7 +18,7 @@ public class AlchemicalBarrelContainer extends PEContainer {
 		super(PEContainerTypes.ALCHEMICAL_BARREL_CONTAINER, windowId, playerInv);
 		this.blockEntity = barrel;
 		this.blockEntity.startOpen(playerInv.player);
-		IItemHandler inv = this.blockEntity.getInventory(null);
+		ResourceHandler<ItemResource> inv = this.blockEntity.getInventory(null);
 		//Barrel Inventory
 		for (int i = 0; i < 8; i++) {
 			for (int j = 0; j < 13; j++) {

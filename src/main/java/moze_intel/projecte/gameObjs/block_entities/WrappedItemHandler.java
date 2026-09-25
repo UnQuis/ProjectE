@@ -1,65 +1,56 @@
 package moze_intel.projecte.gameObjs.block_entities;
 
-import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import org.jetbrains.annotations.NotNull;
+import java.util.Objects;
+import net.neoforged.neoforge.transfer.DelegatingResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.TransferPreconditions;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 
 /**
- * IItemHandler implementation for exposure to the public Useful when you want the IItemHandler itself to have full in/out access internally but restricted access in
- * public
+ * Ограничивает направление перемещений ресурсов, сохраняя остальную семантику делегируемого обработчика.
  */
-public class WrappedItemHandler implements IItemHandlerModifiable {
+public class WrappedItemHandler extends DelegatingResourceHandler<ItemResource> {
 
-	private final IItemHandlerModifiable compose;
 	private final WriteMode mode;
 
-	public WrappedItemHandler(IItemHandlerModifiable compose, WriteMode mode) {
-		this.compose = compose;
+	public WrappedItemHandler(ResourceHandler<ItemResource> delegate, WriteMode mode) {
+		super(delegate);
 		this.mode = mode;
 	}
 
 	@Override
-	public int getSlots() {
-		return compose.getSlots();
+	public int insert(int index, ItemResource resource, int amount, TransactionContext transaction) {
+		Objects.checkIndex(index, size());
+		TransferPreconditions.checkNonEmptyNonNegative(resource, amount);
+		return mode == WriteMode.IN || mode == WriteMode.IN_OUT ? super.insert(index, resource, amount, transaction) : 0;
 	}
 
-	@NotNull
 	@Override
-	public ItemStack getStackInSlot(int slot) {
-		return compose.getStackInSlot(slot);
-	}
-
-	@NotNull
-	@Override
-	public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-		if (mode == WriteMode.IN || mode == WriteMode.IN_OUT) {
-			return compose.insertItem(slot, stack, simulate);
+	public int insert(ItemResource resource, int amount, TransactionContext transaction) {
+		TransferPreconditions.checkNonEmptyNonNegative(resource, amount);
+		int inserted = 0;
+		for (int index = 0; index < size() && inserted < amount; index++) {
+			inserted += insert(index, resource, amount - inserted, transaction);
 		}
-		return stack;
+		return inserted;
 	}
 
-	@NotNull
 	@Override
-	public ItemStack extractItem(int slot, int amount, boolean simulate) {
-		if (mode == WriteMode.OUT || mode == WriteMode.IN_OUT) {
-			return compose.extractItem(slot, amount, simulate);
+	public int extract(int index, ItemResource resource, int amount, TransactionContext transaction) {
+		Objects.checkIndex(index, size());
+		TransferPreconditions.checkNonEmptyNonNegative(resource, amount);
+		return mode == WriteMode.OUT || mode == WriteMode.IN_OUT ? super.extract(index, resource, amount, transaction) : 0;
+	}
+
+	@Override
+	public int extract(ItemResource resource, int amount, TransactionContext transaction) {
+		TransferPreconditions.checkNonEmptyNonNegative(resource, amount);
+		int extracted = 0;
+		for (int index = 0; index < size() && extracted < amount; index++) {
+			extracted += extract(index, resource, amount - extracted, transaction);
 		}
-		return ItemStack.EMPTY;
-	}
-
-	@Override
-	public int getSlotLimit(int slot) {
-		return compose.getSlotLimit(slot);
-	}
-
-	@Override
-	public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-		return compose.isItemValid(slot, stack);
-	}
-
-	@Override
-	public void setStackInSlot(int slot, @NotNull ItemStack stack) {
-		compose.setStackInSlot(slot, stack);
+		return extracted;
 	}
 
 	public enum WriteMode {

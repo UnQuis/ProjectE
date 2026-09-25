@@ -18,6 +18,7 @@ import moze_intel.projecte.gameObjs.container.DMFurnaceContainer;
 import moze_intel.projecte.gameObjs.container.slots.SlotPredicates;
 import moze_intel.projecte.gameObjs.registration.impl.BlockEntityTypeRegistryObject;
 import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
+import moze_intel.projecte.utils.ItemHelper;
 import moze_intel.projecte.utils.WorldHelper;
 import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.SharedConstants;
@@ -56,29 +57,27 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import net.neoforged.neoforge.common.Tags;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
+import net.neoforged.neoforge.transfer.CombinedResourceHandler;
 import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
 import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
 public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider, RecipeCraftingHolder {
 
-	//Note: In 26.1 Capabilities.Item.BLOCK expects a provider that returns ResourceHandler<ItemResource>,
-	// so the legacy IItemHandler views below are adapted to that view in the provider
 	public static final ICapabilityProvider<DMFurnaceBlockEntity, @Nullable Direction, ResourceHandler<ItemResource>> INVENTORY_PROVIDER = (furnace, side) -> {
 		if (side == null) {
-			return ItemHandlerResourceAdapter.of(furnace.joined);
+			return furnace.joined;
 		} else if (side == Direction.UP) {
-			return ItemHandlerResourceAdapter.of(furnace.automationInput);
+			return furnace.automationInput;
 		} else if (side == Direction.DOWN) {
-			return ItemHandlerResourceAdapter.of(furnace.automationOutput);
+			return furnace.automationOutput;
 		}
-		return ItemHandlerResourceAdapter.of(furnace.automationSides);
+		return furnace.automationSides;
 	};
 	private static final long EMC_CONSUMPTION = 2;
 	private static final Codec<Map<Identifier, Integer>> RECIPES_USED_CODEC = Codec.unboundedMap(Identifier.CODEC, Codec.INT);
@@ -87,7 +86,8 @@ public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider
 		private ItemStack oldInput = ItemStack.EMPTY;
 
 		@Override
-		protected void onLoad() {
+		public void deserialize(ValueInput input) {
+			super.deserialize(input);
 			oldInput = getStackInSlot(0).copy();
 		}
 
@@ -109,10 +109,10 @@ public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider
 	private final CompactableStackHandler outputInventory = new CompactableStackHandler(getInvSize());
 	private final StackHandler fuelInv = new StackHandler(1);
 
-	private final IItemHandler joined;
-	private final IItemHandlerModifiable automationInput;
-	private final IItemHandlerModifiable automationOutput;
-	private final IItemHandler automationSides;
+	private final ResourceHandler<ItemResource> joined;
+	private final ResourceHandler<ItemResource> automationInput;
+	private final ResourceHandler<ItemResource> automationOutput;
+	private final ResourceHandler<ItemResource> automationSides;
 
 	protected final int ticksBeforeSmelt;
 	private final int efficiencyBonus;
@@ -140,22 +140,20 @@ public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider
 		this.quickCheck = RecipeManager.createCheck(RecipeType.SMELTING);
 
 		this.automationInput = new WrappedItemHandler(inputInventory, WrappedItemHandler.WriteMode.IN) {
-			@NotNull
 			@Override
-			public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-				return hasSmeltingResult(stack) ? super.insertItem(slot, stack, simulate) : stack;
+			public boolean isValid(int index, ItemResource resource) {
+				return super.isValid(index, resource) && hasSmeltingResult(resource.toStack(1));
 			}
 		};
 		this.automationOutput = new WrappedItemHandler(outputInventory, WrappedItemHandler.WriteMode.OUT);
-		IItemHandlerModifiable automationFuel = new WrappedItemHandler(fuelInv, WrappedItemHandler.WriteMode.IN) {
-			@NotNull
+		ResourceHandler<ItemResource> automationFuel = new WrappedItemHandler(fuelInv, WrappedItemHandler.WriteMode.IN) {
 			@Override
-			public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-				return SlotPredicates.FURNACE_FUEL.test(stack) ? super.insertItem(slot, stack, simulate) : stack;
+			public boolean isValid(int index, ItemResource resource) {
+				return super.isValid(index, resource) && SlotPredicates.FURNACE_FUEL.test(resource.toStack(1));
 			}
 		};
-		this.automationSides = new CombinedInvWrapper(automationFuel, automationOutput);
-		this.joined = new CombinedInvWrapper(automationInput, automationFuel, automationOutput);
+		this.automationSides = new CombinedResourceHandler<>(automationFuel, automationOutput);
+		this.joined = new CombinedResourceHandler<>(automationInput, automationFuel, automationOutput);
 	}
 
 	@Override
@@ -217,7 +215,7 @@ public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider
 		return PELang.GUI_DARK_MATTER_FURNACE.translate();
 	}
 
-	public IItemHandler getFuel() {
+	public ResourceHandler<ItemResource> getFuel() {
 		return fuelInv;
 	}
 
@@ -229,11 +227,11 @@ public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider
 		return fuelInv.getStackInSlot(0);
 	}
 
-	public IItemHandler getInput() {
+	public ResourceHandler<ItemResource> getInput() {
 		return inputInventory;
 	}
 
-	public IItemHandler getOutput() {
+	public ResourceHandler<ItemResource> getOutput() {
 		return outputInventory;
 	}
 
@@ -319,13 +317,11 @@ public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider
 		}
 		ResourceHandler<ItemResource> pulledHandler = pullTarget.getCapability();
 		if (pulledHandler != null) {
-			//26.1: block capabilities expose ResourceHandler<ItemResource>, wrap it in a legacy IItemHandler view
-			IItemHandler handler = IItemHandler.of(pulledHandler);
-			for (int i = 0, slots = handler.getSlots(); i < slots; i++) {
-				ItemStack extractTest = handler.extractItem(i, Integer.MAX_VALUE, true);
-				if (!extractTest.isEmpty()) {
-					IItemHandler targetInv = SlotPredicates.FURNACE_FUEL.test(extractTest) ? fuelInv : inputInventory;
-					transferItem(targetInv, i, extractTest, handler);
+			for (int i = 0, slots = pulledHandler.size(); i < slots; i++) {
+				ItemResource resource = pulledHandler.getResource(i);
+				if (!resource.isEmpty()) {
+					ResourceHandler<ItemResource> target = SlotPredicates.FURNACE_FUEL.test(resource.toStack(1)) ? fuelInv : inputInventory;
+					transferItem(target, i, resource, pulledHandler);
 				}
 			}
 		}
@@ -337,24 +333,23 @@ public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider
 		}
 		ResourceHandler<ItemResource> pushedHandler = pushTarget.getCapability();
 		if (pushedHandler != null) {
-			//26.1: block capabilities expose ResourceHandler<ItemResource>, wrap it in a legacy IItemHandler view
-			IItemHandler targetInv = IItemHandler.of(pushedHandler);
-			for (int i = 0, slots = outputInventory.getSlots(); i < slots; i++) {
-				ItemStack extractTest = outputInventory.extractItem(i, Integer.MAX_VALUE, true);
-				if (!extractTest.isEmpty()) {
-					transferItem(targetInv, i, extractTest, outputInventory);
+			for (int i = 0, slots = outputInventory.size(); i < slots; i++) {
+				ItemResource resource = outputInventory.getResource(i);
+				if (!resource.isEmpty()) {
+					transferItem(pushedHandler, i, resource, outputInventory);
 				}
 			}
 		}
 	}
 
-	private void transferItem(IItemHandler targetInv, int i, ItemStack extractTest, IItemHandler outputInventory) {
-		ItemStack remainderTest = ItemHandlerHelper.insertItemStacked(targetInv, extractTest, true);
-		int successfullyTransferred = extractTest.getCount() - remainderTest.getCount();
-		if (successfullyTransferred > 0) {
-			ItemStack toInsert = outputInventory.extractItem(i, successfullyTransferred, false);
-			ItemStack result = ItemHandlerHelper.insertItemStacked(targetInv, toInsert, false);
-			assert result.isEmpty();
+	private void transferItem(ResourceHandler<ItemResource> target, int index, ItemResource resource, ResourceHandler<ItemResource> source) {
+		try (Transaction transaction = Transaction.openRoot()) {
+			int available = source.extract(index, resource, source.getAmountAsInt(index), transaction);
+			int inserted = ResourceHandlerUtil.insertStacking(target, resource, available, transaction);
+			int extracted = source.extract(index, resource, inserted, transaction);
+			if (inserted > 0 && inserted == extracted) {
+				transaction.commit();
+			}
 		}
 	}
 
@@ -385,7 +380,7 @@ public class DMFurnaceBlockEntity extends EmcBlockEntity implements MenuProvider
 		ItemStack toSmelt = getItemToSmelt();
 		ItemStack smeltResult = recipeResult.scaledResult(level.getRandom(), getDoubleChance(toSmelt));
 		if (!smeltResult.isEmpty()) {//Double-check the result isn't somehow empty
-			ItemHandlerHelper.insertItemStacked(outputInventory, smeltResult, false);
+			ItemUtil.insertItemReturnRemaining(outputInventory, smeltResult, false, null);
 
 			if (toSmelt.is(Items.WET_SPONGE)) {
 				//Hardcoded handling of wet sponge to filling a bucket with water

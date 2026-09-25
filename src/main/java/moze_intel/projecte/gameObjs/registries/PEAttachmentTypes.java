@@ -7,15 +7,15 @@ import moze_intel.projecte.gameObjs.registration.PEDeferredHolder;
 import moze_intel.projecte.gameObjs.registration.PEDeferredRegister;
 import moze_intel.projecte.impl.capability.AlchBagImpl.AlchemicalBagAttachment;
 import moze_intel.projecte.impl.capability.KnowledgeImpl.KnowledgeAttachment;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.attachment.IAttachmentSerializer;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 
 public class PEAttachmentTypes {
 
@@ -59,14 +59,17 @@ public class PEAttachmentTypes {
 					.build()
 	);
 
-	public static <HANDLER extends IItemHandlerModifiable> HANDLER copyHandler(IItemHandler handler, Int2ObjectFunction<HANDLER> handlerCreator) {
-		int slots = handler.getSlots();
-		HANDLER handlerCopy = handlerCreator.get(slots);
-		for (int i = 0; i < slots; i++) {
-			ItemStack stack = handler.getStackInSlot(i);
-			if (!stack.isEmpty()) {
-				handlerCopy.setStackInSlot(i, stack.copy());
+	public static <HANDLER extends ResourceHandler<ItemResource>> HANDLER copyHandler(ResourceHandler<ItemResource> handler, Int2ObjectFunction<HANDLER> handlerCreator) {
+		HANDLER handlerCopy = handlerCreator.get(handler.size());
+		try (Transaction transaction = Transaction.openRoot()) {
+			for (int i = 0, slots = handler.size(); i < slots; i++) {
+				ItemResource resource = handler.getResource(i);
+				int amount = handler.getAmountAsInt(i);
+				if (!resource.isEmpty() && handlerCopy.insert(i, resource, amount, transaction) != amount) {
+					throw new IllegalStateException("Could not copy the full item resource while copying an attachment inventory");
+				}
 			}
+			transaction.commit();
 		}
 		return handlerCopy;
 	}

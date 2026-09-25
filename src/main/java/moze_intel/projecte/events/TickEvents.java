@@ -10,6 +10,7 @@ import moze_intel.projecte.gameObjs.container.AlchBagContainer;
 import moze_intel.projecte.gameObjs.items.AlchemicalBag;
 import moze_intel.projecte.gameObjs.items.IFireProtector;
 import moze_intel.projecte.handlers.InternalAbilities;
+import moze_intel.projecte.utils.ItemHelper;
 import moze_intel.projecte.utils.PlayerHelper;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -20,7 +21,9 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 @EventBusSubscriber(modid = PECore.MODID)
 public class TickEvents {
@@ -37,11 +40,12 @@ public class TickEvents {
 			COLORS_CHANGED.clear();
 			collectBagColorsPresent(player, COLORS_PRESENT);
 			for (DyeColor color : COLORS_PRESENT) {
-				IItemHandler inv = provider.getBag(color);
-				for (int i = 0, slots = inv.getSlots(); i < slots; i++) {
-					ItemStack current = inv.getStackInSlot(i);
+				ResourceHandler<ItemResource> inv = provider.getBag(color);
+				for (int i = 0, slots = inv.size(); i < slots; i++) {
+					ItemStack current = ItemUtil.getStack(inv, i);
 					IAlchBagItem alchBagItem = current.getCapability(PECapabilities.ALCH_BAG_ITEM_CAPABILITY);
 					if (alchBagItem != null && alchBagItem.updateInAlchBag(inv, player, current)) {
+						ItemHelper.setStack(inv, i, current);
 						COLORS_CHANGED.add(color);
 					}
 				}
@@ -81,10 +85,10 @@ public class TickEvents {
 
 	private static void collectBagColorsPresent(Player player, Set<DyeColor> bagsPresent) {
 		bagsPresent.clear();
-		IItemHandler inv = IItemHandler.of(player.getCapability(Capabilities.Item.ENTITY));
+		ResourceHandler<ItemResource> inv = player.getCapability(Capabilities.Item.ENTITY);
 		if (inv != null) {
-			for (int i = 0, slots = inv.getSlots(); i < slots; i++) {
-				ItemStack stack = inv.getStackInSlot(i);
+			for (int i = 0, slots = inv.size(); i < slots; i++) {
+				ItemStack stack = ItemUtil.getStack(inv, i);
 				if (!stack.isEmpty() && stack.getItem() instanceof AlchemicalBag bag) {
 					bagsPresent.add(bag.color);
 				}

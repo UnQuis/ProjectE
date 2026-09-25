@@ -27,8 +27,7 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -117,7 +116,8 @@ public class AlchemicalBarrel extends DirectionalBlock implements PEEntityBlock<
 	@Override
 	@Deprecated
 	public int getAnalogOutputSignal(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Direction direction) {
-		return ItemHandlerHelper.calcRedstoneFromInventory(IItemHandler.of(WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, null)));
+		var handler = WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, null);
+		return handler == null ? 0 : ResourceHandlerUtil.getRedstoneSignalFromResourceHandler(handler);
 	}
 
 	@NotNull

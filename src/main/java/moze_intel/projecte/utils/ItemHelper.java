@@ -2,6 +2,7 @@ package moze_intel.projecte.utils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.InteractionResult;
@@ -9,16 +10,23 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
-import org.jetbrains.annotations.NotNull;
+import net.neoforged.neoforge.transfer.DelegatingResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
+import net.neoforged.neoforge.transfer.TransferPreconditions;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * Helpers for Inventories, ItemStacks, Items, and the Ore Dictionary Notice: Please try to keep methods tidy and alphabetically ordered. Thanks!
  */
 public final class ItemHelper {
+
+	private ItemHelper() {
+	}
 
 	/**
 	 * Gets an ActionResult based on a type
@@ -32,72 +40,119 @@ public final class ItemHelper {
 	 *
 	 * @return True if the inventory was empty.
 	 */
-	public static boolean compactInventory(IItemHandlerModifiable inventory) {
+	public static boolean compactInventory(ResourceHandler<ItemResource> inventory) {
 		List<ItemStack> temp = new ArrayList<>();
-		for (int i = 0, slots = inventory.getSlots(); i < slots; i++) {
-			ItemStack stackInSlot = inventory.getStackInSlot(i);
-			if (!stackInSlot.isEmpty()) {
-				temp.add(stackInSlot);
-				inventory.setStackInSlot(i, ItemStack.EMPTY);
+		try (Transaction transaction = Transaction.openRoot()) {
+			for (int i = 0, slots = inventory.size(); i < slots; i++) {
+				ItemStack stack = ItemUtil.getStack(inventory, i);
+				if (!stack.isEmpty()) {
+					temp.add(stack);
+					int extracted = inventory.extract(i, ItemResource.of(stack), stack.getCount(), transaction);
+					if (extracted != stack.getCount()) {
+						throw new IllegalStateException("Could not extract the full stack while compacting an inventory");
+					}
+				}
 			}
-		}
-		for (ItemStack s : temp) {
-			ItemHandlerHelper.insertItemStacked(inventory, s, false);
+			for (ItemStack stack : temp) {
+				int inserted = ResourceHandlerUtil.insertStacking(inventory, ItemResource.of(stack), stack.getCount(), transaction);
+				if (inserted != stack.getCount()) {
+					throw new IllegalStateException("Could not reinsert the full stack while compacting an inventory");
+				}
+			}
+			transaction.commit();
 		}
 		return temp.isEmpty();
 	}
 
-	public static IItemHandlerModifiable immutableCopy(IItemHandler toCopy) {
-		int slots = toCopy.getSlots();
-		final List<ItemStack> list = new ArrayList<>(slots);
-		for (int i = 0; i < slots; i++) {
-			list.add(toCopy.getStackInSlot(i).copy());
-		}
-		return new IItemHandlerModifiable() {
+	public static ResourceHandler<ItemResource> immutableCopy(ResourceHandler<ItemResource> toCopy) {
+		return new DelegatingResourceHandler<>(toCopy) {
 			@Override
-			public void setStackInSlot(int slot, @NotNull ItemStack stack) {
+			public int insert(int index, ItemResource resource, int amount, TransactionContext transaction) {
+				Objects.checkIndex(index, size());
+				TransferPreconditions.checkNonEmptyNonNegative(resource, amount);
+				return 0;
 			}
 
 			@Override
-			public int getSlots() {
-				return list.size();
-			}
-
-			@NotNull
-			@Override
-			public ItemStack getStackInSlot(int slot) {
-				return list.get(slot);
-			}
-
-			@NotNull
-			@Override
-			public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-				return stack;
-			}
-
-			@NotNull
-			@Override
-			public ItemStack extractItem(int slot, int amount, boolean simulate) {
-				return ItemStack.EMPTY;
+			public int insert(ItemResource resource, int amount, TransactionContext transaction) {
+				TransferPreconditions.checkNonEmptyNonNegative(resource, amount);
+				return 0;
 			}
 
 			@Override
-			public int getSlotLimit(int slot) {
-				return getStackInSlot(slot).getMaxStackSize();
+			public int extract(int index, ItemResource resource, int amount, TransactionContext transaction) {
+				Objects.checkIndex(index, size());
+				TransferPreconditions.checkNonEmptyNonNegative(resource, amount);
+				return 0;
 			}
 
 			@Override
-			public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-				return true;
+			public int extract(ItemResource resource, int amount, TransactionContext transaction) {
+				TransferPreconditions.checkNonEmptyNonNegative(resource, amount);
+				return 0;
 			}
 		};
+	}
+
+	public static ItemStack insertItemStacked(@Nullable ResourceHandler<ItemResource> handler, ItemStack stack) {
+		if (stack.isEmpty() || handler == null) {
+			return stack;
+		}
+		int inserted = ResourceHandlerUtil.insertStacking(handler, ItemResource.of(stack), stack.getCount(), null);
+		int remaining = stack.getCount() - inserted;
+		return remaining == 0 ? ItemStack.EMPTY : stack.copyWithCount(remaining);
+	}
+
+	public static ItemStack extractItem(ResourceHandler<ItemResource> handler, int index, int amount, boolean simulate) {
+		ItemStack current = ItemUtil.getStack(handler, index);
+		if (current.isEmpty() || amount <= 0) {
+			return ItemStack.EMPTY;
+		}
+		try (Transaction transaction = Transaction.openRoot()) {
+			int extracted = handler.extract(index, ItemResource.of(current), Math.min(amount, current.getCount()), transaction);
+			if (!simulate && extracted > 0) {
+				transaction.commit();
+			}
+			return extracted == 0 ? ItemStack.EMPTY : current.copyWithCount(extracted);
+		}
+	}
+
+	/**
+	 * Транзакционно заменяет содержимое одного слота.
+	 *
+	 * @return {@code true}, если новое содержимое было полностью записано
+	 */
+	public static boolean setStack(ResourceHandler<ItemResource> handler, int index, ItemStack stack) {
+		return setStack(handler, index, stack, null);
+	}
+
+	public static boolean setStack(ResourceHandler<ItemResource> handler, int index, ItemStack stack, @Nullable TransactionContext parent) {
+		Objects.checkIndex(index, handler.size());
+		ItemStack current = ItemUtil.getStack(handler, index);
+		if (ItemStack.matches(current, stack)) {
+			return true;
+		}
+		ItemResource currentResource = handler.getResource(index);
+		int currentAmount = handler.getAmountAsInt(index);
+		ItemResource newResource = ItemResource.of(stack);
+		int newAmount = stack.getCount();
+		try (Transaction transaction = Transaction.open(parent)) {
+			if (handler.extract(index, currentResource, currentAmount, transaction) != currentAmount) {
+				return false;
+			}
+			if (newAmount > 0 && handler.insert(index, newResource, newAmount, transaction) != newAmount) {
+				return false;
+			}
+			transaction.commit();
+			return true;
+		}
 	}
 
 	public static boolean isRepairableDamagedItem(ItemStack stack) {
 		//MC 26.1 removed ItemStack#isRepairable; repairability is now expressed via the REPAIRABLE
 		// data component (repair with a matching material in an anvil) or combine-repairing with a copy
 		return stack.isDamageableItem() && stack.getDamageValue() > 0 &&
-			(stack.has(DataComponents.REPAIRABLE) || stack.getItem().isCombineRepairable(stack));
+				(stack.has(DataComponents.REPAIRABLE) || stack.getItem().isCombineRepairable(stack));
 	}
 
 	/**

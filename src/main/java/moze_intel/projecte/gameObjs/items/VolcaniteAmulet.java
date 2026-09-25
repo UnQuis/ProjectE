@@ -40,9 +40,10 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.saveddata.WeatherData;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.jetbrains.annotations.NotNull;
 
 public class VolcaniteAmulet extends ItemPE implements IProjectileShooter, IPedestalItem, IFireProtector, ICapabilityAware {
@@ -69,9 +70,12 @@ public class VolcaniteAmulet extends ItemPE implements IProjectileShooter, IPede
 		ItemStack stack = ctx.getItemInHand();
 		if (!level.isClientSide() && PlayerHelper.hasEditPermission(player, level, pos) && consumeFuel(player, stack, 32, true)) {
 			Direction sideHit = ctx.getClickedFace();
-			IFluidHandler fluidHandler = IFluidHandler.of(WorldHelper.getCapability(level, Capabilities.Fluid.BLOCK, pos, sideHit));
+			ResourceHandler<FluidResource> fluidHandler = WorldHelper.getCapability(level, Capabilities.Fluid.BLOCK, pos, sideHit);
 			if (fluidHandler != null) {
-				fluidHandler.fill(new FluidStack(Fluids.LAVA, FluidType.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE);
+				try (Transaction transaction = Transaction.openRoot()) {
+					fluidHandler.insert(FluidResource.of(Fluids.LAVA), FluidType.BUCKET_VOLUME, transaction);
+					transaction.commit();
+				}
 				return InteractionResult.CONSUME;
 			}
 			WorldHelper.placeFluid(player, level, pos, sideHit, Fluids.LAVA, false);

@@ -11,8 +11,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.ContainerInput;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class AlchBagContainer extends PEHandContainer {
@@ -20,10 +21,10 @@ public class AlchBagContainer extends PEHandContainer {
 	private final boolean immutable;
 
 	public static AlchBagContainer fromNetwork(int windowId, Inventory playerInv, FriendlyByteBuf buf) {
-		return new AlchBagContainer(windowId, playerInv, buf.readEnum(InteractionHand.class), new ItemStackHandler(104), buf.readByte(), buf.readBoolean());
+		return new AlchBagContainer(windowId, playerInv, buf.readEnum(InteractionHand.class), new ItemStacksResourceHandler(104), buf.readByte(), buf.readBoolean());
 	}
 
-	public AlchBagContainer(int windowId, Inventory playerInv, InteractionHand hand, IItemHandlerModifiable invBag, int selected, boolean immutable) {
+	public AlchBagContainer(int windowId, Inventory playerInv, InteractionHand hand, ResourceHandler<ItemResource> invBag, int selected, boolean immutable) {
 		super(PEContainerTypes.ALCH_BAG_CONTAINER, windowId, playerInv, hand, selected);
 		this.immutable = immutable;
 		//Bag Inventory
@@ -35,7 +36,7 @@ public class AlchBagContainer extends PEHandContainer {
 		addPlayerInventory(48, 152);
 	}
 
-	private InventoryContainerSlot createContainerSlot(IItemHandlerModifiable inv, int index, int x, int y) {
+	private InventoryContainerSlot createContainerSlot(ResourceHandler<ItemResource> inv, int index, int x, int y) {
 		if (immutable) {
 			return new InventoryContainerSlot(inv, index, x, y) {
 				@Override

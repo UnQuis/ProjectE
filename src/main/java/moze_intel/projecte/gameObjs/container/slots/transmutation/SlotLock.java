@@ -10,6 +10,7 @@ import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.gameObjs.container.inventory.TransmutationInventory;
 import moze_intel.projecte.gameObjs.container.slots.InventoryContainerSlot;
 import moze_intel.projecte.gameObjs.container.slots.SlotPredicates;
+import moze_intel.projecte.utils.ItemHelper;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -40,12 +41,6 @@ public class SlotLock extends InventoryContainerSlot {
 	}
 
 	@Override
-	public void initialize(@NotNull ItemStack stack) {
-		//Note: We don't need to copy any of the logic from set as initialize is only ever called on the client
-		super.initialize(stack);
-	}
-
-	@Override
 	public void set(@NotNull ItemStack stack) {
 		super.set(stack);
 		if (inv.isServer()) {
@@ -71,6 +66,8 @@ public class SlotLock extends InventoryContainerSlot {
 				}
 			}
 		}
+		//Слоты ResourceHandler не хранят передаваемый vanilla стек, поэтому сохраняем изменения EMC напрямую.
+		ItemHelper.setStack(inv, getSlotIndex(), stack);
 	}
 
 	@Override

@@ -42,9 +42,10 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.neoforged.neoforge.items.wrapper.PlayerMainInvWrapper;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import net.minecraft.world.item.component.TooltipDisplay;
@@ -67,14 +68,14 @@ public class GemEternalDensity extends ItemPE implements IAlchBagItem, IAlchChes
 	public void inventoryTick(@NotNull ItemStack stack, @NotNull ServerLevel level, @NotNull Entity entity, @Nullable EquipmentSlot slot) {
 		super.inventoryTick(stack, level, entity, slot);
 		if (!level.isClientSide() && entity instanceof Player player) {
-			condense(stack, new PlayerMainInvWrapper(player.getInventory()));
+			condense(stack, player.getCapability(Capabilities.Item.ENTITY));
 		}
 	}
 
 	/**
 	 * @return Whether the inventory was changed
 	 */
-	private boolean condense(ItemStack gem, IItemHandler inv) {
+	private boolean condense(ItemStack gem, ResourceHandler<ItemResource> inv) {
 		if (!gem.getOrDefault(PEDataComponentTypes.ACTIVE, false)) {
 			return false;
 		}
@@ -91,8 +92,8 @@ public class GemEternalDensity extends ItemPE implements IAlchBagItem, IAlchChes
 		}
 		long emcRoomFor = Long.MAX_VALUE - gemEmc;
 		GemData gemData = gem.getOrDefault(PEDataComponentTypes.GEM_DATA, GemData.EMPTY);
-		for (int i = 0, slots = inv.getSlots(); i < slots; i++) {
-			ItemStack stack = inv.getStackInSlot(i);
+		for (int i = 0, slots = inv.size(); i < slots; i++) {
+			ItemStack stack = ItemUtil.getStack(inv, i);
 			if (stack.isEmpty()) {
 				continue;
 			}
@@ -113,22 +114,29 @@ public class GemEternalDensity extends ItemPE implements IAlchBagItem, IAlchChes
 			//Note: We know emcValue is strictly smaller or equal to emcRoomFor, so this should always be at least one
 			long maxToAdd = emcRoomFor / emcValue;
 			int halfStack = stack.getCount() == 1 ? 1 : stack.getCount() / 2;
-			//Try to extract half the stack, clamped at the amount we have room for the emc of
-			ItemStack simulatedExtraction = inv.extractItem(i, (int) Math.min(maxToAdd, halfStack), true);
-			//If we couldn't extract anything, or for some reason the handler gave a different type of item than it says is stored in that slot
-			// don't bother processing it
-			if (!simulatedExtraction.isEmpty() || !ItemStack.isSameItemSameComponents(stack, simulatedExtraction)) {
+			int amount = (int) Math.min(maxToAdd, halfStack);
+			ItemResource resource = ItemResource.of(stack);
+			int simulated;
+			try (Transaction transaction = Transaction.openRoot()) {
+				simulated = inv.extract(i, resource, amount, transaction);
+			}
+			if (simulated > 0 && resource.matches(stack)) {
 				if (filtered == null) {
 					filtered = gemData.whitelistMatches(stack);
 				}
 				if (gemData.isWhitelist() == filtered) {
-					//Extract the item from the inventory
-					ItemStack copy = inv.extractItem(i, simulatedExtraction.getCount(), false);
-					if (!copy.isEmpty()) {
+					int extracted;
+					try (Transaction transaction = Transaction.openRoot()) {
+						extracted = inv.extract(i, resource, simulated, transaction);
+						if (extracted > 0) {
+							transaction.commit();
+						}
+					}
+					if (extracted > 0) {
 						// and add how much emc we got from it to our stored emc
-						gemEmc += emcValue * copy.getCount();
+						gemEmc += emcValue * extracted;
 						gem.set(PEDataComponentTypes.STORED_EMC, gemEmc);
-						gem.set(PEDataComponentTypes.GEM_DATA, gemData.addConsumed(copy));
+						gem.set(PEDataComponentTypes.GEM_DATA, gemData.addConsumed(stack.copyWithCount(extracted)));
 						condenseFromStoredEmc(inv, gem, gemEmc, target, targetEmc);
 						return true;
 					}
@@ -138,7 +146,7 @@ public class GemEternalDensity extends ItemPE implements IAlchBagItem, IAlchChes
 		return condenseFromStoredEmc(inv, gem, gemEmc, target, targetEmc);
 	}
 
-	private boolean condenseFromStoredEmc(IItemHandler inv, ItemStack gem, long originalGemEmc, ItemLike target, long targetEmc) {
+	private boolean condenseFromStoredEmc(ResourceHandler<ItemResource> inv, ItemStack gem, long originalGemEmc, ItemLike target, long targetEmc) {
 		if (originalGemEmc >= targetEmc) {
 			ItemStack targetStack = new ItemStack(target);
 			int maxStackSize = targetStack.getMaxStackSize();
@@ -147,7 +155,7 @@ public class GemEternalDensity extends ItemPE implements IAlchBagItem, IAlchChes
 			while (toInsert > 0) {
 				//Note: We know that it can fit in an int as it is <= maxStackSize
 				ItemStack stackToInsert = targetStack.copyWithCount((int) Math.min(toInsert, maxStackSize));
-				ItemStack remaining = ItemHandlerHelper.insertItemStacked(inv, stackToInsert, false);
+				ItemStack remaining = ItemUtil.insertItemReturnRemaining(inv, stackToInsert, false, null);
 				if (remaining.getCount() == stackToInsert.getCount()) {
 					//Nothing fit, we can't insert any of this item into the inventory
 					break;
@@ -229,14 +237,14 @@ public class GemEternalDensity extends ItemPE implements IAlchBagItem, IAlchChes
 	@Override
 	public boolean updateInAlchChest(@NotNull Level level, @NotNull BlockPos pos, @NotNull ItemStack stack) {
 		if (!level.isClientSide() && stack.getOrDefault(PEDataComponentTypes.ACTIVE, false)) {
-			IItemHandler handler = IItemHandler.of(WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, null));
+			ResourceHandler<ItemResource> handler = WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, null);
 			return handler != null && condense(stack, handler);
 		}
 		return false;
 	}
 
 	@Override
-	public boolean updateInAlchBag(@NotNull IItemHandler inv, @NotNull Player player, @NotNull ItemStack stack) {
+	public boolean updateInAlchBag(@NotNull ResourceHandler<ItemResource> inv, @NotNull Player player, @NotNull ItemStack stack) {
 		return !player.level().isClientSide() && condense(stack, inv);
 	}
 

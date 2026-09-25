@@ -30,8 +30,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -117,7 +116,8 @@ public class AlchemicalChest extends BlockDirection implements SimpleWaterlogged
 	@Override
 	@Deprecated
 	public int getAnalogOutputSignal(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Direction direction) {
-		return ItemHandlerHelper.calcRedstoneFromInventory(IItemHandler.of(WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, state, null, null)));
+		var handler = WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, state, null, null);
+		return handler == null ? 0 : ResourceHandlerUtil.getRedstoneSignalFromResourceHandler(handler);
 	}
 
 	@NotNull

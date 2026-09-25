@@ -2,15 +2,16 @@ package moze_intel.projecte.gameObjs.container.slots;
 
 import java.util.function.Predicate;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.jetbrains.annotations.NotNull;
 
-// Partial copy of SlotItemHandler with a validator
+// Partial copy of ResourceHandlerSlot with a validator
 public class ValidatedSlot extends InventoryContainerSlot {
 
 	private final Predicate<ItemStack> validator;
 
-	public ValidatedSlot(IItemHandler itemHandler, int index, int xPosition, int yPosition, Predicate<ItemStack> validator) {
+	public ValidatedSlot(ResourceHandler<ItemResource> itemHandler, int index, int xPosition, int yPosition, Predicate<ItemStack> validator) {
 		super(itemHandler, index, xPosition, yPosition);
 		this.validator = validator;
 	}

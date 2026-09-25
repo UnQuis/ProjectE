@@ -26,7 +26,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
@@ -75,11 +78,13 @@ public final class EMCHelper {
 		if (player.isCreative() || minFuel == 0) {
 			return minFuel;
 		}
-		IItemHandler curios = player.getCapability(IntegrationHelper.CURIO_ITEM_HANDLER);
+		ResourceHandler<ItemResource> curios = player.getCapability(IntegrationHelper.CURIO_ITEM_HANDLER);
 		if (curios != null) {
-			for (int i = 0, slots = curios.getSlots(); i < slots; i++) {
-				long actualExtracted = tryExtract(curios.getStackInSlot(i), minFuel);
+			for (int i = 0, slots = curios.size(); i < slots; i++) {
+				ItemStack stack = ItemUtil.getStack(curios, i);
+				long actualExtracted = tryExtract(stack, minFuel);
 				if (actualExtracted > 0) {
+					ItemHelper.setStack(curios, i, stack);
 					player.containerMenu.broadcastChanges();
 					return actualExtracted;
 				}
@@ -87,19 +92,20 @@ public final class EMCHelper {
 		}
 
 		//Note: The implementation of this will iterate in the order: Main inventory, Armor, Offhand
-		IItemHandler inv = IItemHandler.of(player.getCapability(Capabilities.Item.ENTITY));
+		ResourceHandler<ItemResource> inv = player.getCapability(Capabilities.Item.ENTITY);
 		if (inv != null) {
 			//Ensure that we have an item handler capability, because if for example the player is dead we will not
 			Int2IntMap map = new Int2IntOpenHashMap();
 			boolean metRequirement = false;
 			long emcConsumed = 0;
-			for (int i = 0, slots = inv.getSlots(); i < slots; i++) {
-				ItemStack stack = inv.getStackInSlot(i);
+			for (int i = 0, slots = inv.size(); i < slots; i++) {
+				ItemStack stack = ItemUtil.getStack(inv, i);
 				if (stack.isEmpty()) {
 					continue;
 				}
 				long actualExtracted = tryExtract(stack, minFuel);
 				if (actualExtracted > 0) { //Prioritize extracting from emc storage items
+					ItemHelper.setStack(inv, i, stack);
 					player.containerMenu.broadcastChanges();
 					return actualExtracted;
 				} else if (!metRequirement && FuelMapper.isStackFuel(stack)) {
@@ -115,10 +121,16 @@ public final class EMCHelper {
 				}
 			}
 			if (metRequirement) {
-				for (Iterator<Int2IntMap.Entry> iterator = Int2IntMaps.fastIterator(map); iterator.hasNext(); ) {
-					Int2IntMap.Entry entry = iterator.next();
-					//TODO: Should we be validating we were able to actually extract the items?
-					inv.extractItem(entry.getIntKey(), entry.getIntValue(), false);
+				try (Transaction transaction = Transaction.openRoot()) {
+					for (Iterator<Int2IntMap.Entry> iterator = Int2IntMaps.fastIterator(map); iterator.hasNext(); ) {
+						Int2IntMap.Entry entry = iterator.next();
+						int index = entry.getIntKey();
+						//TODO: Should we be validating we were able to actually extract the items?
+						if (inv.extract(index, inv.getResource(index), entry.getIntValue(), transaction) != entry.getIntValue()) {
+							return -1;
+						}
+					}
+					transaction.commit();
 				}
 				player.containerMenu.broadcastChanges();
 				return emcConsumed;

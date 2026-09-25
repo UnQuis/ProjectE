@@ -18,6 +18,7 @@ import moze_intel.projecte.api.event.PlayerAttemptLearnEvent;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.gameObjs.PETags;
 import moze_intel.projecte.gameObjs.registries.PEItems;
+import moze_intel.projecte.utils.ItemHelper;
 import moze_intel.projecte.utils.MathUtils;
 import moze_intel.projecte.utils.PlayerHelper;
 import moze_intel.projecte.utils.text.SearchQueryParser;
@@ -26,17 +27,19 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.ItemStackHandler;
-import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
+import net.neoforged.neoforge.transfer.CombinedResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
-public class TransmutationInventory extends CombinedInvWrapper {
+public class TransmutationInventory extends CombinedResourceHandler<ItemResource> {
 
 	public final Player player;
 	public final IKnowledgeProvider provider;
-	private final IItemHandlerModifiable inputLocks;
-	private final IItemHandlerModifiable learning;
-	public final IItemHandlerModifiable outputs;
+	private final ResourceHandler<ItemResource> inputLocks;
+	private final InventoryHandler learning;
+	public final InventoryHandler outputs;
 
 	private static final int MAX_MATTER_DISPLAY = 12;
 	private static final int MAX_FUEL_DISPLAY = 4;
@@ -51,13 +54,13 @@ public class TransmutationInventory extends CombinedInvWrapper {
 	private long lastAvailableEmc;
 
 	public TransmutationInventory(Player player) {
-		super((IItemHandlerModifiable) Objects.requireNonNull(player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY)).getInputAndLocks(),
-				new ItemStackHandler(2), new ItemStackHandler(16));
+		super(Objects.requireNonNull(player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY)).getInputAndLocks(),
+				new InventoryHandler(2), new InventoryHandler(16));
 		this.player = player;
 		this.provider = Objects.requireNonNull(player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY));
-		this.inputLocks = itemHandler[0];
-		this.learning = itemHandler[1];
-		this.outputs = itemHandler[2];
+		this.inputLocks = (ResourceHandler<ItemResource>) getHandlerFromIndex(0);
+		this.learning = (InventoryHandler) getHandlerFromIndex(1);
+		this.outputs = (InventoryHandler) getHandlerFromIndex(2);
 		if (isClient()) {
 			//Update all targets so that we display the items to the player
 			updateClientTargets(false);
@@ -131,7 +134,7 @@ public class TransmutationInventory extends CombinedInvWrapper {
 			//Ensure the learned item is in the emc range that we are even trying to display. If it requires more emc than we have available,
 			// we can't possibly have it end up in the targets after an update
 			if (learnedItemEmc <= availableEmc) {
-				ItemStack lockStack = inputLocks.getStackInSlot(LOCK_INDEX);
+				ItemStack lockStack = ItemUtil.getStack(inputLocks, LOCK_INDEX);
 				if (!lockStack.isEmpty()) {
 					ItemInfo lockInfo = IEMCProxy.INSTANCE.getPersistentInfo(ItemInfo.fromStack(lockStack));
 					long lockEmc = IEMCProxy.INSTANCE.getValue(lockInfo);
@@ -202,7 +205,7 @@ public class TransmutationInventory extends CombinedInvWrapper {
 		if (unlearnedItemEmc <= availableEmc) {
 			//Validate that the item has a chance of being displayed. If it costs more than the emc we have available, there is no chance it is being displayed
 			int firstNonLockSlot = slot;
-			ItemStack lockStack = inputLocks.getStackInSlot(LOCK_INDEX);
+			ItemStack lockStack = ItemUtil.getStack(inputLocks, LOCK_INDEX);
 			long lockEmc = 0;
 			if (!lockStack.isEmpty()) {
 				ItemInfo lockInfo = IEMCProxy.INSTANCE.getPersistentInfo(ItemInfo.fromStack(lockStack));
@@ -313,7 +316,7 @@ public class TransmutationInventory extends CombinedInvWrapper {
 		record EmcData(ItemInfo info, long emc) {
 		}
 		Predicate<EmcData> filterPredicate;
-		ItemStack lockStack = inputLocks.getStackInSlot(LOCK_INDEX);
+		ItemStack lockStack = ItemUtil.getStack(inputLocks, LOCK_INDEX);
 		int matterCounter = 0;
 		int fuelCounter = 0;
 		if (lockStack.isEmpty()) {
@@ -434,16 +437,17 @@ public class TransmutationInventory extends CombinedInvWrapper {
 		}
 		IntList inputLocksChanged = new IntArrayList();
 		//Start by trying to add it to the EMC items on the left
-		for (int slotIndex = 0, slots = inputLocks.getSlots(); slotIndex < slots; slotIndex++) {
+		for (int slotIndex = 0, slots = inputLocks.size(); slotIndex < slots; slotIndex++) {
 			if (slotIndex == LOCK_INDEX) {
 				continue;
 			}
-			ItemStack stack = inputLocks.getStackInSlot(slotIndex);
+			ItemStack stack = ItemUtil.getStack(inputLocks, slotIndex);
 			IItemEmcHolder emcHolder = stack.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
 			if (emcHolder != null) {
 				long shrunkenValue = MathUtils.clampToLong(value);
 				long actualInserted = emcHolder.insertEmc(stack, shrunkenValue, EmcAction.EXECUTE);
 				if (actualInserted > 0) {
+					ItemHelper.setStack(inputLocks, slotIndex, stack);
 					inputLocksChanged.add(slotIndex);
 					value = value.subtract(BigInteger.valueOf(actualInserted));
 					if (value.signum() == 0) {//value == 0
@@ -482,16 +486,17 @@ public class TransmutationInventory extends CombinedInvWrapper {
 			IntList inputLocksChanged = new IntArrayList();
 			BigInteger toRemove = value.subtract(currentEmc);
 			value = currentEmc;
-			for (int slotIndex = 0, slots = inputLocks.getSlots(); slotIndex < slots; slotIndex++) {
+			for (int slotIndex = 0, slots = inputLocks.size(); slotIndex < slots; slotIndex++) {
 				if (slotIndex == LOCK_INDEX) {
 					continue;
 				}
-				ItemStack stack = inputLocks.getStackInSlot(slotIndex);
+				ItemStack stack = ItemUtil.getStack(inputLocks, slotIndex);
 				IItemEmcHolder emcHolder = stack.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
 				if (emcHolder != null) {
 					long shrunkenToRemove = MathUtils.clampToLong(toRemove);
 					long actualExtracted = emcHolder.extractEmc(stack, shrunkenToRemove, EmcAction.EXECUTE);
 					if (actualExtracted > 0) {
+						ItemHelper.setStack(inputLocks, slotIndex, stack);
 						inputLocksChanged.add(slotIndex);
 						toRemove = toRemove.subtract(BigInteger.valueOf(actualExtracted));
 						if (toRemove.signum() == 0) {//toRemove == 0
@@ -532,17 +537,24 @@ public class TransmutationInventory extends CombinedInvWrapper {
 		PlayerHelper.updateScore((ServerPlayer) player, PlayerHelper.SCOREBOARD_EMC, emc);
 	}
 
-	public IItemHandlerModifiable getHandlerForSlot(int slot) {
-		return super.getHandlerFromIndex(super.getIndexForSlot(slot));
+	public ResourceHandler<ItemResource> getHandlerForSlot(int slot) {
+		int index = getIndexFromSlot(slot);
+		if (index < inputLocks.size()) {
+			return inputLocks;
+		}
+		index -= inputLocks.size();
+		return index < learning.size() ? learning : outputs;
 	}
 
 	public int getIndexFromSlot(int slot) {
-		for (IItemHandlerModifiable h : itemHandler) {
-			if (slot >= h.getSlots()) {
-				slot -= h.getSlots();
-			}
+		if (slot < inputLocks.size()) {
+			return slot;
 		}
-		return slot;
+		slot -= inputLocks.size();
+		if (slot < learning.size()) {
+			return slot;
+		}
+		return slot - learning.size();
 	}
 
 	/**
@@ -550,18 +562,18 @@ public class TransmutationInventory extends CombinedInvWrapper {
 	 */
 	public long getAvailableEmcAsLong() {
 		long emc = MathUtils.clampToLong(provider.getEmc());
-		if (emc == Long.MAX_VALUE || inputLocks.getSlots() == 0) {
+		if (emc == Long.MAX_VALUE || inputLocks.size() == 0) {
 			//If we already are at max or somehow don't have any slots
 			return emc;
 		}
 		long emcToMax = Long.MAX_VALUE - emc;
-		for (int i = 0, slots = inputLocks.getSlots(); i < slots; i++) {
+		for (int i = 0, slots = inputLocks.size(); i < slots; i++) {
 			if (i == LOCK_INDEX) {
 				//Skip it even though this technically could add to available EMC.
 				//This is because this case can only happen if the provider is already at max EMC
 				continue;
 			}
-			ItemStack stack = inputLocks.getStackInSlot(i);
+			ItemStack stack = ItemUtil.getStack(inputLocks, i);
 			IItemEmcHolder emcHolder = stack.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
 			if (emcHolder != null) {
 				long storedEmc = emcHolder.getStoredEmc(stack);
@@ -579,13 +591,13 @@ public class TransmutationInventory extends CombinedInvWrapper {
 	 */
 	public BigInteger getAvailableEmc() {
 		BigInteger emc = provider.getEmc();
-		for (int i = 0, slots = inputLocks.getSlots(); i < slots; i++) {
+		for (int i = 0, slots = inputLocks.size(); i < slots; i++) {
 			if (i == LOCK_INDEX) {
 				//Skip it even though this technically could add to available EMC.
 				//This is because this case can only happen if the provider is already at max EMC
 				continue;
 			}
-			ItemStack stack = inputLocks.getStackInSlot(i);
+			ItemStack stack = ItemUtil.getStack(inputLocks, i);
 			IItemEmcHolder emcHolder = stack.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
 			if (emcHolder != null) {
 				emc = emc.add(BigInteger.valueOf(emcHolder.getStoredEmc(stack)));
@@ -629,6 +641,25 @@ public class TransmutationInventory extends CombinedInvWrapper {
 			searchPage++;
 			//TODO: Can we optimize updating the targets based on what are currently displaying? Probably not in a way that is worth it
 			updateClientTargets(false);
+		}
+	}
+
+	private static class InventoryHandler extends ItemStacksResourceHandler {
+
+		private InventoryHandler(int size) {
+			super(size);
+		}
+
+		private int getSlots() {
+			return size();
+		}
+
+		private ItemStack getStackInSlot(int slot) {
+			return ItemUtil.getStack(this, slot);
+		}
+
+		private void setStackInSlot(int slot, ItemStack stack) {
+			set(slot, ItemResource.of(stack), stack.getCount());
 		}
 	}
 }

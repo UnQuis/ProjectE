@@ -15,10 +15,9 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.ItemStackHandler;
-import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
+import net.neoforged.neoforge.transfer.CombinedResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.jetbrains.annotations.NotNull;
 
 public class CondenserMK2BlockEntity extends CondenserBlockEntity {
@@ -29,25 +28,25 @@ public class CondenserMK2BlockEntity extends CondenserBlockEntity {
 
 	@NotNull
 	@Override
-	protected IItemHandler createAutomationInventory() {
-		IItemHandlerModifiable automationInput = new WrappedItemHandler(getInput(), WrappedItemHandler.WriteMode.IN) {
-			@NotNull
+	protected ResourceHandler<ItemResource> createAutomationInventory() {
+		ResourceHandler<ItemResource> automationInput = new WrappedItemHandler(getInput(), WrappedItemHandler.WriteMode.IN) {
 			@Override
-			public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-				return SlotPredicates.HAS_EMC.test(stack) && !isStackEqualToLock(stack) ? super.insertItem(slot, stack, simulate) : stack;
+			public boolean isValid(int index, ItemResource resource) {
+				ItemStack stack = resource.toStack(1);
+				return super.isValid(index, resource) && SlotPredicates.HAS_EMC.test(stack) && !isStackEqualToLock(stack);
 			}
 		};
-		IItemHandlerModifiable automationOutput = new WrappedItemHandler(getOutput(), WrappedItemHandler.WriteMode.OUT);
-		return new CombinedInvWrapper(automationInput, automationOutput);
+		ResourceHandler<ItemResource> automationOutput = new WrappedItemHandler(getOutput(), WrappedItemHandler.WriteMode.OUT);
+		return new CombinedResourceHandler<>(automationInput, automationOutput);
 	}
 
 	@Override
-	protected ItemStackHandler createInput() {
+	protected StackHandler createInput() {
 		return new StackHandler(42);
 	}
 
 	@Override
-	protected ItemStackHandler createOutput() {
+	protected StackHandler createOutput() {
 		return new StackHandler(42);
 	}
 

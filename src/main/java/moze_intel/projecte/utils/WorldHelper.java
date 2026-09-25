@@ -83,7 +83,9 @@ import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.util.ItemStackMap;
 import net.neoforged.neoforge.event.EventHooks;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -195,10 +197,10 @@ public final class WorldHelper {
 		}
 	}
 
-	public static void dropInventory(@Nullable IItemHandler inv, Level level, BlockPos pos) {
+	public static void dropInventory(@Nullable ResourceHandler<ItemResource> inv, Level level, BlockPos pos) {
 		if (inv != null) {
-			for (int i = 0, slots = inv.getSlots(); i < slots; i++) {
-				ItemStack stack = inv.getStackInSlot(i);
+			for (int i = 0, slots = inv.size(); i < slots; i++) {
+				ItemStack stack = ItemUtil.getStack(inv, i);
 				if (!stack.isEmpty()) {
 					level.addFreshEntity(new ItemEntity(level, pos.getX(), pos.getY(), pos.getZ(), stack));
 				}

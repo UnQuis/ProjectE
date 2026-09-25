@@ -1,17 +1,17 @@
 package moze_intel.projecte.gameObjs.container.slots;
 
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.SlotItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 
-public class InventoryContainerSlot extends SlotItemHandler implements IInventoryContainerSlot {
+public class InventoryContainerSlot extends TransactionalResourceHandlerSlot implements IInventoryContainerSlot {
 
-    public InventoryContainerSlot(IItemHandler itemHandler, int index, int x, int y) {
-        super(itemHandler, index, x, y);
-    }
+	public InventoryContainerSlot(ResourceHandler<ItemResource> itemHandler, int index, int x, int y) {
+		super(itemHandler, index, x, y);
+	}
 
-    @Override
-    public int getMaxStackSize(ItemStack stack) {
-        return Math.min(getMaxStackSize(), stack.getMaxStackSize());
-    }
+	@Override
+	public int getMaxStackSize(ItemStack stack) {
+		return Math.min(getMaxStackSize(), stack.getMaxStackSize());
+	}
 }

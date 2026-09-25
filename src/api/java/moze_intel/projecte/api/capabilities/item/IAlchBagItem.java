@@ -3,7 +3,8 @@ package moze_intel.projecte.api.capabilities.item;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.ItemCapability;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -26,5 +27,5 @@ public interface IAlchBagItem {
 	 *
 	 * @return Whether the inventory was changed by this item ticking
 	 */
-	boolean updateInAlchBag(@NotNull IItemHandler inv, @NotNull Player player, @NotNull ItemStack stack);
+	boolean updateInAlchBag(@NotNull ResourceHandler<ItemResource> inv, @NotNull Player player, @NotNull ItemStack stack);
 }

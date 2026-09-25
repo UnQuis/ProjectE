@@ -34,8 +34,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.ItemCapability;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
@@ -71,11 +73,11 @@ public record KeyPressPKT(PEKeybind key) implements IPEPacket {
 			return;
 		} else if (key == PEKeybind.TRANSMUTATION_TABLET) {
             if (!(player instanceof ServerPlayer)) return;
-            Optional<IItemHandlerModifiable> curiosInv = TransmutationTableCurios.getCuriosInventory(player);
+            Optional<ResourceHandler<ItemResource>> curiosInv = TransmutationTableCurios.getCuriosInventory(player);
             if (curiosInv.isEmpty()) return;
-            IItemHandlerModifiable curios = curiosInv.get();
-            for (int i = 0; i < curios.getSlots(); i++) {
-                ItemStack stack = curios.getStackInSlot(i);
+            var curios = curiosInv.get();
+            for (int i = 0; i < curios.size(); i++) {
+                ItemStack stack = ItemUtil.getStack(curios, i);
                 if (stack.getItem() instanceof ITransmutationTablet tablet) {
                     tablet.openContainer(player);
                     break;

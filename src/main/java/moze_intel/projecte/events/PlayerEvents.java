@@ -8,6 +8,7 @@ import moze_intel.projecte.gameObjs.items.AlchemicalBag;
 import moze_intel.projecte.gameObjs.items.armor.PEArmor;
 import moze_intel.projecte.gameObjs.items.armor.PEArmor.ReductionInfo;
 import moze_intel.projecte.impl.TransmutationOffline;
+import moze_intel.projecte.utils.ItemHelper;
 import moze_intel.projecte.utils.PlayerHelper;
 import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.ChatFormatting;
@@ -33,8 +34,8 @@ import net.neoforged.neoforge.event.entity.EntityInvulnerabilityCheckEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 
 @EventBusSubscriber(modid = PECore.MODID)
 public class PlayerEvents {
@@ -119,8 +120,8 @@ public class PlayerEvents {
 			IAlchBagProvider bagProvider = player.getCapability(PECapabilities.ALCH_BAG_CAPABILITY);
 			if (bagProvider != null) {
 				ItemStack stack = itemEntity.getItem();
-				IItemHandler handler = bagProvider.getBag(((AlchemicalBag) bag.getItem()).color);
-				ItemStack remainder = ItemHandlerHelper.insertItemStacked(handler, stack, false);
+				ResourceHandler<ItemResource> handler = bagProvider.getBag(((AlchemicalBag) bag.getItem()).color);
+				ItemStack remainder = ItemHelper.insertItemStacked(handler, stack);
 
 				int pickedUpCount = stack.getCount() - remainder.getCount();
 				if (pickedUpCount > 0) {

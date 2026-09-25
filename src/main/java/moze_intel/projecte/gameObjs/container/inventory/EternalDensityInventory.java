@@ -5,10 +5,11 @@ import moze_intel.projecte.components.GemData;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemStackLinkedSet;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 import org.jetbrains.annotations.NotNull;
 
-public class EternalDensityInventory extends ItemStackHandler {
+public class EternalDensityInventory extends ItemStacksResourceHandler {
 
 	private final ItemStack invItem;
 	private final boolean remote;
@@ -29,44 +30,49 @@ public class EternalDensityInventory extends ItemStackHandler {
 		}
 	}
 
-	@Override
 	public int getSlots() {
-		return 9;
+		return size();
+	}
+
+	public ItemStack getStackInSlot(int slot) {
+		return getResource(slot).toStack(getAmountAsInt(slot));
 	}
 
 	@Override
-	public boolean isItemValid(int slot, @NotNull ItemStack stack) {
-		if (stack.isEmpty()) {
+	public boolean isValid(int index, ItemResource resource) {
+		if (resource.isEmpty()) {
 			return true;
 		}
-		for (int i = 0, slots = getSlots(); i < slots; i++) {
-			if (ItemStack.isSameItemSameComponents(stack, getStackInSlot(i))) {
+		ItemStack stack = resource.toStack(1);
+		for (int i = 0, slots = size(); i < slots; i++) {
+			ItemStack stored = getStackInSlot(i);
+			if (!stored.isEmpty() && ItemStack.isSameItemSameComponents(stack, stored)) {
 				//Only allow duplicates if it is the same slot as it is already stored in
-				return i == slot;
+				return i == index;
 			}
 		}
 		return true;
 	}
 
-	@Override
 	public void setStackInSlot(int slot, @NotNull ItemStack stack) {
-		if (isItemValid(slot, stack)) {//Ensure the stack is valid before setting it
-			super.setStackInSlot(slot, stack);
+		if (isValid(slot, ItemResource.of(stack))) {
+			set(slot, ItemResource.of(stack), stack.getCount());
 		}
 	}
 
 	@Override
-	public int getSlotLimit(int slot) {
+	protected int getCapacity(int index, ItemResource resource) {
 		return 1;
 	}
 
 	@Override
-	protected void onContentsChanged(int slot) {//TODO: Make use of the slot parameter somehow?
-		if (remote) {//Skip updating the item on teh client as we already sync the data the client cares about
+	protected void onContentsChanged(int slot, ItemStack previousContents) {
+		if (remote) {
+			//Skip updating the item on teh client as we already sync the data the client cares about
 			return;
 		}
 		Set<ItemStack> targets = ItemStackLinkedSet.createTypeAndComponentsSet();
-		for (int i = 0, slots = getSlots(); i < slots; ++i) {
+		for (int i = 0, slots = size(); i < slots; ++i) {
 			ItemStack stackInSlot = getStackInSlot(i);
 			if (!stackInSlot.isEmpty()) {
 				targets.add(stackInSlot.copyWithCount(1));

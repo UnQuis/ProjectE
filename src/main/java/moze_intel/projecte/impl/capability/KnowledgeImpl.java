@@ -38,9 +38,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.attachment.IAttachmentHolder;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -206,7 +207,7 @@ public class KnowledgeImpl implements IKnowledgeProvider {
 
 	@NotNull
 	@Override
-	public IItemHandlerModifiable getInputAndLocks() {
+	public ResourceHandler<ItemResource> getInputAndLocks() {
 		return attachment().inputLocks;
 	}
 
@@ -239,12 +240,13 @@ public class KnowledgeImpl implements IKnowledgeProvider {
 	public void syncInputAndLocks(@NotNull ServerPlayer player, IntList slotsChanged, TargetUpdateType updateTargets) {
 		if (!slotsChanged.isEmpty()) {
 			KnowledgeAttachment attachment = attachment();
-			int slots = attachment.inputLocks.getSlots();
+			int slots = attachment.inputLocks.size();
 			Int2ObjectMap<ItemStack> stacksToSync = new Int2ObjectOpenHashMap<>();
 			for (int slot : slotsChanged) {
 				if (slot >= 0 && slot < slots) {
 					//Validate the slot is a valid index
-					stacksToSync.put(slot, attachment.inputLocks.getStackInSlot(slot));
+					ItemResource resource = attachment.inputLocks.getResource(slot);
+					stacksToSync.put(slot, resource.isEmpty() ? ItemStack.EMPTY : resource.toStack(attachment.inputLocks.getAmountAsInt(slot)));
 				}
 			}
 			if (!stacksToSync.isEmpty()) {
@@ -257,13 +259,14 @@ public class KnowledgeImpl implements IKnowledgeProvider {
 	@Override
 	public void receiveInputsAndLocks(Int2ObjectMap<ItemStack> changes) {
 		KnowledgeAttachment attachment = attachment();
-		int slots = attachment.inputLocks.getSlots();
+		int slots = attachment.inputLocks.size();
 		for (Iterator<Int2ObjectMap.Entry<ItemStack>> iterator = Int2ObjectMaps.fastIterator(changes); iterator.hasNext(); ) {
 			Int2ObjectMap.Entry<ItemStack> entry = iterator.next();
 			int slot = entry.getIntKey();
 			if (slot >= 0 && slot < slots) {
 				//Validate the slot is a valid index
-				attachment.inputLocks.setStackInSlot(slot, entry.getValue());
+				ItemStack stack = entry.getValue();
+				attachment.inputLocks.set(slot, ItemResource.of(stack), stack.getCount());
 			}
 		}
 	}
@@ -317,16 +320,16 @@ public class KnowledgeImpl implements IKnowledgeProvider {
 				KnowledgeAttachment::new
 		);
 
-		private final ItemStackHandler inputLocks;
+		private final ItemStacksResourceHandler inputLocks;
 		private final Set<ItemInfo> knowledge;
 		private boolean fullKnowledge;
 		private BigInteger emc;
 
 		public KnowledgeAttachment() {
-			this(new HashSet<>(), new ItemStackHandler(LOCK_SLOTS), BigInteger.ZERO, false);
+			this(new HashSet<>(), new ItemStacksResourceHandler(LOCK_SLOTS), BigInteger.ZERO, false);
 		}
 
-		private KnowledgeAttachment(Set<ItemInfo> knowledge, ItemStackHandler inputLocks, BigInteger emc, boolean fullKnowledge) {
+		private KnowledgeAttachment(Set<ItemInfo> knowledge, ItemStacksResourceHandler inputLocks, BigInteger emc, boolean fullKnowledge) {
 			this.knowledge = knowledge;
 			this.inputLocks = inputLocks;
 			this.emc = emc;
@@ -336,7 +339,7 @@ public class KnowledgeImpl implements IKnowledgeProvider {
 		@Nullable
 		public KnowledgeAttachment copy(IAttachmentHolder holder, HolderLookup.Provider registries) {
 			//Note: ItemInfo and BigInteger are both immutable, so we can just add them directly
-			return new KnowledgeAttachment(new HashSet<>(knowledge), PEAttachmentTypes.copyHandler(inputLocks, ItemStackHandler::new), emc, fullKnowledge);
+			return new KnowledgeAttachment(new HashSet<>(knowledge), PEAttachmentTypes.copyHandler(inputLocks, ItemStacksResourceHandler::new), emc, fullKnowledge);
 		}
 	}
 }

@@ -9,6 +9,7 @@ import moze_intel.projecte.gameObjs.container.slots.SlotPredicates;
 import moze_intel.projecte.gameObjs.registration.impl.BlockEntityTypeRegistryObject;
 import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
+import moze_intel.projecte.utils.ItemHelper;
 import moze_intel.projecte.utils.text.TextComponentUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -23,20 +24,20 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
 import net.neoforged.neoforge.common.NeoForge;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CondenserBlockEntity extends EmcChestBlockEntity {
 
-	public static final ICapabilityProvider<CondenserBlockEntity, @Nullable Direction, ResourceHandler<ItemResource>> INVENTORY_PROVIDER = (condenser, side) -> ItemHandlerResourceAdapter.of(condenser.automationInventory);
+	public static final ICapabilityProvider<CondenserBlockEntity, @Nullable Direction, ResourceHandler<ItemResource>> INVENTORY_PROVIDER = (condenser, side) -> condenser.automationInventory;
 
-	protected final ItemStackHandler inputInventory = createInput();
-	private final ItemStackHandler outputInventory = createOutput();
+	protected final StackHandler inputInventory = createInput();
+	private final StackHandler outputInventory = createOutput();
 	@Nullable
 	private ItemInfo lockInfo;
 	private boolean isAcceptingEmc;
@@ -44,7 +45,7 @@ public class CondenserBlockEntity extends EmcChestBlockEntity {
 	public long requiredEmc;
 	//Start at one less than actual just to ensure we run initially after loading
 	private int loadIndex = EMCMappingHandler.getLoadIndex() - 1;
-	private final IItemHandler automationInventory;
+	private final ResourceHandler<ItemResource> automationInventory;
 
 	public CondenserBlockEntity(BlockPos pos, BlockState state) {
 		this(PEBlockEntityTypes.CONDENSER, pos, state);
@@ -76,35 +77,35 @@ public class CondenserBlockEntity extends EmcChestBlockEntity {
 		return lockInfo;
 	}
 
-	public ItemStackHandler getInput() {
+	public StackHandler getInput() {
 		return inputInventory;
 	}
 
-	public ItemStackHandler getOutput() {
+	public StackHandler getOutput() {
 		return outputInventory;
 	}
 
-	protected ItemStackHandler createInput() {
+	protected StackHandler createInput() {
 		return new StackHandler(91);
 	}
 
-	protected ItemStackHandler createOutput() {
+	protected StackHandler createOutput() {
 		return inputInventory;
 	}
 
 	@NotNull
-	protected IItemHandler createAutomationInventory() {
+	protected ResourceHandler<ItemResource> createAutomationInventory() {
 		return new WrappedItemHandler(inputInventory, WrappedItemHandler.WriteMode.IN_OUT) {
-			@NotNull
 			@Override
-			public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-				return SlotPredicates.HAS_EMC.test(stack) && !isStackEqualToLock(stack) ? super.insertItem(slot, stack, simulate) : stack;
+			public boolean isValid(int index, ItemResource resource) {
+				ItemStack stack = resource.toStack(1);
+				return super.isValid(index, resource) && SlotPredicates.HAS_EMC.test(stack) && !isStackEqualToLock(stack);
 			}
 
-			@NotNull
 			@Override
-			public ItemStack extractItem(int slot, int max, boolean simulate) {
-				return isStackEqualToLock(getStackInSlot(slot)) ? super.extractItem(slot, max, simulate) : ItemStack.EMPTY;
+			public int extract(int index, ItemResource resource, int amount, TransactionContext transaction) {
+				ItemStack stored = ItemUtil.getStack(inputInventory, index);
+				return isStackEqualToLock(stored) ? super.extract(index, resource, amount, transaction) : 0;
 			}
 		};
 	}
@@ -145,9 +146,13 @@ public class CondenserBlockEntity extends EmcChestBlockEntity {
 		for (int i = 0, slots = inputInventory.getSlots(); i < slots; i++) {
 			ItemStack stack = inputInventory.getStackInSlot(i);
 			if (!stack.isEmpty() && !isStackEqualToLock(stack)) {
-				inputInventory.extractItem(i, 1, false);
-				forceInsertEmc(IEMCProxy.INSTANCE.getSellValue(stack), EmcAction.EXECUTE);
-				break;
+				try (Transaction transaction = Transaction.openRoot()) {
+					if (inputInventory.extract(i, ItemResource.of(stack), 1, transaction) == 1) {
+						forceInsertEmc(IEMCProxy.INSTANCE.getSellValue(stack), EmcAction.EXECUTE);
+						transaction.commit();
+						break;
+					}
+				}
 			}
 		}
 		if (this.getStoredEmc() >= requiredEmc && this.hasSpace()) {
@@ -159,7 +164,7 @@ public class CondenserBlockEntity extends EmcChestBlockEntity {
 	protected final void pushStack() {
 		ItemInfo lockInfo = getLockInfo();
 		if (lockInfo != null) {
-			ItemHandlerHelper.insertItemStacked(outputInventory, lockInfo.createStack(), false);
+			ItemHelper.insertItemStacked(outputInventory, lockInfo.createStack());
 		}
 	}
 

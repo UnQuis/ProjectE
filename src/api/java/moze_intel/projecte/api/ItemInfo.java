@@ -177,11 +177,10 @@ public final class ItemInfo {
 	@Nullable
 	@SuppressWarnings("OptionalAssignedToNull")
 	public <T> T getOrNull(DataComponentType<? extends T> type) {
-		Optional<? extends T> storedComponent = componentsPatch.getPatch(type);
-		if (storedComponent == null || storedComponent.isEmpty()) {
+		if (!componentsPatch.isPatched(type)) {
 			return null;
 		}
-		return storedComponent.get();
+		return componentsPatch.getPatch(type);
 	}
 
 	/**

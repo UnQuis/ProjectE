@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Range;
 public interface IEmcStorage {
 
 	/**
-	 * Like {@link net.neoforged.neoforge.fluids.capability.IFluidHandler.FluidAction} except for EMC in general
+	 * Like a transaction commit or rollback decision except for EMC in general
 	 */
 	enum EmcAction {
 		EXECUTE,

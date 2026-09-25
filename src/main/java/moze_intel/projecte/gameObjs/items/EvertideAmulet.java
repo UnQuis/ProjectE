@@ -41,11 +41,11 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.saveddata.WeatherData;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.FluidType;
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.transfer.InfiniteResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.jetbrains.annotations.NotNull;
 
 public class EvertideAmulet extends ItemPE implements IProjectileShooter, IPedestalItem, ICapabilityAware {
@@ -71,9 +71,12 @@ public class EvertideAmulet extends ItemPE implements IProjectileShooter, IPedes
 		BlockPos pos = ctx.getClickedPos();
 		if (!level.isClientSide() && PlayerHelper.hasEditPermission(player, level, pos)) {
 			Direction sideHit = ctx.getClickedFace();
-			IFluidHandler fluidHandler = IFluidHandler.of(WorldHelper.getCapability(level, Capabilities.Fluid.BLOCK, pos, sideHit));
+			ResourceHandler<FluidResource> fluidHandler = WorldHelper.getCapability(level, Capabilities.Fluid.BLOCK, pos, sideHit);
 			if (fluidHandler != null) {
-				fluidHandler.fill(new FluidStack(Fluids.WATER, FluidType.BUCKET_VOLUME), IFluidHandler.FluidAction.EXECUTE);
+				try (Transaction transaction = Transaction.openRoot()) {
+					fluidHandler.insert(FluidResource.of(Fluids.WATER), FluidType.BUCKET_VOLUME, transaction);
+					transaction.commit();
+				}
 				return InteractionResult.CONSUME;
 			}
 			WorldHelper.placeFluid(player, level, pos, sideHit, Fluids.WATER, !ProjectEConfig.server.items.opEvertide.get());

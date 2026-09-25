@@ -6,6 +6,7 @@ import moze_intel.projecte.PECore;
 import moze_intel.projecte.gameObjs.items.ItemPE;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import moze_intel.projecte.integration.IntegrationHelper;
+import moze_intel.projecte.utils.ItemHelper;
 import net.minecraft.core.Holder;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -19,7 +20,9 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.FluidState;
 import net.neoforged.neoforge.common.NeoForgeMod;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 public class InternalAbilities {
 
@@ -61,10 +64,10 @@ public class InternalAbilities {
 			}
 		}
 		//Single curios capability query for the whole tick (cached instead of re-querying per check)
-		IItemHandler curios = player.getCapability(IntegrationHelper.CURIO_ITEM_HANDLER);
+		ResourceHandler<ItemResource> curios = player.getCapability(IntegrationHelper.CURIO_ITEM_HANDLER);
 		if (curios != null) {
-			for (int i = 0, slots = curios.getSlots(); i < slots; i++) {
-				ItemStack stack = curios.getStackInSlot(i);
+			for (int i = 0, slots = curios.size(); i < slots; i++) {
+				ItemStack stack = ItemUtil.getStack(curios, i);
 				if (stack.isEmpty()) {
 					continue;
 				}
@@ -73,7 +76,11 @@ public class InternalAbilities {
 				} else if (stack.is(PEItems.VOLCANITE_AMULET)) {
 					hasVolcanite = true;
 				} else if (!hasSwrgWithEmc && stack.is(PEItems.SWIFTWOLF_RENDING_GALE)) {
+					ItemStack original = stack.copy();
 					hasSwrgWithEmc = ItemPE.hasEmc(player, stack, 64, true);
+					if (hasSwrgWithEmc && !ItemStack.matches(original, stack)) {
+						ItemHelper.setStack(curios, i, stack);
+					}
 				}
 			}
 		}

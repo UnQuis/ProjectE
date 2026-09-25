@@ -8,7 +8,9 @@ import moze_intel.projecte.gameObjs.IMatterType;
 import moze_intel.projecte.gameObjs.block_entities.DMPedestalBlockEntity;
 import moze_intel.projecte.gameObjs.registration.impl.BlockEntityTypeRegistryObject;
 import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
+import moze_intel.projecte.utils.ItemHelper;
 import moze_intel.projecte.utils.WorldHelper;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -82,9 +84,9 @@ public class Pedestal extends Block implements SimpleWaterloggedBlock, PEEntityB
 	private boolean dropItem(Level level, BlockPos pos) {
 		DMPedestalBlockEntity pedestal = WorldHelper.getBlockEntity(DMPedestalBlockEntity.class, level, pos);
 		if (pedestal != null) {
-			ItemStack stack = pedestal.getInventory().getStackInSlot(0);
+			ItemStack stack = ItemUtil.getStack(pedestal.getInventory(), 0);
 			if (!stack.isEmpty()) {
-				pedestal.getInventory().setStackInSlot(0, ItemStack.EMPTY);
+				ItemHelper.setStack(pedestal.getInventory(), 0, ItemStack.EMPTY);
 				level.addFreshEntity(new ItemEntity(level, pos.getX(), pos.getY() + 0.8, pos.getZ(), stack));
 				return true;
 			}
@@ -122,7 +124,7 @@ public class Pedestal extends Block implements SimpleWaterloggedBlock, PEEntityB
 			if (pedestal == null) {
 				return InteractionResult.FAIL;
 			}
-			ItemStack item = pedestal.getInventory().getStackInSlot(0);
+			ItemStack item = ItemUtil.getStack(pedestal.getInventory(), 0);
 			if (stack.isEmpty() && !item.isEmpty()) {
 				IPedestalItem pedestalItem = item.getCapability(PECapabilities.PEDESTAL_ITEM_CAPABILITY);
 				if (pedestalItem != null) {
@@ -130,7 +132,7 @@ public class Pedestal extends Block implements SimpleWaterloggedBlock, PEEntityB
 					level.sendBlockUpdated(pos, state, state, Block.UPDATE_IMMEDIATE);
 				}
 			} else if (!stack.isEmpty() && item.isEmpty()) {
-				pedestal.getInventory().setStackInSlot(0, stack.split(1));
+				ItemHelper.setStack(pedestal.getInventory(), 0, stack.split(1));
 			}
 		}
 		return InteractionResult.SUCCESS;
@@ -144,7 +146,7 @@ public class Pedestal extends Block implements SimpleWaterloggedBlock, PEEntityB
 		DMPedestalBlockEntity ped = WorldHelper.getBlockEntity(DMPedestalBlockEntity.class, level, pos);
 		if (ped != null && ped.previousRedstoneState != hasSignal) {
 			if (hasSignal) {
-				ItemStack stack = ped.getInventory().getStackInSlot(0);
+				ItemStack stack = ItemUtil.getStack(ped.getInventory(), 0);
 				//Note: Checking the capability is present will validate that the stack is not empty
 				if (stack.getCapability(PECapabilities.PEDESTAL_ITEM_CAPABILITY) != null) {
 					ped.setActive(level, pos, !ped.getActive());
@@ -167,7 +169,7 @@ public class Pedestal extends Block implements SimpleWaterloggedBlock, PEEntityB
 	public int getAnalogOutputSignal(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Direction direction) {
 		DMPedestalBlockEntity pedestal = WorldHelper.getBlockEntity(DMPedestalBlockEntity.class, level, pos);
 		if (pedestal != null) {
-			ItemStack stack = pedestal.getInventory().getStackInSlot(0);
+			ItemStack stack = ItemUtil.getStack(pedestal.getInventory(), 0);
 			if (!stack.isEmpty()) {
 				if (stack.getCapability(PECapabilities.PEDESTAL_ITEM_CAPABILITY) != null) {
 					return pedestal.getActive() ? 15 : 10;

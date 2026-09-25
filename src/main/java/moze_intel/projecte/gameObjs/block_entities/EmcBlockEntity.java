@@ -10,14 +10,19 @@ import moze_intel.projecte.utils.WorldHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.chunk.status.ChunkStatus;
-import net.neoforged.neoforge.items.ItemStackHandler;
+import net.minecraft.world.level.storage.ValueInput;
+import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Range;
 
@@ -141,15 +146,34 @@ public abstract class EmcBlockEntity extends BaseEmcBlockEntity {
 		return sentEmc;
 	}
 
-	protected class StackHandler extends ItemStackHandler {
+	public class StackHandler extends ItemStacksResourceHandler {
 
 		protected StackHandler(int size) {
 			super(size);
 		}
 
+		protected StackHandler(NonNullList<ItemStack> stacks) {
+			super(stacks);
+		}
+
+		public int getSlots() {
+			return size();
+		}
+
+		public ItemStack getStackInSlot(int slot) {
+			return stacks.get(slot);
+		}
+
+		public void setStackInSlot(int slot, ItemStack stack) {
+			set(slot, ItemResource.of(stack), stack.getCount());
+		}
+
 		@Override
+		protected void onContentsChanged(int slot, ItemStack previousContents) {
+			onContentsChanged(slot);
+		}
+
 		protected void onContentsChanged(int slot) {
-			super.onContentsChanged(slot);
 			setChanged();
 		}
 	}
@@ -158,7 +182,7 @@ public abstract class EmcBlockEntity extends BaseEmcBlockEntity {
 
 		//Start as needing to check for compacting when loaded
 		private boolean needsCompacting = true;
-		private boolean empty;
+		private boolean empty = true;
 
 		protected CompactableStackHandler(int size) {
 			super(size);
@@ -180,15 +204,10 @@ public abstract class EmcBlockEntity extends BaseEmcBlockEntity {
 		}
 
 		@Override
-		protected void onLoad() {
-			super.onLoad();
-			empty = true;
-			for (int slot = 0, slots = getSlots(); slot < slots; slot++) {
-				if (!getStackInSlot(slot).isEmpty()) {
-					empty = false;
-					break;
-				}
-			}
+		public void deserialize(ValueInput input) {
+			super.deserialize(input);
+			empty = ResourceHandlerUtil.isEmpty(this);
+			needsCompacting = true;
 		}
 
 		/**

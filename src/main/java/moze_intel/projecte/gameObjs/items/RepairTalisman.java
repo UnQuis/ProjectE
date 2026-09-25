@@ -28,7 +28,10 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,7 +83,7 @@ public class RepairTalisman extends ItemPE implements IAlchBagItem, IAlchChestIt
 	@Override
 	public boolean updateInAlchChest(@NotNull Level level, @NotNull BlockPos pos, @NotNull ItemStack stack) {
 		if (!level.isClientSide()) {
-			IItemHandler inv = IItemHandler.of(WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, null));
+			ResourceHandler<ItemResource> inv = WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, null);
 			if (inv != null) {
 				return updateInHandler(inv, stack);
 			}
@@ -89,11 +92,11 @@ public class RepairTalisman extends ItemPE implements IAlchBagItem, IAlchChestIt
 	}
 
 	@Override
-	public boolean updateInAlchBag(@NotNull IItemHandler inv, @NotNull Player player, @NotNull ItemStack stack) {
+	public boolean updateInAlchBag(@NotNull ResourceHandler<ItemResource> inv, @NotNull Player player, @NotNull ItemStack stack) {
 		return !player.level().isClientSide() && updateInHandler(inv, stack);
 	}
 
-	private boolean updateInHandler(@NotNull IItemHandler inv, @NotNull ItemStack stack) {
+	private boolean updateInHandler(@NotNull ResourceHandler<ItemResource> inv, @NotNull ItemStack stack) {
 		byte coolDown = stack.getOrDefault(PEDataComponentTypes.COOLDOWN, (byte) 0);
 		if (coolDown > 0) {
 			stack.set(PEDataComponentTypes.COOLDOWN, (byte) (coolDown - 1));
@@ -111,22 +114,27 @@ public class RepairTalisman extends ItemPE implements IAlchBagItem, IAlchChestIt
 	}
 
 	private static void repairAllItems(Player player) {
-		repairAllItems(IItemHandler.of(player.getCapability(Capabilities.Item.ENTITY)), player, CAN_REPAIR_PLAYER_ITEM);
+		repairAllItems(player.getCapability(Capabilities.Item.ENTITY), player, CAN_REPAIR_PLAYER_ITEM);
 		repairAllItems(player.getCapability(IntegrationHelper.CURIO_ITEM_HANDLER), player, CAN_REPAIR_PLAYER_ITEM);
 	}
 
-	private static <DATA> boolean repairAllItems(@Nullable IItemHandler inv, DATA data, BiPredicate<ItemStack, DATA> canRepairStack) {
+	private static <DATA> boolean repairAllItems(@Nullable ResourceHandler<ItemResource> inv, DATA data, BiPredicate<ItemStack, DATA> canRepairStack) {
 		if (inv == null) {
 			return false;
 		}
 		boolean hasAction = false;
-		for (int i = 0, slots = inv.getSlots(); i < slots; i++) {
-			ItemStack invStack = inv.getStackInSlot(i);
-			if (canRepairStack.test(invStack, data)) {
-				invStack.setDamageValue(invStack.getDamageValue() - 1);
-				if (!hasAction) {
-					hasAction = true;
+		try (Transaction transaction = Transaction.openRoot()) {
+			for (int i = 0, slots = inv.size(); i < slots; i++) {
+				ItemStack invStack = ItemUtil.getStack(inv, i);
+				if (canRepairStack.test(invStack, data)) {
+					invStack.setDamageValue(invStack.getDamageValue() - 1);
+					if (ItemHelper.setStack(inv, i, invStack, transaction) && !hasAction) {
+						hasAction = true;
+					}
 				}
+			}
+			if (hasAction) {
+				transaction.commit();
 			}
 		}
 		return hasAction;

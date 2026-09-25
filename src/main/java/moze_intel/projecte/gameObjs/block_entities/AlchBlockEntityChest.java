@@ -5,6 +5,7 @@ import moze_intel.projecte.api.capabilities.item.IAlchChestItem;
 import moze_intel.projecte.gameObjs.container.AlchChestContainer;
 import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
+import moze_intel.projecte.utils.ItemHelper;
 import moze_intel.projecte.utils.text.TextComponentUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -19,15 +20,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class AlchBlockEntityChest extends EmcChestBlockEntity {
 
-	public static final ICapabilityProvider<AlchBlockEntityChest, @Nullable Direction, ResourceHandler<ItemResource>> INVENTORY_PROVIDER = (chest, side) -> ItemHandlerResourceAdapter.of(chest.inventory);
+	public static final ICapabilityProvider<AlchBlockEntityChest, @Nullable Direction, ResourceHandler<ItemResource>> INVENTORY_PROVIDER = (chest, side) -> chest.inventory;
 
 	private final StackHandler inventory = new StackHandler(104) {
 		@Override
@@ -58,10 +59,10 @@ public class AlchBlockEntityChest extends EmcChestBlockEntity {
 
 	public static void tickClient(Level level, BlockPos pos, BlockState state, AlchBlockEntityChest alchChest) {
 		for (int i = 0, slots = alchChest.inventory.getSlots(); i < slots; i++) {
-			ItemStack stack = alchChest.inventory.getStackInSlot(i);
+			ItemStack stack = ItemUtil.getStack(alchChest.inventory, i);
 			IAlchChestItem alchChestItem = stack.getCapability(PECapabilities.ALCH_CHEST_ITEM_CAPABILITY);
-			if (alchChestItem != null) {
-				alchChestItem.updateInAlchChest(level, pos, stack);
+			if (alchChestItem != null && alchChestItem.updateInAlchChest(level, pos, stack)) {
+				ItemHelper.setStack(alchChest.inventory, i, stack);
 			}
 		}
 		EmcChestBlockEntity.lidAnimateTick(level, pos, state, alchChest);
@@ -70,10 +71,10 @@ public class AlchBlockEntityChest extends EmcChestBlockEntity {
 	public static void tickServer(Level level, BlockPos pos, BlockState state, AlchBlockEntityChest alchChest) {
 		StackHandler inventory = alchChest.inventory;
 		for (int i = 0, slots = inventory.getSlots(); i < slots; i++) {
-			ItemStack stack = inventory.getStackInSlot(i);
+			ItemStack stack = ItemUtil.getStack(inventory, i);
 			IAlchChestItem alchChestItem = stack.getCapability(PECapabilities.ALCH_CHEST_ITEM_CAPABILITY);
 			if (alchChestItem != null && alchChestItem.updateInAlchChest(level, pos, stack)) {
-				inventory.onContentsChanged(i);
+				ItemHelper.setStack(inventory, i, stack);
 			}
 		}
 		if (alchChest.inventoryChanged) {
@@ -84,7 +85,7 @@ public class AlchBlockEntityChest extends EmcChestBlockEntity {
 		alchChest.updateComparators(level, pos);
 	}
 
-	public IItemHandler getInventory() {
+	public ResourceHandler<ItemResource> getInventory() {
 		return inventory;
 	}
 

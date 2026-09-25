@@ -38,8 +38,8 @@ import net.minecraft.world.phys.HitResult.Type;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -98,19 +98,19 @@ public class BlackHoleBand extends PEToggleItem implements IAlchBagItem, IAlchCh
 			@NotNull PEDESTAL pedestal) {
 		Vec3 target = Vec3.atCenterOf(pos);
 		//Cache the item handlers for neighboring positions in a fixed-size array (6 directions) to avoid EnumMap allocation each tick
-		IItemHandler[] nearbyHandlers = new IItemHandler[6];
+		ResourceHandler<ItemResource>[] nearbyHandlers = new ResourceHandler[6];
 		for (ItemEntity item : level.getEntitiesOfClass(ItemEntity.class, pedestal.getEffectBounds(), ent -> !ent.isSpectator() && ent.isAlive())) {
 			WorldHelper.gravitateEntityTowards(item, target);
 			if (!level.isClientSide() && item.distanceToSqr(target) < 1.21) {
 				for (int i = 0; i < Constants.DIRECTIONS.length; i++) {
 					Direction dir = Constants.DIRECTIONS[i];
 					//Cache the item handlers in various spots so that we only query each neighboring position once
-					IItemHandler inv = nearbyHandlers[i];
+					ResourceHandler<ItemResource> inv = nearbyHandlers[i];
 					if (inv == null) {
-						inv = IItemHandler.of(WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos.relative(dir), dir));
+						inv = WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos.relative(dir), dir);
 						nearbyHandlers[i] = inv;
 					}
-					ItemStack result = ItemHandlerHelper.insertItemStacked(inv, item.getItem(), false);
+					ItemStack result = ItemHelper.insertItemStacked(inv, item.getItem());
 					if (result.isEmpty()) {
 						item.discard();
 						break;
@@ -134,14 +134,14 @@ public class BlackHoleBand extends PEToggleItem implements IAlchBagItem, IAlchCh
 	@Override
 	public boolean updateInAlchChest(@NotNull Level level, @NotNull BlockPos pos, @NotNull ItemStack stack) {
 		if (stack.getOrDefault(PEDataComponentTypes.ACTIVE, false)) {
-			IItemHandler handler = IItemHandler.of(WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, null));
+			ResourceHandler<ItemResource> handler = WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, null);
 			if (handler != null) {
 				AABB aabb = new AABB(pos).inflate(5);
 				Vec3 center = aabb.getCenter();
 				for (ItemEntity e : level.getEntitiesOfClass(ItemEntity.class, aabb, ent -> !ent.isSpectator() && ent.isAlive())) {
 					WorldHelper.gravitateEntityTowards(e, center);
 					if (!level.isClientSide() && e.distanceToSqr(center) < 1.21) {
-						ItemStack result = ItemHandlerHelper.insertItemStacked(handler, e.getItem(), false);
+						ItemStack result = ItemHelper.insertItemStacked(handler, e.getItem());
 						if (!result.isEmpty()) {
 							e.setItem(result);
 						} else {
@@ -155,7 +155,7 @@ public class BlackHoleBand extends PEToggleItem implements IAlchBagItem, IAlchCh
 	}
 
 	@Override
-	public boolean updateInAlchBag(@NotNull IItemHandler inv, @NotNull Player player, @NotNull ItemStack stack) {
+	public boolean updateInAlchBag(@NotNull ResourceHandler<ItemResource> inv, @NotNull Player player, @NotNull ItemStack stack) {
 		if (stack.getOrDefault(PEDataComponentTypes.ACTIVE, false)) {
 			for (ItemEntity e : player.level().getEntitiesOfClass(ItemEntity.class, player.getBoundingBox().inflate(5))) {
 				WorldHelper.gravitateEntityTowards(e, player.position());

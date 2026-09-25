@@ -25,7 +25,8 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.entity.EntityTeleportEvent;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -81,7 +82,7 @@ public class VoidRing extends GemEternalDensity implements IPedestalItem, IExtra
 	}
 
 	@Override
-	public boolean updateInAlchBag(@NotNull IItemHandler inv, @NotNull Player player, @NotNull ItemStack stack) {
+	public boolean updateInAlchBag(@NotNull ResourceHandler<ItemResource> inv, @NotNull Player player, @NotNull ItemStack stack) {
 		// super is Gem of Eternal Density
 		return super.updateInAlchBag(inv, player, stack) | PEItems.BLACK_HOLE_BAND.get().updateInAlchBag(inv, player, stack);
 	}

@@ -16,8 +16,9 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import org.jetbrains.annotations.NotNull;
 import net.minecraft.world.InteractionResult;
 
@@ -55,9 +56,9 @@ public class AlchemicalBag extends ItemPE {
 						break;
 					}
 				}
-				IItemHandler inv = alchBagProvider.getBag(bag.color);
-				for (int i = 0; i < inv.getSlots(); i++) {
-					ItemStack ring = inv.getStackInSlot(i);
+				ResourceHandler<ItemResource> inv = alchBagProvider.getBag(bag.color);
+				for (int i = 0; i < inv.size(); i++) {
+					ItemStack ring = ItemUtil.getStack(inv, i);
 					if (!ring.isEmpty() && (ring.is(PEItems.BLACK_HOLE_BAND) || ring.is(PEItems.VOID_RING))) {
 						if (ring.getOrDefault(PEDataComponentTypes.ACTIVE, false)) {
 							return stack;
@@ -82,7 +83,7 @@ public class AlchemicalBag extends ItemPE {
 		@NotNull
 		@Override
 		public AbstractContainerMenu createMenu(int windowId, @NotNull Inventory playerInventory, @NotNull Player player) {
-			IItemHandlerModifiable inv = (IItemHandlerModifiable) Objects.requireNonNull(player.getCapability(PECapabilities.ALCH_BAG_CAPABILITY)).getBag(color);
+			ResourceHandler<ItemResource> inv = Objects.requireNonNull(player.getCapability(PECapabilities.ALCH_BAG_CAPABILITY)).getBag(color);
 			return new AlchBagContainer(windowId, playerInventory, hand, inv, playerInventory.getSelectedSlot(), false);
 		}
 

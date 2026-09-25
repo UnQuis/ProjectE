@@ -14,8 +14,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AbstractFurnaceBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -53,7 +52,8 @@ public class MatterFurnace extends AbstractFurnaceBlock implements IMatterBlock,
 	@Override
 	@Deprecated
 	public int getAnalogOutputSignal(@NotNull BlockState state, @NotNull Level level, @NotNull BlockPos pos, @NotNull Direction direction) {
-		return ItemHandlerHelper.calcRedstoneFromInventory(IItemHandler.of(WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, state, null, null)));
+		var handler = WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, state, null, null);
+		return handler == null ? 0 : ResourceHandlerUtil.getRedstoneSignalFromResourceHandler(handler);
 	}
 
 	@Override

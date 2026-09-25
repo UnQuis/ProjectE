@@ -5,6 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import moze_intel.projecte.gameObjs.block_entities.DMPedestalBlockEntity;
 import net.minecraft.SharedConstants;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.debug.DebugScreenEntries;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -54,7 +55,7 @@ public class PedestalRenderer implements BlockEntityRenderer<DMPedestalBlockEnti
 			if (Minecraft.getInstance().debugEntries.isCurrentlyEnabled(DebugScreenEntries.ENTITY_HITBOXES)) {
 				state.effectBounds = pedestal.getEffectBounds().move(-pos.getX(), -pos.getY(), -pos.getZ());
 			}
-			ItemStack stack = pedestal.getInventory().getStackInSlot(0);
+			ItemStack stack = ItemUtil.getStack(pedestal.getInventory(), 0);
 			if (!stack.isEmpty()) {
 				long gameTime = level.getGameTime();
 				state.bobY = Mth.sin((gameTime + partialTicks) / 10.0F) * 0.1F + 0.1F;

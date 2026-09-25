@@ -6,6 +6,7 @@ import moze_intel.projecte.api.capabilities.item.IPedestalItem;
 import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
 import moze_intel.projecte.gameObjs.registries.PESoundEvents;
 import moze_intel.projecte.utils.Constants;
+import moze_intel.projecte.utils.ItemHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -19,15 +20,15 @@ import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class DMPedestalBlockEntity extends EmcBlockEntity implements IDMPedestal {
 
-	public static final ICapabilityProvider<DMPedestalBlockEntity, @Nullable Direction, ResourceHandler<ItemResource>> INVENTORY_PROVIDER = (pedestal, side) -> ItemHandlerResourceAdapter.of(pedestal.inventory);
+	public static final ICapabilityProvider<DMPedestalBlockEntity, @Nullable Direction, ResourceHandler<ItemResource>> INVENTORY_PROVIDER = (pedestal, side) -> pedestal.inventory;
 	private static final int RANGE = 4;
 
 	private final StackHandler inventory = new StackHandler(1) {
@@ -52,12 +53,14 @@ public class DMPedestalBlockEntity extends EmcBlockEntity implements IDMPedestal
 
 	public static void tickClient(Level level, BlockPos pos, BlockState state, DMPedestalBlockEntity pedestal) {
 		if (pedestal.getActive()) {
-			ItemStack stack = pedestal.inventory.getStackInSlot(0);
+			ItemStack stack = ItemUtil.getStack(pedestal.inventory, 0);
 			IPedestalItem pedestalItem = stack.getCapability(PECapabilities.PEDESTAL_ITEM_CAPABILITY);
 			if (pedestalItem == null) {
 				pedestal.setActive(level, pos, false);
 			} else {
-				pedestalItem.updateInPedestal(stack, level, pos, pedestal);
+				if (pedestalItem.updateInPedestal(stack, level, pos, pedestal)) {
+					ItemHelper.setStack(pedestal.inventory, 0, stack);
+				}
 				if (pedestal.particleCooldown <= 0) {
 					spawnParticleTypes(level, pos);
 					pedestal.particleCooldown = Constants.TICKS_PER_HALF_SECOND;
@@ -70,12 +73,12 @@ public class DMPedestalBlockEntity extends EmcBlockEntity implements IDMPedestal
 
 	public static void tickServer(Level level, BlockPos pos, BlockState state, DMPedestalBlockEntity pedestal) {
 		if (pedestal.getActive()) {
-			ItemStack stack = pedestal.inventory.getStackInSlot(0);
+			ItemStack stack = ItemUtil.getStack(pedestal.inventory, 0);
 			IPedestalItem pedestalItem = stack.getCapability(PECapabilities.PEDESTAL_ITEM_CAPABILITY);
 			if (pedestalItem == null) {
 				pedestal.setActive(level, pos, false);
 			} else if (pedestalItem.updateInPedestal(stack, level, pos, pedestal)) {
-				pedestal.inventory.onContentsChanged(0);
+				ItemHelper.setStack(pedestal.inventory, 0, stack);
 			}
 		}
 		pedestal.updateComparators(level, pos);
@@ -176,7 +179,7 @@ public class DMPedestalBlockEntity extends EmcBlockEntity implements IDMPedestal
 		markDirty(level, pos, true);
 	}
 
-	public IItemHandlerModifiable getInventory() {
+	public ResourceHandler<ItemResource> getInventory() {
 		return inventory;
 	}
 }

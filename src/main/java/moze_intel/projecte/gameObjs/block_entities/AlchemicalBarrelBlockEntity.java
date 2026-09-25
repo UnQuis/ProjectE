@@ -5,6 +5,7 @@ import moze_intel.projecte.api.capabilities.item.IAlchChestItem;
 import moze_intel.projecte.gameObjs.container.AlchemicalBarrelContainer;
 import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
+import moze_intel.projecte.utils.ItemHelper;
 import moze_intel.projecte.utils.text.TextComponentUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -25,11 +26,16 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.capabilities.ICapabilityProvider;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class AlchemicalBarrelBlockEntity extends EmcBlockEntity implements MenuProvider {
+
+	public static final ICapabilityProvider<AlchemicalBarrelBlockEntity, @Nullable Direction, ResourceHandler<ItemResource>> INVENTORY_PROVIDER = (barrel, side) -> barrel.inventory;
 
 	private final ContainerOpenersCounter openersCounter = new ContainerOpenersCounter() {
 		@Override
@@ -67,20 +73,20 @@ public class AlchemicalBarrelBlockEntity extends EmcBlockEntity implements MenuP
 
 	public static void tickClient(Level level, BlockPos pos, BlockState state, AlchemicalBarrelBlockEntity barrel) {
 		for (int i = 0, slots = barrel.inventory.getSlots(); i < slots; i++) {
-			ItemStack stack = barrel.inventory.getStackInSlot(i);
+			ItemStack stack = ItemUtil.getStack(barrel.inventory, i);
 			IAlchChestItem chestItem = stack.getCapability(PECapabilities.ALCH_CHEST_ITEM_CAPABILITY);
-			if (chestItem != null) {
-				chestItem.updateInAlchChest(level, pos, stack);
+			if (chestItem != null && chestItem.updateInAlchChest(level, pos, stack)) {
+				ItemHelper.setStack(barrel.inventory, i, stack);
 			}
 		}
 	}
 
 	public static void tickServer(Level level, BlockPos pos, BlockState state, AlchemicalBarrelBlockEntity barrel) {
 		for (int i = 0, slots = barrel.inventory.getSlots(); i < slots; i++) {
-			ItemStack stack = barrel.inventory.getStackInSlot(i);
+			ItemStack stack = ItemUtil.getStack(barrel.inventory, i);
 			IAlchChestItem chestItem = stack.getCapability(PECapabilities.ALCH_CHEST_ITEM_CAPABILITY);
 			if (chestItem != null && chestItem.updateInAlchChest(level, pos, stack)) {
-				barrel.inventory.onContentsChanged(i);
+				ItemHelper.setStack(barrel.inventory, i, stack);
 			}
 		}
 		if (barrel.inventoryChanged) {
@@ -121,7 +127,7 @@ public class AlchemicalBarrelBlockEntity extends EmcBlockEntity implements MenuP
 		}
 	}
 
-	public IItemHandler getInventory(@Nullable Direction direction) {
+	public ResourceHandler<ItemResource> getInventory(@Nullable Direction direction) {
 		return inventory;
 	}
 

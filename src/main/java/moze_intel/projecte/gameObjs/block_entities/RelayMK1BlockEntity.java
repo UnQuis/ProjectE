@@ -23,12 +23,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 import net.neoforged.neoforge.capabilities.ICapabilityProvider;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
-import net.neoforged.neoforge.items.ItemStackHandler;
-import net.neoforged.neoforge.items.wrapper.CombinedInvWrapper;
+import net.neoforged.neoforge.transfer.CombinedResourceHandler;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -36,19 +35,19 @@ public class RelayMK1BlockEntity extends EmcBlockEntity implements MenuProvider,
 
 	public static final ICapabilityProvider<RelayMK1BlockEntity, @Nullable Direction, ResourceHandler<ItemResource>> INVENTORY_PROVIDER = (relay, side) -> {
 		if (side == null) {
-			return ItemHandlerResourceAdapter.of(relay.joined);
+			return relay.joined;
 		} else if (side.getAxis().isVertical()) {
-			return ItemHandlerResourceAdapter.of(relay.automationOutput);
+			return relay.automationOutput;
 		}
-		return ItemHandlerResourceAdapter.of(relay.automationInput);
+		return relay.automationInput;
 	};
 
 	private final CompactableStackHandler input;
-	private final ItemStackHandler output = new StackHandler(1);
+	private final StackHandler output = new StackHandler(1);
 
-	private final IItemHandlerModifiable automationOutput;
-	private final IItemHandlerModifiable automationInput;
-	private final IItemHandler joined;
+	private final ResourceHandler<ItemResource> automationOutput;
+	private final ResourceHandler<ItemResource> automationInput;
+	private final ResourceHandler<ItemResource> joined;
 
 	private final long chargeRate;
 
@@ -62,33 +61,30 @@ public class RelayMK1BlockEntity extends EmcBlockEntity implements MenuProvider,
 		super(type, pos, state, tier.getStorage());
 		this.chargeRate = tier.getChargeRate();
 		input = new CompactableStackHandler(sizeInv) {
-			@NotNull
 			@Override
-			public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-				return SlotPredicates.RELAY_INV.test(stack) ? super.insertItem(slot, stack, simulate) : stack;
+			public boolean isValid(int index, ItemResource resource) {
+				return super.isValid(index, resource) && SlotPredicates.RELAY_INV.test(resource.toStack(1));
 			}
 		};
 
 		this.automationInput = new WrappedItemHandler(input, WrappedItemHandler.WriteMode.IN);
 		this.automationOutput = new WrappedItemHandler(output, WrappedItemHandler.WriteMode.IN_OUT) {
-			@NotNull
 			@Override
-			public ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-				return SlotPredicates.EMC_HOLDER.test(stack) ? super.insertItem(slot, stack, simulate) : stack;
+			public boolean isValid(int index, ItemResource resource) {
+				return super.isValid(index, resource) && SlotPredicates.EMC_HOLDER.test(resource.toStack(1));
 			}
 
-			@NotNull
 			@Override
-			public ItemStack extractItem(int slot, int amount, boolean simulate) {
-				ItemStack stack = getStackInSlot(slot);
+			public int extract(int index, ItemResource resource, int amount, TransactionContext transaction) {
+				ItemStack stack = ItemUtil.getStack(output, 0);
 				IItemEmcHolder emcHolder = stack.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
 				if (emcHolder != null && emcHolder.getNeededEmc(stack) > 0) {
-					return ItemStack.EMPTY;
+					return 0;
 				}
-				return super.extractItem(slot, amount, simulate);
+				return super.extract(index, resource, amount, transaction);
 			}
 		};
-		this.joined = new CombinedInvWrapper(automationInput, automationOutput);
+		this.joined = new CombinedResourceHandler<>(automationInput, automationOutput);
 	}
 
 	@Override
@@ -104,11 +100,11 @@ public class RelayMK1BlockEntity extends EmcBlockEntity implements MenuProvider,
 		return input.getStackInSlot(0);
 	}
 
-	public IItemHandler getInput() {
+	public ResourceHandler<ItemResource> getInput() {
 		return input;
 	}
 
-	public IItemHandler getOutput() {
+	public ResourceHandler<ItemResource> getOutput() {
 		return output;
 	}
 
