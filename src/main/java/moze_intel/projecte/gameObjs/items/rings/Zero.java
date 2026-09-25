@@ -31,11 +31,20 @@ import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.world.item.ItemInstance;
+import net.minecraft.world.item.ItemStackTemplate;
 
 public class Zero extends PEToggleItem implements IPedestalItem, IItemCharge, IBarHelper, ICapabilityAware {
 
 	public Zero(Properties props) {
 		super(props.component(PEDataComponentTypes.CHARGE, 0));
+	}
+
+	@Override
+	public ItemStackTemplate getCraftingRemainder(@NotNull ItemInstance instance) {
+		DataComponentPatch patch = instance instanceof ItemStack stack ? stack.getComponentsPatch() : DataComponentPatch.EMPTY;
+		return new ItemStackTemplate(instance.typeHolder(), instance.count(), patch);
 	}
 
 	@Override

@@ -68,6 +68,8 @@ import net.neoforged.neoforge.common.ItemAbility;
 import net.neoforged.neoforge.common.NeoForgeMod;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.world.item.ItemStackTemplate;
 
 public class Arcana extends ItemPE implements IItemMode<ArcanaMode>, IFireProtector, IExtraFunction, IProjectileShooter, ICapabilityAware, IExposesCurioAttributes {
 
@@ -82,6 +84,12 @@ public class Arcana extends ItemPE implements IItemMode<ArcanaMode>, IFireProtec
 		this.defaultModifiers = Suppliers.memoize(() -> ItemAttributeModifiers.builder()
 				.add(NeoForgeMod.CREATIVE_FLIGHT, FLIGHT, EquipmentSlotGroup.ANY)
 				.build());
+	}
+
+	@Override
+	public ItemStackTemplate getCraftingRemainder(@NotNull ItemInstance instance) {
+		DataComponentPatch patch = instance instanceof ItemStack stack ? stack.getComponentsPatch() : DataComponentPatch.EMPTY;
+		return new ItemStackTemplate(instance.typeHolder(), instance.count(), patch);
 	}
 
 	@Override

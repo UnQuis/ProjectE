@@ -57,11 +57,21 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.jetbrains.annotations.NotNull;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.world.item.ItemInstance;
+import net.minecraft.world.item.ItemStackTemplate;
 
 public class PhilosophersStone extends ItemMode<PhilosophersStoneMode> implements IProjectileShooter, IExtraFunction {
 
 	public PhilosophersStone(Properties props) {
 		super(props.component(PEDataComponentTypes.PHILOSOPHERS_STONE_MODE, PhilosophersStoneMode.CUBE), 4);
+	}
+
+	@Override
+	public ItemStackTemplate getCraftingRemainder(@NotNull ItemInstance instance) {
+		//The stone is only a tool for conversion recipes, it is never consumed, so it must not add to their EMC cost
+		DataComponentPatch patch = instance instanceof ItemStack stack ? stack.getComponentsPatch() : DataComponentPatch.EMPTY;
+		return new ItemStackTemplate(instance.typeHolder(), instance.count(), patch);
 	}
 
 	public BlockHitResult getHitBlock(Level level, Player player, boolean isSneaking) {
