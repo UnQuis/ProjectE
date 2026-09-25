@@ -259,17 +259,9 @@ dependencies {
     compileOnly("top.theillusivec4.curios:curios-neoforge:${curios_version}:api")
     localRuntime("top.theillusivec4.curios:curios-neoforge:${curios_version}")
 
-    //TODO: Remove having to specify these as non transitive once https://github.com/McJtyMods/TheOneProbe/issues/548 is fixed
-    compileOnly("mcjty.theoneprobe:theoneprobe:${top_version}:api") {
-        transitive = false
-    }
-    localRuntime("mcjty.theoneprobe:theoneprobe:${top_version}") {
-        transitive = false
-    }
     //Jade is fetched from Modrinth as it does not publish its API as a separate tracked dependency version
     compileOnly("maven.modrinth:jade:${jade_version}")
     localRuntime("maven.modrinth:jade:${jade_version}")
-    compileOnly("mcp.mobius.waila:wthit-api:neo-${wthit_version}")
 
     //Minecraft 26.x no longer pulls in the JSR-305 annotations transitively, but we still use them
     compileOnly("com.google.code.findbugs:jsr305:3.0.2")

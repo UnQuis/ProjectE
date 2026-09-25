@@ -147,7 +147,6 @@ public class PECore {
 		GameStagesHelper.checkModsLoaded();
 
 		modEventBus.addListener(this::commonSetup);
-		modEventBus.addListener(IntegrationHelper::sendIMCMessages);
 		modEventBus.addListener(this::registerCapabilities);
 		modEventBus.addListener(this::registerRegistries);
 		modEventBus.addListener(this::modifyRegistries);

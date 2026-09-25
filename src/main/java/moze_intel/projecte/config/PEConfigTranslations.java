@@ -107,7 +107,7 @@ public enum PEConfigTranslations implements IConfigTranslation {
 	SERVER_MISC_UNSAFE_KEY_BINDS("server.misc.unsafe_key_binds", "Unsafe Key Binds",
 			"False requires your hand be empty for Gem Armor Offensive Abilities to be readied or triggered."),
 	SERVER_MISC_LOOKING_AT_DISPLAY("server.misc.looking_at_display", "Looking At Display",
-			"Shows the EMC value of blocks when looking at them in Jade, TOP, or WTHIT."),
+			"Shows the EMC value of blocks when looking at them in Jade."),
 	SERVER_MISC_SHOW_MISSING_STAGES("server.misc.show_missing_game_stages", "Show Missing Game Stages",
 			"If enabled, warnings will tell you which Game Stages you are missing to use blacklisted items."),
 
