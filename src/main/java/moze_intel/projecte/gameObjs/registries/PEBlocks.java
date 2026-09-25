@@ -12,22 +12,22 @@ import moze_intel.projecte.gameObjs.blocks.AlchemicalChest;
 import moze_intel.projecte.gameObjs.blocks.Collector;
 import moze_intel.projecte.gameObjs.blocks.Condenser;
 import moze_intel.projecte.gameObjs.blocks.CondenserMK2;
+import moze_intel.projecte.gameObjs.blocks.InterdictionLantern;
 import moze_intel.projecte.gameObjs.blocks.InterdictionTorchEntityBlock.InterdictionTorch;
 import moze_intel.projecte.gameObjs.blocks.InterdictionTorchEntityBlock.InterdictionTorchWall;
-import moze_intel.projecte.gameObjs.blocks.InterdictionLantern;
 import moze_intel.projecte.gameObjs.blocks.MatterBlock;
 import moze_intel.projecte.gameObjs.blocks.MatterFurnace;
 import moze_intel.projecte.gameObjs.blocks.Pedestal;
-import moze_intel.projecte.gameObjs.blocks.ProjectETNT;
 import moze_intel.projecte.gameObjs.blocks.ProjectETNT.TNTEntityCreator;
+import moze_intel.projecte.gameObjs.blocks.ProjectETNT;
 import moze_intel.projecte.gameObjs.blocks.Relay;
 import moze_intel.projecte.gameObjs.blocks.TransmutationStone;
 import moze_intel.projecte.gameObjs.entity.EntityNovaCataclysmPrimed;
 import moze_intel.projecte.gameObjs.entity.EntityNovaCatalystPrimed;
 import moze_intel.projecte.gameObjs.items.PEBlockItem;
 import moze_intel.projecte.gameObjs.registration.impl.BlockDeferredRegister;
-import moze_intel.projecte.gameObjs.registration.impl.BlockRegistryObject;
 import moze_intel.projecte.gameObjs.registration.impl.BlockRegistryObject.WallOrFloorBlockRegistryObject;
+import moze_intel.projecte.gameObjs.registration.impl.BlockRegistryObject;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.StandingAndWallBlockItem;
@@ -57,7 +57,7 @@ public class PEBlocks {
 	public static final BlockRegistryObject<MatterFurnace, BlockItem> RED_MATTER_FURNACE = registerFurnace("rm_furnace", EnumMatterType.RED_MATTER, 2_000_000, 6_000_000);
 	public static final BlockRegistryObject<MatterBlock, BlockItem> DARK_MATTER = registerMatterBlock("dark_matter_block", EnumMatterType.DARK_MATTER, 1_000_000, 3_000_000);
 	public static final BlockRegistryObject<MatterBlock, BlockItem> RED_MATTER = registerMatterBlock("red_matter_block", EnumMatterType.RED_MATTER, 2_000_000, 6_000_000);
-	public static final WallOrFloorBlockRegistryObject<InterdictionTorch, InterdictionTorchWall, StandingAndWallBlockItem> INTERDICTION_TORCH = BLOCKS.registerWallOrFloorItem("interdiction_torch", InterdictionTorch::new, InterdictionTorchWall::new, () -> BlockBehaviour.Properties.of().pushReaction(PushReaction.DESTROY).noCollision().instabreak().strength(0).lightLevel(state -> 14).randomTicks());
+	public static final WallOrFloorBlockRegistryObject<InterdictionTorch, InterdictionTorchWall, StandingAndWallBlockItem> INTERDICTION_TORCH = BLOCKS.registerWallOrFloorItem("interdiction_torch", InterdictionTorch::new, InterdictionTorchWall::new, () -> BlockBehaviour.Properties.of().pushReaction(PushReaction.POPPED).noCollision().instabreak().strength(0).lightLevel(state -> 14).randomTicks());
 	public static final BlockRegistryObject<ProjectETNT, BlockItem> NOVA_CATALYST = registerExplosive("nova_catalyst", EntityNovaCatalystPrimed::new);
 	public static final BlockRegistryObject<ProjectETNT, BlockItem> NOVA_CATACLYSM = registerExplosive("nova_cataclysm", EntityNovaCataclysmPrimed::new);
 	public static final BlockRegistryObject<TransmutationStone, BlockItem> TRANSMUTATION_TABLE = BLOCKS.register("transmutation_table", properties -> new TransmutationStone(properties.mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(10, 30)));
@@ -81,7 +81,7 @@ public class PEBlocks {
 					.sound(SoundType.LANTERN)
 					.lightLevel(state -> 15)
 					.noOcclusion()
-					.pushReaction(PushReaction.DESTROY)
+					.pushReaction(PushReaction.POPPED)
 			));
 
 	private static BlockRegistryObject<Block, BlockItem> registerFuelBlock(String name, MapColor mapColor) {

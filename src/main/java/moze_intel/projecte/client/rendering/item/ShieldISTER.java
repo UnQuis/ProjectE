@@ -11,6 +11,7 @@ import net.minecraft.client.model.object.equipment.ShieldModel;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.SubmitNodeCollector;
 import net.minecraft.client.renderer.blockentity.BannerRenderer;
+import net.minecraft.client.renderer.rendertype.RenderType;
 import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.client.resources.model.sprite.SpriteGetter;
@@ -44,16 +45,18 @@ public class ShieldISTER implements SpecialModelRenderer<ShieldISTER.ShieldData>
 			return;
 		}
 		SpriteId spriteId = new SpriteId(Sheets.SHIELD_SHEET, data.texture());
-		submitNodeCollector.submitModel(model, Unit.INSTANCE, poseStack, lightCoords, overlayCoords, -1, spriteId, sprites, outlineColor, null);
+		submitNodeCollector.submitModel(model, Unit.INSTANCE, poseStack, lightCoords, overlayCoords, -1, spriteId, sprites, outlineColor);
 		BannerPatternLayers patterns = data.patterns();
 		DyeColor baseColor = data.baseColor();
 		if (!patterns.layers().isEmpty() || baseColor != null) {
 			BannerRenderer.submitPatterns(sprites, poseStack, submitNodeCollector, lightCoords, overlayCoords, model, Unit.INSTANCE, false,
-					Objects.requireNonNullElse(baseColor, DyeColor.WHITE), patterns, null);
+					Objects.requireNonNullElse(baseColor, DyeColor.WHITE), patterns);
 		}
 		if (hasFoil) {
-			submitNodeCollector.submitModel(model, Unit.INSTANCE, poseStack, RenderTypes.entityGlint(), lightCoords, overlayCoords, -1, sprites.get(spriteId),
-					0, null);
+			RenderType foilRenderType = patterns.layers().isEmpty() && baseColor == null
+					? RenderTypes.entitySolidGlint(spriteId.atlasLocation()) : RenderTypes.patternedShieldGlint();
+			submitNodeCollector.order(patterns.layers().size() + 2)
+					.submitModel(model, Unit.INSTANCE, poseStack, foilRenderType, lightCoords, overlayCoords, -1, sprites.get(spriteId), 0);
 		}
 	}
 

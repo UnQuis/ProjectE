@@ -17,6 +17,7 @@ import moze_intel.projecte.network.packets.to_server.SearchUpdatePKT;
 import moze_intel.projecte.utils.ItemHelper;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -99,9 +100,9 @@ public class TransmutationContainer extends PEHandContainer {
 	public void removed(@NotNull Player player) {
 		super.removed(player);
 		if (!player.isAlive() || player instanceof ServerPlayer serverPlayer && serverPlayer.hasDisconnected()) {
-			player.drop(unlearn.getItem(), false);
+			player.drop(unlearn.getItem(), false, Prediction.PREDICTED);
 		} else {
-			player.getInventory().placeItemBackInInventory(unlearn.getItem());
+			player.getInventory().placeItemBackInInventory(unlearn.getItem(), Prediction.PREDICTED);
 		}
 	}
 

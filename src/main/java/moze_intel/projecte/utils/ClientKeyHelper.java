@@ -11,22 +11,23 @@ import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import net.neoforged.neoforge.client.settings.KeyConflictContext;
 import net.neoforged.neoforge.client.settings.KeyModifier;
-import org.lwjgl.glfw.GLFW;
 
 public class ClientKeyHelper {
 
 	private static final KeyMapping.Category PROJECTE_CATEGORY = KeyMapping.Category.register(PECore.rl("projecte"));
+	private static final int KEYCODE_G = 'g';
+	private static final int KEYCODE_K = 'k';
 	private static ImmutableBiMap<PEKeybind, KeyMapping> peToMc = ImmutableBiMap.of();
 
 	public static void registerKeyBindings(RegisterKeyMappingsEvent event) {
 		ImmutableBiMap.Builder<PEKeybind, KeyMapping> builder = ImmutableBiMap.builder();
-		addKeyBinding(event, builder, PEKeybind.HELMET_TOGGLE, KeyModifier.SHIFT, GLFW.GLFW_KEY_X);
-		addKeyBinding(event, builder, PEKeybind.BOOTS_TOGGLE, KeyModifier.NONE, GLFW.GLFW_KEY_X);
-		addKeyBinding(event, builder, PEKeybind.CHARGE, KeyModifier.NONE, GLFW.GLFW_KEY_V);
-		addKeyBinding(event, builder, PEKeybind.EXTRA_FUNCTION, KeyModifier.NONE, GLFW.GLFW_KEY_C);
-		addKeyBinding(event, builder, PEKeybind.FIRE_PROJECTILE, KeyModifier.NONE, GLFW.GLFW_KEY_R);
-		addKeyBinding(event, builder, PEKeybind.MODE, KeyModifier.NONE, GLFW.GLFW_KEY_G);
-		addKeyBinding(event, builder, PEKeybind.TRANSMUTATION_TABLET, KeyModifier.NONE, GLFW.GLFW_KEY_K);
+		addKeyBinding(event, builder, PEKeybind.HELMET_TOGGLE, KeyModifier.SHIFT, InputConstants.KEYCODE_X);
+		addKeyBinding(event, builder, PEKeybind.BOOTS_TOGGLE, KeyModifier.NONE, InputConstants.KEYCODE_X);
+		addKeyBinding(event, builder, PEKeybind.CHARGE, KeyModifier.NONE, InputConstants.KEYCODE_V);
+		addKeyBinding(event, builder, PEKeybind.EXTRA_FUNCTION, KeyModifier.NONE, InputConstants.KEYCODE_C);
+		addKeyBinding(event, builder, PEKeybind.FIRE_PROJECTILE, KeyModifier.NONE, InputConstants.KEYCODE_R);
+		addKeyBinding(event, builder, PEKeybind.MODE, KeyModifier.NONE, KEYCODE_G);
+		addKeyBinding(event, builder, PEKeybind.TRANSMUTATION_TABLET, KeyModifier.NONE, KEYCODE_K);
 		peToMc = builder.build();
 	}
 
@@ -51,9 +52,9 @@ public class ClientKeyHelper {
 		private boolean lastState;
 
 		PEKeyMapping(PEKeybind keybind, KeyModifier keyModifier, int keyCode) {
-			super(keybind.getTranslationKey(), InputConstants.Type.KEYSYM, keyCode, PROJECTE_CATEGORY);
+			super(keybind.getTranslationKey(), InputConstants.Type.KEYBOARD, keyCode, PROJECTE_CATEGORY);
 			setKeyConflictContext(KeyConflictContext.IN_GAME);
-			setKeyModifierAndCode(keyModifier, InputConstants.Type.KEYSYM.getOrCreate(keyCode));
+			setKeyModifierAndCode(keyModifier, InputConstants.Type.KEYBOARD.getOrCreate(keyCode));
 			this.keybind = keybind;
 		}
 

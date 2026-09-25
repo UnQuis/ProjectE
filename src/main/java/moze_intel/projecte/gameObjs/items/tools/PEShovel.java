@@ -14,21 +14,19 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
 
-public class PEShovel extends ShovelItem implements IItemCharge, IBarHelper {
+public class PEShovel extends Item implements IItemCharge, IBarHelper {
 
 	private final IMatterType matterType;
 	private final int numCharges;
 
 	public PEShovel(IMatterType matterType, int numCharges, Properties props) {
-		//ShovelItem applies the attribute modifiers and Tool component itself via Item.Properties#shovel
-		super(ToolHelper.createToolMaterial(matterType), 2, -3, props
+		super(props.shovel(ToolHelper.createToolMaterial(matterType), 2, -3)
 				.component(PEDataComponentTypes.CHARGE, 0)
 				.component(PEDataComponentTypes.STORED_EMC, 0L)
 		);
@@ -47,7 +45,7 @@ public class PEShovel extends ShovelItem implements IItemCharge, IBarHelper {
 	}
 
 	@Override
-	public <T extends LivingEntity> int damageItem(@NotNull ItemStack stack, int amount, T entity, @NotNull Consumer<Item> onBroken) {
+	public <T extends LivingEntity> int damageItem(@NotNull ItemStack stack, int amount, T entity, @NotNull Consumer<ItemStack> onBroken) {
 		return 0;
 	}
 

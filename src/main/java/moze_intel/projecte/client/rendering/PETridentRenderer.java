@@ -45,14 +45,14 @@ public class PETridentRenderer extends ThrownTridentRenderer {
 		// [VanillaCopy] Vanilla's ThrownTridentRenderer#submit but with our per-entity texture
 		Identifier texture = state instanceof PETridentRenderState peState ? peState.texture : ThrownTridentRenderer.TRIDENT_LOCATION;
 		poseStack.pushPose();
-		poseStack.mulPose(Axis.YP.rotationDegrees(state.yRot - 90.0F));
-		poseStack.mulPose(Axis.ZP.rotationDegrees(state.xRot + 90.0F));
+		poseStack.rotateDegrees(Axis.YP, state.yRot - 90.0F);
+		poseStack.rotateDegrees(Axis.ZP, state.xRot + 90.0F);
 		submitNodeCollector.order(0)
-				.submitModel(model, Unit.INSTANCE, poseStack, texture, state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor, null);
+				.submitModel(model, Unit.INSTANCE, poseStack, texture, state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
 		if (state.isFoil) {
 			submitNodeCollector.order(1)
-					.submitModel(model, Unit.INSTANCE, poseStack, RenderTypes.entityGlint(),
-							state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor, null);
+					.submitModel(model, Unit.INSTANCE, poseStack, RenderTypes.entitySolidGlint(texture),
+							state.lightCoords, OverlayTexture.NO_OVERLAY, state.outlineColor);
 		}
 		poseStack.popPose();
 		this.submitNameDisplay(state, poseStack, submitNodeCollector, camera);

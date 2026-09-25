@@ -14,7 +14,6 @@ import moze_intel.projecte.emc.mappers.OreBlacklistMapper;
 import moze_intel.projecte.emc.mappers.RawMaterialsBlacklistMapper;
 import moze_intel.projecte.gameObjs.PETags;
 import moze_intel.projecte.gameObjs.items.Tome;
-import moze_intel.projecte.integration.IntegrationHelper;
 import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.client.Minecraft;
 import net.minecraft.commands.CommandBuildContext;
@@ -61,7 +60,7 @@ public class DumpMissingEmc {
 		}) {
 			return true;
 		} else if (!FMLEnvironment.isProduction() && SKIP_TOP &&
-				   holder.unwrapKey().map(key -> key.identifier().getNamespace().equals(IntegrationHelper.TOP_MODID)).orElse(false)) {
+				   holder.unwrapKey().map(key -> key.identifier().getNamespace().equals("theoneprobe")).orElse(false)) {
 			//Skip TOP items in dev
 			return true;
 		}

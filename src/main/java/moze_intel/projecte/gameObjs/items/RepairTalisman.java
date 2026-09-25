@@ -41,7 +41,7 @@ public class RepairTalisman extends ItemPE implements IAlchBagItem, IAlchChestIt
 																							stack.getCapability(PECapabilities.MODE_CHANGER_ITEM_CAPABILITY) == null &&
 																							ItemHelper.isRepairableDamagedItem(stack);
 	private static final BiPredicate<ItemStack, Player> CAN_REPAIR_PLAYER_ITEM =
-			(stack, player) -> CAN_REPAIR_ITEM.test(stack, null) && (stack != player.getMainHandItem() || !player.swinging);
+			(stack, player) -> CAN_REPAIR_ITEM.test(stack, null) && (stack != player.getMainHandItem() || !player.isSwinging());
 
 	public RepairTalisman(Properties props) {
 		super(props.component(PEDataComponentTypes.COOLDOWN, (byte) 0));

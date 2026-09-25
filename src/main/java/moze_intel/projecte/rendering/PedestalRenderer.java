@@ -5,7 +5,6 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import moze_intel.projecte.gameObjs.block_entities.DMPedestalBlockEntity;
 import net.minecraft.SharedConstants;
-import net.neoforged.neoforge.transfer.item.ItemUtil;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.debug.DebugScreenEntries;
 import net.minecraft.client.renderer.SubmitNodeCollector;
@@ -24,6 +23,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
@@ -76,7 +76,7 @@ public class PedestalRenderer implements BlockEntityRenderer<DMPedestalBlockEnti
 			poseStack.pushPose();
 			poseStack.translate(0.5D, 0.7D + state.bobY, 0.5D);
 			poseStack.scale(0.75F, 0.75F, 0.75F);
-			poseStack.mulPose(Axis.YP.rotation(state.angle));
+			poseStack.rotate(Axis.YP, state.angle);
 			state.item.submit(poseStack, submitNodeCollector, state.lightCoords, OverlayTexture.NO_OVERLAY, 0);
 			poseStack.popPose();
 		}

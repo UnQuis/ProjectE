@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -24,14 +25,17 @@ import moze_intel.projecte.gameObjs.registries.PEDamageTypes;
 import moze_intel.projecte.gameObjs.registries.PESoundEvents;
 import net.minecraft.advancements.triggers.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.Direction.Axis;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Holder;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.HolderSet;
+import net.minecraft.core.component.BlockTransformer;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
@@ -44,12 +48,12 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
 import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.EntitySpawnReason;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation;
+import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.animal.sheep.Sheep;
 import net.minecraft.world.entity.monster.Enemy;
@@ -57,13 +61,16 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ToolMaterial;
+import net.minecraft.world.item.component.BlockTransformers;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.LevelEvent;
 import net.minecraft.world.level.block.RotatedPillarBlock;
@@ -73,8 +80,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult.Type;
+import net.neoforged.neoforge.common.DataMapHooks;
 import net.neoforged.neoforge.common.IShearable;
-import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.ItemAbility;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.EventHooks;
@@ -188,7 +195,12 @@ public class ToolHelper {
 			if (!level.isClientSide()) {
 				level.levelEvent(LevelEvent.SOUND_EXTINGUISH_FIRE, pos, 0);
 			}
-			CampfireBlock.dowse(player, level, pos, state);
+			if (level.isClientSide()) {
+				for (int i = 0; i < 20; i++) {
+					CampfireBlock.makeParticles(level, pos, state.getValue(CampfireBlock.SIGNAL_FIRE), true);
+				}
+			}
+			level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
 			if (!level.isClientSide()) {
 				level.setBlock(pos, state.setValue(CampfireBlock.LIT, Boolean.FALSE), Block.UPDATE_ALL_IMMEDIATE);
 			}
@@ -201,7 +213,7 @@ public class ToolHelper {
 	 * Tills in an AOE using a hoe. Charge affects the AOE. Optional per-block EMC cost.
 	 */
 	public static InteractionResult tillAOE(UseOnContext context, BlockState clickedState, long emcCost) {
-		return useAOE(context, clickedState, emcCost, ItemAbilities.HOE_TILL, SoundEvents.HOE_TILL, -1, new HoeToolAOEData());
+		return useAOE(context, clickedState, emcCost, BlockTransformers.HOE, SoundEvents.HOE_TILL, -1, new HoeToolAOEData());
 	}
 
 	/**
@@ -213,29 +225,54 @@ public class ToolHelper {
 			//Don't allow flattening a block from underneath
 			return InteractionResult.PASS;
 		}
-		return useAOE(context, clickedState, emcCost, ItemAbilities.SHOVEL_FLATTEN, SoundEvents.SHOVEL_FLATTEN, -1, new ShovelToolAOEData());
+		return useAOE(context, clickedState, emcCost, BlockTransformers.SHOVEL, SoundEvents.SHOVEL_FLATTEN, -1, new ShovelToolAOEData());
 	}
 
 	/**
 	 * Strips logs in an AOE using an axe (ex: log to stripped log). Charge affects the AOE. Optional per-block EMC cost.
 	 */
 	public static InteractionResult stripLogsAOE(UseOnContext context, BlockState clickedState, long emcCost) {
-		return useAxeAOE(context, clickedState, emcCost, ItemAbilities.AXE_STRIP, SoundEvents.AXE_STRIP, -1);
+		return useAxeAOE(context, clickedState, emcCost, BlockTransformers.AXE, SoundEvents.AXE_STRIP, -1);
 	}
 
 	public static InteractionResult scrapeAOE(UseOnContext context, BlockState clickedState, long emcCost) {
-		return useAxeAOE(context, clickedState, emcCost, ItemAbilities.AXE_SCRAPE, SoundEvents.AXE_SCRAPE, LevelEvent.PARTICLES_SCRAPE);
+		return useAxeAOE(context, clickedState, emcCost, BlockTransformers.AXE, SoundEvents.AXE_SCRAPE, LevelEvent.PARTICLES_SCRAPE);
 	}
 
 	public static InteractionResult waxOffAOE(UseOnContext context, BlockState clickedState, long emcCost) {
-		return useAxeAOE(context, clickedState, emcCost, ItemAbilities.AXE_WAX_OFF, SoundEvents.AXE_WAX_OFF, LevelEvent.PARTICLES_WAX_OFF);
+		return useAxeAOE(context, clickedState, emcCost, BlockTransformers.AXE, SoundEvents.AXE_WAX_OFF, LevelEvent.PARTICLES_WAX_OFF);
 	}
 
-	private static InteractionResult useAxeAOE(UseOnContext context, BlockState clickedState, long emcCost, ItemAbility action, SoundEvent sound, int particle) {
-		return useAOE(context, clickedState, emcCost, action, sound, particle, new AxeToolAOEData());
+	private static InteractionResult useAxeAOE(UseOnContext context, BlockState clickedState, long emcCost, ResourceKey<BlockTransformer> transformerKey, Holder<SoundEvent> sound, int particle) {
+		return useAOE(context, clickedState, emcCost, transformerKey, sound, particle, new AxeToolAOEData());
 	}
 
-	private static InteractionResult useAOE(UseOnContext context, BlockState clickedState, long emcCost, ItemAbility action, SoundEvent sound, int particle,
+	private static BlockState getModifiedState(UseOnContext context, BlockState state, ResourceKey<BlockTransformer> transformerKey, Holder<SoundEvent> sound) {
+		BlockTransformer transformer = context.getLevel().registryAccess().lookupOrThrow(Registries.BLOCK_TRANSFORMER).getValueOrThrow(transformerKey);
+		Function<BlockState, BlockState> dataMapProvider = transformerKey.equals(BlockTransformers.AXE)
+				? DataMapHooks.axeBlockTransformer(context.getItemInHand()) : ignored -> null;
+		for (BlockTransformer.BlockTransformData transformData : transformer.transforms()) {
+			if (!transformData.sound().value().equals(sound.value()) || transformData.disallowedFaces().contains(context.getClickedFace())) {
+				continue;
+			}
+			BlockState modifiedState = dataMapProvider.apply(state);
+			if (modifiedState == null) {
+				modifiedState = transformData.blockStateProvider().value().getOptionalState(context.getLevel(), context.getLevel().getRandom(), context.getClickedPos());
+			}
+			if (modifiedState != null) {
+				return transformData.updateFromNeighbors() ? Block.updateFromNeighbourShapes(modifiedState, context.getLevel(), context.getClickedPos()) : modifiedState;
+			}
+		}
+		return null;
+	}
+
+	private static void dropHoeRoots(Level level, BlockPos pos, BlockState state, ResourceKey<BlockTransformer> transformerKey, Direction face) {
+		if (transformerKey.equals(BlockTransformers.HOE) && state.is(Blocks.ROOTED_DIRT)) {
+			Block.popResourceFromFace(level, pos, face, new ItemStack(Items.HANGING_ROOTS));
+		}
+	}
+
+	private static InteractionResult useAOE(UseOnContext context, BlockState clickedState, long emcCost, ResourceKey<BlockTransformer> transformerKey, Holder<SoundEvent> sound, int particle,
 			IToolAOEData toolAOEData) {
 		Player player = context.getPlayer();
 		if (player == null) {
@@ -247,7 +284,7 @@ public class ToolHelper {
 			//Skip modifying the blocks if there is something we think is invalid about the position in the world in general
 			return InteractionResult.PASS;
 		}
-		BlockState modifiedState = clickedState.getToolModifiedState(context, action, false);
+		BlockState modifiedState = getModifiedState(context, clickedState, transformerKey, sound);
 		if (modifiedState == null) {
 			//Skip modifying the blocks if the one we clicked cannot be modified
 			return InteractionResult.PASS;
@@ -257,8 +294,9 @@ public class ToolHelper {
 		//Process the block we interacted with initially and play the sound
 		//Note: For more detailed comments on why/how we set the block and remove the block above see the for loop below
 		CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger((ServerPlayer) player, pos, context.getItemInHand());
+		dropHoeRoots(level, pos, clickedState, transformerKey, context.getClickedFace());
 		level.setBlock(pos, modifiedState, Block.UPDATE_ALL_IMMEDIATE);
-		level.playSound(null, pos, sound, SoundSource.BLOCKS, 1.0F, 1.0F);
+		level.playSound(null, pos, sound.value(), SoundSource.BLOCKS, 1.0F, 1.0F);
 		if (particle != -1) {
 			level.levelEvent(particle, pos, 0);
 		}
@@ -279,14 +317,13 @@ public class ToolHelper {
 				UseOnContext adjustedContext = new UseOnContext(level, context.getPlayer(), context.getHand(), context.getItemInHand(), new BlockHitResult(
 						context.getClickLocation().add(newPos.getX() - pos.getX(), newPos.getY() - pos.getY(), newPos.getZ() - pos.getZ()),
 						context.getClickedFace(), newPos, context.isInside()));
-				if (toolAOEData.isValid(level, newPos, state) && modifiedState == state.getToolModifiedState(adjustedContext, action, true)) {
+				if (toolAOEData.isValid(level, newPos, state) && modifiedState.equals(getModifiedState(adjustedContext, state, transformerKey, sound))) {
 					if (ItemPE.consumeFuel(player, stack, emcCost, true)) {
 						//Some of the below methods don't behave properly when the BlockPos is mutable, so now that we are onto ones where it may actually
 						// matter we make sure to get an immutable instance of newPos
 						newPos = newPos.immutable();
 						CriteriaTriggers.ITEM_USED_ON_BLOCK.trigger((ServerPlayer) player, newPos, context.getItemInHand());
-						//Run it without simulation in case there are any side effects
-						state.getToolModifiedState(adjustedContext, action, false);
+						dropHoeRoots(level, newPos, state, transformerKey, context.getClickedFace());
 						//Replace the block. Note it just directly sets it (in the same way the normal tools do), rather than using our
 						// checkedReplaceBlock to make the blocks not "blink" when getting changed. We don't bother using checkedReplaceBlock
 						// as we already fired all the events/checks for seeing if we are allowed to use this item in this location and were

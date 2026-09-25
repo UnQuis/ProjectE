@@ -37,8 +37,8 @@ public class TridentISTER implements SpecialModelRenderer<Identifier> {
 	public void submit(@Nullable Identifier texture, PoseStack poseStack, SubmitNodeCollector submitNodeCollector,
 			int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
 		Identifier location = texture != null ? texture : TridentModel.TEXTURE;
-		RenderType renderType = hasFoil ? RenderTypes.entityGlint() : model.renderType(location);
-		submitNodeCollector.submitModelPart(model.root(), poseStack, renderType, lightCoords, overlayCoords, null, -1, null, outlineColor);
+		RenderType renderType = hasFoil ? RenderTypes.entitySolidGlint(location) : model.renderType(location);
+		submitNodeCollector.submitModelPart(model.root(), poseStack, renderType, lightCoords, overlayCoords, null, -1, outlineColor);
 	}
 
 	@Override

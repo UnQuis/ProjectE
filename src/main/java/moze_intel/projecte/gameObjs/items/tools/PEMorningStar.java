@@ -1,6 +1,6 @@
 package moze_intel.projecte.gameObjs.items.tools;
 
-import java.util.List;
+import java.util.function.Consumer;
 import moze_intel.projecte.config.ProjectEConfig;
 import moze_intel.projecte.gameObjs.IMatterType;
 import moze_intel.projecte.gameObjs.PETags;
@@ -22,17 +22,15 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemInstance;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.GrassBlock;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.ItemAbility;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 import org.jetbrains.annotations.NotNull;
-import net.minecraft.world.item.component.TooltipDisplay;
-import java.util.function.Consumer;
 
 public class PEMorningStar extends PETool implements IItemMode<PickaxeMode>, IHasConditionalAttributes {
 
@@ -50,8 +48,7 @@ public class PEMorningStar extends PETool implements IItemMode<PickaxeMode>, IHa
 
 	@Override
 	public boolean canPerformAction(@NotNull ItemInstance stack, @NotNull ItemAbility toolAction) {
-		return ItemAbilities.DEFAULT_SHOVEL_ACTIONS.contains(toolAction) ||
-			   ToolHelper.DEFAULT_PE_HAMMER_ACTIONS.contains(toolAction) || ToolHelper.DEFAULT_PE_MORNING_STAR_ACTIONS.contains(toolAction);
+		return ToolHelper.DEFAULT_PE_HAMMER_ACTIONS.contains(toolAction) || ToolHelper.DEFAULT_PE_MORNING_STAR_ACTIONS.contains(toolAction);
 	}
 
 	@Override

@@ -1,11 +1,9 @@
 package moze_intel.projecte.gameObjs.blocks;
 
-import com.mojang.serialization.MapCodec;
 import moze_intel.projecte.gameObjs.EnumMatterType;
 import moze_intel.projecte.gameObjs.block_entities.DMFurnaceBlockEntity;
 import moze_intel.projecte.gameObjs.registration.impl.BlockEntityTypeRegistryObject;
 import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
-import moze_intel.projecte.gameObjs.registries.PEBlockTypes;
 import moze_intel.projecte.utils.WorldHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -31,12 +29,6 @@ public class MatterFurnace extends AbstractFurnaceBlock implements IMatterBlock,
 	@Override
 	public BlockEntityTypeRegistryObject<? extends DMFurnaceBlockEntity> getType() {
 		return matterType == EnumMatterType.RED_MATTER ? PEBlockEntityTypes.RED_MATTER_FURNACE : PEBlockEntityTypes.DARK_MATTER_FURNACE;
-	}
-
-	@NotNull
-	@Override
-	protected MapCodec<MatterFurnace> codec() {
-		return PEBlockTypes.MATTER_FURNACE.value();
 	}
 
 	@Override

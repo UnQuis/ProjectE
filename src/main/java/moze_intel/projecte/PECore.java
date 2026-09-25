@@ -19,10 +19,8 @@ import moze_intel.projecte.gameObjs.blacklist.BlacklistManager;
 import moze_intel.projecte.gameObjs.blacklist.BlacklistType;
 import moze_intel.projecte.gameObjs.blacklist.GameStagesHelper;
 import moze_intel.projecte.gameObjs.items.IHasConditionalAttributes;
-import moze_intel.projecte.gameObjs.registries.PEArmorMaterials;
 import moze_intel.projecte.gameObjs.registries.PEAttachmentTypes;
 import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
-import moze_intel.projecte.gameObjs.registries.PEBlockTypes;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import moze_intel.projecte.gameObjs.registries.PEContainerTypes;
 import moze_intel.projecte.gameObjs.registries.PECreativeTabs;
@@ -36,7 +34,6 @@ import moze_intel.projecte.gameObjs.registries.PESoundEvents;
 import moze_intel.projecte.impl.TransmutationOffline;
 import moze_intel.projecte.impl.capability.AlchBagImpl;
 import moze_intel.projecte.impl.capability.KnowledgeImpl;
-import moze_intel.projecte.integration.IntegrationHelper;
 import moze_intel.projecte.network.PacketHandler;
 import moze_intel.projecte.network.ThreadCheckUUID;
 import moze_intel.projecte.network.ThreadCheckUpdate;
@@ -64,6 +61,7 @@ import net.minecraft.core.dispenser.OptionalDispenseItemBehavior;
 import net.minecraft.core.dispenser.ShearsDispenseItemBehavior;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.Identifier;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.ReloadableServerResources;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.ResourceManager;
@@ -84,13 +82,13 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.fml.loading.FMLEnvironment;
+import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.NeoForge;
@@ -102,12 +100,13 @@ import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.event.server.ServerStoppedEvent;
 import net.neoforged.neoforge.fluids.FluidType;
 import net.neoforged.neoforge.network.PacketDistributor;
-import net.neoforged.neoforge.transfer.ResourceHandler;
-import net.neoforged.neoforge.transfer.fluid.FluidResource;
-import net.neoforged.neoforge.transfer.transaction.Transaction;
 import net.neoforged.neoforge.registries.ModifyRegistriesEvent;
 import net.neoforged.neoforge.registries.NewRegistryEvent;
 import net.neoforged.neoforge.registries.callback.ClearCallback;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.fluid.FluidResource;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -154,7 +153,6 @@ public class PECore {
 		PEAttachmentTypes.ATTACHMENT_TYPES.register(modEventBus);
 		PEBlockEntityTypes.BLOCK_ENTITY_TYPES.register(modEventBus);
 		PEBlocks.BLOCKS.register(modEventBus);
-		PEBlockTypes.BLOCK_TYPES.register(modEventBus);
 		PEContainerTypes.CONTAINER_TYPES.register(modEventBus);
 		PECreativeTabs.CREATIVE_TABS.register(modEventBus);
 		PEDataComponentTypes.DATA_COMPONENT_TYPES.register(modEventBus);
@@ -235,7 +233,7 @@ public class PECore {
 							level.setBlockAndUpdate(pos, modifiedState);
 							level.gameEvent(null, GameEvent.BLOCK_CHANGE, pos);
 						} else if (state.isFlammable(level, pos, opposite)) {
-							state.onCaughtFire(level, pos, opposite, null);
+							state.onCaughtFire(level, pos, opposite, null, ItemStack.EMPTY);
 							if (state.getBlock() instanceof TntBlock) {
 								level.removeBlock(pos, false);
 							}
@@ -316,7 +314,12 @@ public class PECore {
 
 	private void addReloadListeners(AddServerReloadListenersEvent event) {
 		//26.1: addListener now requires a unique Identifier key for each mod-added listener
-		event.addListener(rl("emc_data"), (ResourceManagerReloadListener) manager -> emcUpdateResourceManager = new EmcUpdateData(event.getServerResources(), event.getRegistryAccess(), manager));
+		MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+		if (server == null) {
+			PECore.LOGGER.error("Failed to get server registry access while registering EMC reload listener");
+			return;
+		}
+		event.addListener(rl("emc_data"), (ResourceManagerReloadListener) manager -> emcUpdateResourceManager = new EmcUpdateData(event.getServerResources(), server.registryAccess(), manager));
 		event.addListener(rl("world_transmutation"), WorldTransmutationManager.INSTANCE);
 	}
 

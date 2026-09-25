@@ -2,8 +2,8 @@ package moze_intel.projecte.gameObjs.items.tools;
 
 import com.mojang.serialization.Codec;
 import io.netty.buffer.ByteBuf;
-import java.util.List;
 import java.util.Locale;
+import java.util.function.Consumer;
 import java.util.function.IntFunction;
 import moze_intel.projecte.api.capabilities.item.IExtraFunction;
 import moze_intel.projecte.config.ProjectEConfig;
@@ -36,20 +36,18 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemInstance;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.ItemUseAnimation;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.AABB;
 import net.neoforged.neoforge.common.IShearable;
-import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.ItemAbility;
 import net.neoforged.neoforge.event.ItemAttributeModifierEvent;
 import org.jetbrains.annotations.NotNull;
-import net.minecraft.world.item.component.TooltipDisplay;
-import java.util.function.Consumer;
 
 public class PEKatar extends PETool implements IItemMode<KatarMode>, IExtraFunction, IHasConditionalAttributes {
 
@@ -67,9 +65,7 @@ public class PEKatar extends PETool implements IItemMode<KatarMode>, IExtraFunct
 
 	@Override
 	public boolean canPerformAction(@NotNull ItemInstance stack, @NotNull ItemAbility toolAction) {
-		return ItemAbilities.DEFAULT_AXE_ACTIONS.contains(toolAction) || ItemAbilities.DEFAULT_SHEARS_ACTIONS.contains(toolAction) ||
-			   ItemAbilities.DEFAULT_HOE_ACTIONS.contains(toolAction) ||
-			   ToolHelper.DEFAULT_PE_KATAR_ACTIONS.contains(toolAction);
+		return ToolHelper.DEFAULT_PE_KATAR_ACTIONS.contains(toolAction);
 	}
 
 	@NotNull

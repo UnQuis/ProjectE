@@ -1,6 +1,5 @@
 package moze_intel.projecte.gameObjs.blocks;
 
-import com.mojang.serialization.MapCodec;
 import moze_intel.projecte.gameObjs.block_entities.AlchemicalBarrelBlockEntity;
 import moze_intel.projecte.gameObjs.registration.impl.BlockEntityTypeRegistryObject;
 import moze_intel.projecte.gameObjs.registries.PEBlockEntityTypes;
@@ -33,17 +32,9 @@ import org.jetbrains.annotations.Nullable;
 
 public class AlchemicalBarrel extends DirectionalBlock implements PEEntityBlock<AlchemicalBarrelBlockEntity> {
 
-	private static final MapCodec<AlchemicalBarrel> CODEC = simpleCodec(AlchemicalBarrel::new);
-
 	public AlchemicalBarrel(BlockBehaviour.Properties properties) {
 		super(properties);
 		this.registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH).setValue(BlockStateProperties.OPEN, false));
-	}
-
-	@NotNull
-	@Override
-	protected MapCodec<? extends DirectionalBlock> codec() {
-		return CODEC;
 	}
 
 	@Override

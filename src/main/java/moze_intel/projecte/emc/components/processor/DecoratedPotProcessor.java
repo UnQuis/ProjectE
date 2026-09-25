@@ -1,5 +1,7 @@
 package moze_intel.projecte.emc.components.processor;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.function.ToLongFunction;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.components.DataComponentProcessor;
@@ -10,6 +12,8 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.PotDecorations;
 import org.jetbrains.annotations.NotNull;
@@ -44,8 +48,9 @@ public class DecoratedPotProcessor extends PersistentComponentProcessor<PotDecor
 	@Range(from = 0, to = Long.MAX_VALUE)
 	protected long recalculateEMC(@NotNull ItemInfo info, @Range(from = 1, to = Long.MAX_VALUE) long currentEMC, @NotNull PotDecorations decorations) throws ArithmeticException {
 		long totalDecorationEmc = 0;
-		for (Item decoration : decorations.ordered()) {
-			long decorationEmc = IEMCProxy.INSTANCE.getValue(decoration);
+		for (Optional<ItemStackTemplate> decoration : List.of(decorations.back(), decorations.left(), decorations.right(), decorations.front())) {
+			ItemStack decorationStack = decoration.orElseGet(() -> new ItemStackTemplate(Items.BRICK)).create();
+			long decorationEmc = IEMCProxy.INSTANCE.getValue(decorationStack);
 			if (decorationEmc == 0) {
 				//At least one sherd doesn't have an EMC value, so we can't calculate the value of the pot as a whole
 				return 0;
