@@ -25,6 +25,18 @@ public abstract class WrappedShapelessRecipe implements CraftingRecipe {
         return internal;
     }
 
+    //Since 26.3, NeoForge's recipe content packet is encoded with a StreamCodec.unit which requires the encoded payload to be
+    //equal to the registered prototype instance, so our custom recipes need value based equality based on their type
+    @Override
+    public boolean equals(Object o) {
+        return o != null && o.getClass() == getClass();
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
+
     @NotNull
     @Override
     public CraftingBookCategory category() {

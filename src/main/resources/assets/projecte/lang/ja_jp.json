@@ -434,7 +434,7 @@
   "entity.projecte.nova_catalyst_primed": "起動したノヴァの触媒",
   "entity.projecte.swrg_projectile": "狼王の発射物",
   "entity.projecte.water_projectile": "水オーブ",
-  "fml.menu.mods.info.description.projecte": "EE2を現代のMinecraftバージョンに書き直したMod",
+  "neoforge.screen.mods.info.description.projecte": "EE2を現代のMinecraftバージョンに書き直したMod",
   "fml.menu.mods.info.displayname.projecte": "ProjectE",
   "gem.projecte.activate": "ジェム装備の攻撃能力を発動",
   "gem.projecte.deactivate": "ジェム装備の攻撃能力を無効化",

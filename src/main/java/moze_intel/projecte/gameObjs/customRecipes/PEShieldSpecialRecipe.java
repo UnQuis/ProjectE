@@ -70,4 +70,14 @@ public class PEShieldSpecialRecipe extends CustomRecipe {
 	public RecipeSerializer<PEShieldSpecialRecipe> getSerializer() {
 		return PERecipeSerializers.SHIELD_DECORATION.get();
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		return o != null && o.getClass() == getClass();
+	}
+
+	@Override
+	public int hashCode() {
+		return getClass().hashCode();
+	}
 }

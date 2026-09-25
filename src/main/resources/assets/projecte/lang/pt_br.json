@@ -434,7 +434,7 @@
   "entity.projecte.nova_catalyst_primed": "Nova Catalisadora Armada",
   "entity.projecte.swrg_projectile": "Projétil VDS",
   "entity.projecte.water_projectile": "Orbe de Água",
-  "fml.menu.mods.info.description.projecte": "Uma reescrita completa do EE2 para versões modernas do Minecraft.",
+  "neoforge.screen.mods.info.description.projecte": "Uma reescrita completa do EE2 para versões modernas do Minecraft.",
   "fml.menu.mods.info.displayname.projecte": "ProjectE",
   "gem.projecte.activate": "Habilidades Ofensivas da Armadura de Gemas Ativadas",
   "gem.projecte.deactivate": "Habilidades Ofensivas da Armadura de Gemas Desativadas",

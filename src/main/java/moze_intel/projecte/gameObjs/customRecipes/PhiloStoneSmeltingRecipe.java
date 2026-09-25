@@ -123,4 +123,14 @@ public class PhiloStoneSmeltingRecipe extends CustomRecipe {
 	public RecipeSerializer<PhiloStoneSmeltingRecipe> getSerializer() {
 		return PERecipeSerializers.PHILO_STONE_SMELTING.get();
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		return o != null && o.getClass() == getClass();
+	}
+
+	@Override
+	public int hashCode() {
+		return getClass().hashCode();
+	}
 }
