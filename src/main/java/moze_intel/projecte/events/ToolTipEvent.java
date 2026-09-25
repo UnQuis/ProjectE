@@ -8,6 +8,7 @@ import moze_intel.projecte.api.capabilities.item.IItemEmcHolder;
 import moze_intel.projecte.api.capabilities.item.IPedestalItem;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.config.ProjectEConfig;
+import moze_intel.projecte.gameObjs.items.ItemDescriptions;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
 import moze_intel.projecte.utils.EMCHelper;
 import moze_intel.projecte.utils.text.PELang;
@@ -31,6 +32,8 @@ public class ToolTipEvent {
 			return;
 		}
 		List<Component> tooltip = event.getToolTip();
+		//Functional description of what the item does, shown before the extra info sections
+		ItemDescriptions.addDescription(current, tooltip::add);
 		if (ProjectEConfig.client.pedestalToolTips.get()) {
 			IPedestalItem pedestalItem = current.getCapability(PECapabilities.PEDESTAL_ITEM_CAPABILITY);
 			if (pedestalItem != null) {

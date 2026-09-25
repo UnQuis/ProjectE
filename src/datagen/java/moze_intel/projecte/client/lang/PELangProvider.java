@@ -18,6 +18,9 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
 import net.minecraft.world.item.DyeColor;
+import java.util.List;
+import java.util.Map;
+import moze_intel.projecte.gameObjs.items.ItemDescriptions;
 
 public class PELangProvider extends BaseLanguageProvider {
 
@@ -34,6 +37,7 @@ public class PELangProvider extends BaseLanguageProvider {
 		addConfigs();
 		addEMC();
 		addEntityTypes();
+		addItemDescriptions();
 		addTags();
 		addItems();
 		addModes();
@@ -272,6 +276,14 @@ public class PELangProvider extends BaseLanguageProvider {
 		add(PEEntityTypes.SWRG_PROJECTILE, "SWRG Projectile");
 		add(PEEntityTypes.WATER_PROJECTILE, "Water Orb");
 		add(PEEntityTypes.PE_TRIDENT, "Matter Trident");
+	}
+
+	private void addItemDescriptions() {
+		for (Map.Entry<String, List<ItemDescriptions.Description>> entry : ItemDescriptions.allDescriptions().entrySet()) {
+			for (ItemDescriptions.Description description : entry.getValue()) {
+				add(description.key(), description.english());
+			}
+		}
 	}
 
 	private void addTags() {
