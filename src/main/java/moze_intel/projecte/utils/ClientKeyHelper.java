@@ -52,9 +52,9 @@ public class ClientKeyHelper {
 		private boolean lastState;
 
 		PEKeyMapping(PEKeybind keybind, KeyModifier keyModifier, int keyCode) {
-			super(keybind.getTranslationKey(), InputConstants.Type.KEYBOARD, keyCode, PROJECTE_CATEGORY);
-			setKeyConflictContext(KeyConflictContext.IN_GAME);
-			setKeyModifierAndCode(keyModifier, InputConstants.Type.KEYBOARD.getOrCreate(keyCode));
+			//26.3: the modifier has to be passed to the constructor. Setting it afterwards via setKeyModifierAndCode
+			// made the binding end up as key.keyboard.unknown, which vanilla then treats as unbound and drops while loading
+			super(keybind.getTranslationKey(), KeyConflictContext.IN_GAME, keyModifier, InputConstants.Type.KEYBOARD, keyCode, PROJECTE_CATEGORY);
 			this.keybind = keybind;
 		}
 
