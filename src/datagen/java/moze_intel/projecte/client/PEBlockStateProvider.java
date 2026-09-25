@@ -178,7 +178,7 @@ public class PEBlockStateProvider extends ModelProvider {
 						.face(Direction.WEST, face -> face.uvs(0, 0, 6, 1).texture(PEDESTAL))
 						.face(Direction.UP, face -> face.uvs(6, 6, 6, 6).texture(PEDESTAL))
 						.face(Direction.DOWN, face -> face.uvs(6, 6, 6, 6).texture(PEDESTAL)))
-				.build().create(Identifier.fromNamespaceAndPath(PECore.MODID, "block/dark_matter_pedestal"),
+				.build().create(Identifier.fromNamespaceAndPath(PECore.MODID, "block/dm_pedestal"),
 						new TextureMapping().put(PEDESTAL, darkMatter).put(TextureSlot.PARTICLE, darkMatter), models.modelOutput);
 		simpleBlock(models, PEBlocks.DARK_MATTER_PEDESTAL.getBlock(), model);
 	}

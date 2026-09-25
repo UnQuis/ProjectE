@@ -238,6 +238,8 @@ repositories { RepositoryHandler handler ->
     exclusiveRepo(handler, 'https://maven.blamejared.com', filter -> {
         filter.includeGroupAndSubgroups('com.blamejared')
         filter.includeGroupAndSubgroups('net.darkhax')
+        //MezzConfig is a runtime dependency of JEI and is published on the same maven
+        filter.includeGroupAndSubgroups('net.mezzdev.config')
         filter.includeGroup('mezz.jei')
         filter.includeGroup('org.openzen.zencode')
     })

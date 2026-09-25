@@ -67,7 +67,8 @@ public abstract class BaseLanguageProvider extends LanguageProvider {
 
 	protected void addModInfo(String modName, String description) {
 		add("fml.menu.mods.info.displayname." + modid, modName);
-		add("fml.menu.mods.info.description." + modid, description);
+		//26.3 renamed the mod description translation key
+		add("neoforge.screen.mods.info.description." + modid, description);
 	}
 
 	protected void addAliases(IAliasedTranslation... translations) {

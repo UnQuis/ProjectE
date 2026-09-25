@@ -314,12 +314,18 @@ public class PECore {
 
 	private void addReloadListeners(AddServerReloadListenersEvent event) {
 		//26.1: addListener now requires a unique Identifier key for each mod-added listener
-		MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
-		if (server == null) {
-			PECore.LOGGER.error("Failed to get server registry access while registering EMC reload listener");
+		ReloadableServerResources resources = event.getServerResources();
+		if (resources == null) {
+			//The event can be fired without server resources (on the client for example), in which case there is nothing to map
 			return;
 		}
-		event.addListener(rl("emc_data"), (ResourceManagerReloadListener) manager -> emcUpdateResourceManager = new EmcUpdateData(event.getServerResources(), server.registryAccess(), manager));
+		event.addListener(rl("emc_data"), (ResourceManagerReloadListener) manager -> {
+			//The registry access is only resolvable once the server resources are actually being reloaded
+			MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+			if (server != null) {
+				emcUpdateResourceManager = new EmcUpdateData(resources, server.registryAccess(), manager);
+			}
+		});
 		event.addListener(rl("world_transmutation"), WorldTransmutationManager.INSTANCE);
 	}
 

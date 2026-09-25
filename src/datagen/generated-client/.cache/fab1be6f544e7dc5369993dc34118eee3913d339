@@ -1,4 +1,4 @@
-// 26.3	2026-09-25T18:20:15.927703646	ProjectE Block Models
+// 26.3	2026-09-25T18:41:26.654824186	ProjectE Block Models
 9856188d04dacdca3f11ccc503b4bcbca6aa1dc4 assets/projecte/blockstates/aeternalis_fuel_block.json
 34be2679acce3f5121de8f929fd97e7bf85dbc3e assets/projecte/blockstates/alchemical_barrel.json
 3020df6885e467689fd0277bf1fa83390f340eca assets/projecte/blockstates/alchemical_chest.json
@@ -10,7 +10,7 @@ c554d7025ebec276d7cbeee8d2b716f3630a3e25 assets/projecte/blockstates/condenser_m
 df7350fe97c676623e43ffaf92920dcedb435705 assets/projecte/blockstates/condenser_mk2.json
 703284a2c1a340e19cbaf806b039988b7cd5b6fc assets/projecte/blockstates/dark_matter_block.json
 3122d1010a8a18e66d4f0173219ee0f4b82343f1 assets/projecte/blockstates/dm_furnace.json
-94e62c82aad90bf17bd48fc43bb7db24554bd480 assets/projecte/blockstates/dm_pedestal.json
+9627ca23a08df03c580a965323667d007d201177 assets/projecte/blockstates/dm_pedestal.json
 00fb810ab46328f8c27ff3cc7af8419d30c527cb assets/projecte/blockstates/interdiction_lantern.json
 ba851fae2fa45eb861d2ebed56d26d0a539ec160 assets/projecte/blockstates/interdiction_torch.json
 ce3b25636777b2c6435a5a7ed5f6d9ced451424c assets/projecte/blockstates/mobius_fuel_block.json
@@ -35,9 +35,9 @@ ecdcd31981d61e28847051fd90ca23de1454af7c assets/projecte/models/block/alchemical
 576237971918b935ac7df796b92cd7949c41f40d assets/projecte/models/block/condenser_mk1.json
 ee69ee43fd62ee6bd2612fe1de661b2c1f47b4cc assets/projecte/models/block/condenser_mk2.json
 082e2f76618bdcbbeb367878dc493050e1c27edb assets/projecte/models/block/dark_matter_block.json
-3bf4cac43365a11cabf17e499e984d05831f38fb assets/projecte/models/block/dark_matter_pedestal.json
 c33b3acf132ded58e1a36f5b09a49100d172ef8b assets/projecte/models/block/dm_furnace.json
 495e4f5f0ab6f42d9764d037483126262e18203c assets/projecte/models/block/dm_furnace_on.json
+3bf4cac43365a11cabf17e499e984d05831f38fb assets/projecte/models/block/dm_pedestal.json
 6588365851b2ec423e1be5c2b38834211f115eed assets/projecte/models/block/interdiction_lantern.json
 dc46958faa54bc12b832e6f5e6e894344ee541c0 assets/projecte/models/block/interdiction_lantern_hanging.json
 6db1cfd8a824afb767d13e1813598098b0d33433 assets/projecte/models/block/interdiction_torch.json
