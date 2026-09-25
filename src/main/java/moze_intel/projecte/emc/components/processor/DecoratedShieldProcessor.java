@@ -7,8 +7,6 @@ import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.config.PEConfigTranslations;
 import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.core.component.DataComponents;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -49,9 +47,7 @@ public class DecoratedShieldProcessor implements IDataComponentProcessor {
 		if (info.getItem().is(Tags.Items.TOOLS_SHIELD)) {
 			DyeColor baseColor = info.getOrNull(DataComponents.BASE_COLOR);
 			if (baseColor != null) {
-				ItemStack banner = BuiltInRegistries.ITEM.get(Identifier.withDefaultNamespace(baseColor.getName() + "_banner"))
-				.map(ItemStack::new)
-				.orElseGet(() -> new ItemStack(Items.WHITE_BANNER));
+				ItemStack banner = new ItemStack(Items.BANNER.pick(baseColor));
 				BannerPatternLayers patternLayers = info.getOrNull(DataComponents.BANNER_PATTERNS);
 				if (patternLayers != null && !patternLayers.equals(BannerPatternLayers.EMPTY)) {
 					//If there is any pattern stored, set it so that we can get the value of the banner when it has that pattern stored

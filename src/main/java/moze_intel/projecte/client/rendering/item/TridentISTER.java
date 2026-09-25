@@ -11,6 +11,8 @@ import moze_intel.projecte.gameObjs.items.tools.PETrident;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.model.object.projectile.TridentModel;
 import net.minecraft.client.renderer.SubmitNodeCollector;
+import net.minecraft.client.renderer.rendertype.RenderType;
+import net.minecraft.client.renderer.rendertype.RenderTypes;
 import net.minecraft.client.renderer.special.SpecialModelRenderer;
 import net.minecraft.resources.Identifier;
 import net.minecraft.util.Util;
@@ -35,8 +37,8 @@ public class TridentISTER implements SpecialModelRenderer<Identifier> {
 	public void submit(@Nullable Identifier texture, PoseStack poseStack, SubmitNodeCollector submitNodeCollector,
 			int lightCoords, int overlayCoords, boolean hasFoil, int outlineColor) {
 		Identifier location = texture != null ? texture : TridentModel.TEXTURE;
-		submitNodeCollector.submitModelPart(model.root(), poseStack, model.renderType(location), lightCoords, overlayCoords, null, false, hasFoil, -1, null,
-				outlineColor);
+		RenderType renderType = hasFoil ? RenderTypes.entityGlint() : model.renderType(location);
+		submitNodeCollector.submitModelPart(model.root(), poseStack, renderType, lightCoords, overlayCoords, null, -1, null, outlineColor);
 	}
 
 	@Override

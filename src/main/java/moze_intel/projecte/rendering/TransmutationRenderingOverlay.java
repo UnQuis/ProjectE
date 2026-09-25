@@ -49,7 +49,7 @@ public class TransmutationRenderingOverlay implements GuiLayer {
 
 	@Override
 	public void render(GuiGraphicsExtractor graphics, DeltaTracker delta) {
-		if (!mc.options.hideGui && transmutationResult != null) {
+		if (!mc.gui.hud.isHidden() && transmutationResult != null) {
 			if (transmutationResult instanceof LiquidBlock liquidBlock) {
 				FluidState fluidState = liquidBlock.fluid.defaultFluidState();
 				FluidModel fluidModel = mc.getModelManager().getFluidStateModelSet().get(fluidState);
@@ -116,21 +116,23 @@ public class TransmutationRenderingOverlay implements GuiLayer {
 						}
 					}
 				}
-				event.addCustomRenderer((outlineState, buffer, pose, translucentPass, levelRenderState) -> {
+				event.addCustomRenderer((outlineState, submitNodeCollector, pose, levelRenderState) -> {
 					//Only render once as this is invoked once for the opaque pass and once for the translucent pass
-					if (translucentPass) {
+					if (outlineState.isTranslucent()) {
 						return false;
 					}
-					VertexConsumer builder = buffer.getBuffer(PERenderType.TRANSMUTATION_OVERLAY);
 					for (OutlineShape outlineShape : shapes) {
 						BlockPos pos = outlineShape.pos();
 						pose.pushPose();
 						//Shift by view position here so that we don't have floating point issues at large values
 						pose.translate(pos.getX() - viewPosition.x, pos.getY() - viewPosition.y, pos.getZ() - viewPosition.z);
-						outlineShape.shape().forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
-							for (Direction value : Constants.DIRECTIONS) {
-								renderFace(pose.last(), builder, value, (float) minX, (float) minY, (float) minZ, (float) maxX, (float) maxY, (float) maxZ, alphaColor);
-							}
+						submitNodeCollector.submitCustomGeometry(pose, PERenderType.TRANSMUTATION_OVERLAY, (customPose, builder) -> {
+							outlineShape.shape().forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
+								for (Direction value : Constants.DIRECTIONS) {
+									renderFace(customPose, builder, value, (float) minX, (float) minY, (float) minZ, (float) maxX, (float) maxY, (float) maxZ,
+											alphaColor);
+								}
+							});
 						});
 						pose.popPose();
 					}
