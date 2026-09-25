@@ -8,27 +8,27 @@ import moze_intel.projecte.PECore;
 import net.minecraft.client.renderer.texture.atlas.sources.DirectoryLister;
 import net.minecraft.client.renderer.texture.atlas.sources.SingleFile;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.data.AtlasIds;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
-import net.neoforged.neoforge.common.data.ExistingFileHelper;
-import net.neoforged.neoforge.common.data.SpriteSourceProvider;
+import net.neoforged.neoforge.client.data.SpriteSourceProvider;
 
 public class PESpriteSourceProvider extends SpriteSourceProvider {
 
 	private final Set<Identifier> trackedSingles = new HashSet<>();
 
-	public PESpriteSourceProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper fileHelper) {
-		super(output, lookupProvider, PECore.MODID, fileHelper);
+	public PESpriteSourceProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider) {
+		super(output, lookupProvider, PECore.MODID);
 	}
 
 	@Override
 	protected void gather() {
 		//Note: We always stitch this even when curios isn't loaded, but I don't think there is much we can do about that,
 		// and it is only a small texture, so it won't matter too much
-		addFiles(atlas(BLOCKS_ATLAS), PECore.rl("curios/empty_klein_star"));
-		addFiles(atlas(BLOCKS_ATLAS), PECore.rl("curios/transmutation_tablet"));
+		addFiles(atlas(AtlasIds.BLOCKS), PECore.rl("curios/empty_klein_star"));
+		addFiles(atlas(AtlasIds.BLOCKS), PECore.rl("curios/transmutation_tablet"));
 		//Shield patterns for the matter shields
-		addFiles(atlas(SHIELD_PATTERNS_ATLAS), PECore.rl("entity/dark_matter_shield"), PECore.rl("entity/red_matter_shield"));
+		addFiles(atlas(AtlasIds.SHIELD_PATTERNS), PECore.rl("entity/dark_matter_shield"), PECore.rl("entity/red_matter_shield"));
 	}
 
 	protected void addFiles(SourceList atlas, Identifier... resourceLocations) {

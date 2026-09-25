@@ -16,7 +16,7 @@ public class PEDataMapsProvider extends DataMapProvider {
 	}
 
 	@Override
-	protected void gather() {
+	protected void gather(HolderLookup.Provider registries) {
 		//Four times the burn time of coal
 		int alchemicalCoal = 1_600 * 4;
 		int mobiusFuel = alchemicalCoal * 4;

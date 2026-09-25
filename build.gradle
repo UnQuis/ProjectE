@@ -10,7 +10,7 @@ plugins {
     id('eclipse')
     id('idea')
     id('maven-publish')
-    id('com.gradleup.shadow') version('8.3.6')
+    id('com.gradleup.shadow') version('9.4.3')
     // https://projects.neoforged.net/neoforged/ModDevGradle
     id('net.neoforged.moddev') version('2.0.147')
 }
@@ -243,6 +243,8 @@ test {
 dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-api:${junit_version}")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:${junit_version}")
+    // Gradle injects its own (older) JUnit Platform launcher, which is incompatible with NeoForge's junit-fml on 26.1
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher:1.13.4")
     testImplementation("net.neoforged:testframework:${neo_version}") {
         transitive = false
     }

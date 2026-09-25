@@ -1,5 +1,6 @@
 package moze_intel.projecte.common;
 
+import java.util.concurrent.CompletableFuture;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.api.data.CustomConversionProvider;
 import moze_intel.projecte.api.nss.NSSFake;
@@ -16,8 +17,6 @@ import net.minecraft.world.item.alchemy.Potions;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.fluids.FluidType;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.concurrent.CompletableFuture;
 
 public class PECustomConversionProvider extends CustomConversionProvider {
 
@@ -195,7 +194,7 @@ public class PECustomConversionProvider extends CustomConversionProvider {
 				.before(Items.SMALL_DRIPLEAF, 24)
 				.before(Items.BIG_DRIPLEAF, 32)
 				.before(ItemTags.SMALL_FLOWERS, 16)
-				.before(ItemTags.TALL_FLOWERS, 32)
+				.before(ItemTags.FLOWERS, 32)
 				.before(Items.RED_MUSHROOM, 32)
 				.before(Items.BROWN_MUSHROOM, 32)
 				.before(Items.SUGAR_CANE, 32)

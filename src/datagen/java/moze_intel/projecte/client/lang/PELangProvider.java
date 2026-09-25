@@ -14,9 +14,9 @@ import moze_intel.projecte.integration.jade.PEJadeConstants;
 import moze_intel.projecte.integration.recipe_viewer.alias.ProjectEAliases;
 import moze_intel.projecte.utils.PEKeybind;
 import moze_intel.projecte.utils.text.PELang;
-import net.minecraft.util.Util;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
+import net.minecraft.util.Util;
 import net.minecraft.world.item.DyeColor;
 
 public class PELangProvider extends BaseLanguageProvider {
@@ -67,6 +67,7 @@ public class PELangProvider extends BaseLanguageProvider {
 		add(PELang.DIVINING_RANGE_16, "16x3x3");
 		add(PELang.DIVINING_RANGE_64, "64x3x3");
 		//Keybinds
+		add("key.category.projecte", PECore.MODNAME);
 		add(PEKeybind.HELMET_TOGGLE, "Helmet Effects");
 		add(PEKeybind.BOOTS_TOGGLE, "Boots Effects");
 		add(PEKeybind.CHARGE, "Charge");

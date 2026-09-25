@@ -16,6 +16,8 @@ import moze_intel.projecte.gameObjs.items.ICapabilityAware;
 import moze_intel.projecte.gameObjs.registration.PEDeferredRegister;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Item;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -23,8 +25,11 @@ import org.jetbrains.annotations.NotNull;
 
 public class ItemDeferredRegister extends PEDeferredRegister<Item> {
 
+	private final String modid;
+
 	public ItemDeferredRegister(String modid) {
 		super(Registries.ITEM, modid, ItemRegistryObject::new);
+		this.modid = modid;
 	}
 
 	@Override
@@ -99,11 +104,13 @@ public class ItemDeferredRegister extends PEDeferredRegister<Item> {
 	public <ITEM extends Item> ItemRegistryObject<ITEM> registerTool(String name, Function<Item.Properties, ITEM> sup) {
 		// Use real durability so minecraft:max_damage component is present on the ItemStack.
 		// damageItem() in PETool/PEPickaxe always returns 0 so durability is never actually consumed.
-		return register(name, () -> sup.apply(new Item.Properties().durability(Integer.MAX_VALUE).stacksTo(1).fireResistant()));
+		return register(name, sup, properties -> properties.durability(Integer.MAX_VALUE).stacksTo(1).fireResistant());
 	}
 
 	public <ITEM extends Item> ItemRegistryObject<ITEM> register(String name, Function<Item.Properties, ITEM> sup, UnaryOperator<Item.Properties> propertyModifier) {
-		return register(name, () -> sup.apply(propertyModifier.apply(new Item.Properties())));
+		//Since 26.1, the item's registry key has to be set on the properties before the item is created, otherwise the item throws "Item id not set"
+		ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(modid, name));
+		return register(name, () -> sup.apply(propertyModifier.apply(new Item.Properties().setId(key))));
 	}
 
 	@NotNull

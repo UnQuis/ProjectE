@@ -31,13 +31,13 @@ public class PEArmorMaterials {
 	});
 
 	public static final ArmorMaterial DARK_MATTER = new ArmorMaterial(
-			37, DIAMOND_RESISTANCES, 0, SoundEvents.ARMOR_EQUIP_NETHERITE, 2.0F, 0.1F, NO_REPAIR, assetId("dark_matter")
+			37, DIAMOND_RESISTANCES, 1, SoundEvents.ARMOR_EQUIP_NETHERITE, 2.0F, 0.1F, NO_REPAIR, assetId("dark_matter")
 	);
 	public static final ArmorMaterial RED_MATTER = new ArmorMaterial(
-			37, DIAMOND_RESISTANCES, 0, SoundEvents.ARMOR_EQUIP_NETHERITE, 2.0F, 0.2F, NO_REPAIR, assetId("red_matter")
+			37, DIAMOND_RESISTANCES, 1, SoundEvents.ARMOR_EQUIP_NETHERITE, 2.0F, 0.2F, NO_REPAIR, assetId("red_matter")
 	);
 	public static final ArmorMaterial GEM_ARMOR = new ArmorMaterial(
-			37, DIAMOND_RESISTANCES, 0, SoundEvents.ARMOR_EQUIP_NETHERITE, 2.0F, 0.25F, NO_REPAIR, assetId("gem_armor")
+			37, DIAMOND_RESISTANCES, 1, SoundEvents.ARMOR_EQUIP_NETHERITE, 2.0F, 0.25F, NO_REPAIR, assetId("gem_armor")
 	);
 
 	private static ResourceKey<EquipmentAsset> assetId(String path) {

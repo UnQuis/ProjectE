@@ -598,7 +598,8 @@ public class ToolHelper {
 	 */
 	public static ToolMaterial createToolMaterial(IMatterType matterType) {
 		EnumMatterType matter = (EnumMatterType) matterType;
-		return new ToolMaterial(matter.getIncorrectBlocksForDrops(), Integer.MAX_VALUE, matter.getSpeed(), matter.getAttackDamageBonus(), 0, NO_REPAIR);
+		//Since 26.1, the enchantment value has to be positive, a value of one is effectively unenchantable, which matches the previous value of zero
+		return new ToolMaterial(matter.getIncorrectBlocksForDrops(), Integer.MAX_VALUE, matter.getSpeed(), matter.getAttackDamageBonus(), Math.max(1, matterType.getEnchantmentValue()), NO_REPAIR);
 	}
 
 	public static float getDestroySpeed(float parentDestroySpeed, IMatterType matterType, int charge) {

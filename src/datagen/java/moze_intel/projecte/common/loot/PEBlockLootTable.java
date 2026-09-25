@@ -1,9 +1,8 @@
 package moze_intel.projecte.common.loot;
 
-import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import java.util.Set;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
-import net.minecraft.advancements.critereon.StatePropertiesPredicate;
+import net.minecraft.advancements.criterion.StatePropertiesPredicate;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.loot.BlockLootSubProvider;
 import net.minecraft.world.flag.FeatureFlags;
@@ -18,8 +17,6 @@ import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
 import org.jetbrains.annotations.NotNull;
 
 public class PEBlockLootTable extends BlockLootSubProvider {
-
-	private final Set<Block> knownBlocks = new ReferenceOpenHashSet<>();
 
 	public PEBlockLootTable(HolderLookup.Provider registries) {
 		super(Set.of(
@@ -85,18 +82,5 @@ public class PEBlockLootTable extends BlockLootSubProvider {
 				.name("main")
 				.add(LootItem.lootTableItem(tnt).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(tnt)
 						.setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(TntBlock.UNSTABLE, false)))))));
-	}
-
-	@Override
-	protected void add(@NotNull Block block, @NotNull LootTable.Builder table) {
-		//Overwrite the core register method to add to our list of known blocks
-		super.add(block, table);
-		knownBlocks.add(block);
-	}
-
-	@NotNull
-	@Override
-	protected Iterable<Block> getKnownBlocks() {
-		return knownBlocks;
 	}
 }
