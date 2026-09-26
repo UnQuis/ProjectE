@@ -746,7 +746,6 @@
   "pe.item.rm_sword.desc": "Charge boosts damage and C area attacks; G targets hostiles only or all living entities.",
   "pe.item.soul_stone.desc": "While active, heals its wearer using EMC. In a pedestal: heals nearby players.",
   "pe.item.swiftwolf_rending_gale.desc": "Grants flight with EMC, repels mobs, and throws SWRG shots. Modes: Off, Flight, Shield, Shielded Flight. In a pedestal: lightning-strikes mobs.",
-  "pe.item.tome.desc": "Unlocks all transmutation knowledge when learned.",
   "pe.item.transmutation_stone.desc": "Lets players store EMC, transmute items, and learn or unlearn transmutation knowledge.",
   "pe.item.transmutation_table.desc": "Lets players store EMC, transmute items, and learn or unlearn transmutation knowledge.",
   "pe.item.transmutation_tablet.desc": "Portable transmutation: transmute, learn, and unlearn items from your inventory.",

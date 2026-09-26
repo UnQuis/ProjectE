@@ -120,7 +120,6 @@ public final class ItemDescriptions {
 			Map.entry("high_covalence_dust", List.of(new Description("pe.item.high_covalence_dust.desc", "Repairs a damaged item in crafting and restores the most durability."))),
 			Map.entry("medium_covalence_dust", List.of(new Description("pe.item.medium_covalence_dust.desc", "Repairs a damaged item in crafting and restores more durability."))),
 			Map.entry("low_covalence_dust", List.of(new Description("pe.item.low_covalence_dust.desc", "Repairs a damaged item in crafting and restores some durability."))),
-			Map.entry("tome", List.of(new Description("pe.item.tome.desc", "Unlocks all transmutation knowledge when learned."))),
 			Map.entry("iron_band", List.of(new Description("pe.item.iron_band.desc", "A base component for crafting several ProjectE rings and bands."))),
 			Map.entry("transmutation_tablet", List.of(new Description("pe.item.transmutation_tablet.desc", "Portable transmutation: transmute, learn, and unlearn items from your inventory.")))
 	);
