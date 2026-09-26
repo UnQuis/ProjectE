@@ -7,15 +7,9 @@
     "OOO"
   ],
   "key": {
-    "O": {
-      "tag": "c:obsidians"
-    },
-    "A": {
-      "item": "projecte:aeternalis_fuel_block"
-    },
-    "S": {
-      "tag": "c:glass_blocks"
-    }
+    "O": "#c:obsidians",
+    "A": "projecte:aeternalis_fuel_block",
+    "S": "#c:glass_blocks"
   },
   "result": {
     "id": "projecte:basic_relay"

@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shapeless",
   "group": "projecte:matter/magenta",
   "ingredients": [
-    {
-      "item": "projecte:red_collector"
-    },
-    {
-      "item": "projecte:magenta_matter"
-    }
+    "projecte:red_collector",
+    "projecte:magenta_matter"
   ],
   "result": {
     "id": "projecte:magenta_collector"

@@ -7,15 +7,9 @@
     "RRR"
   ],
   "key": {
-    "L": {
-      "item": "projecte:orange_emc_link"
-    },
-    "C": {
-      "item": "projecte:orange_compressed_collector"
-    },
-    "R": {
-      "item": "projecte:orange_relay"
-    }
+    "L": "projecte:orange_emc_link",
+    "C": "projecte:orange_compressed_collector",
+    "R": "projecte:orange_relay"
   },
   "result": {
     "id": "projecte:orange_power_flower"

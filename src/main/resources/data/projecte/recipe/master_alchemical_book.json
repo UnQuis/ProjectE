@@ -6,15 +6,9 @@
     "EOE"
   ],
   "key": {
-    "B": {
-      "item": "projecte:advanced_alchemical_book"
-    },
-    "O": {
-      "item": "projecte:colossal_star_omega"
-    },
-    "E": {
-      "item": "projecte:colossal_star_ein"
-    }
+    "B": "projecte:advanced_alchemical_book",
+    "O": "projecte:colossal_star_omega",
+    "E": "projecte:colossal_star_ein"
   },
   "result": {
     "id": "projecte:master_alchemical_book"

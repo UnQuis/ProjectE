@@ -10,35 +10,32 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.food.Foods;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.math.BigInteger;
-import java.util.List;
+import java.util.function.Consumer;
 
 public class ItemInfiniteSteak extends Item {
 	@SuppressWarnings("unused")
-	public ItemInfiniteSteak() {
-		super(new Properties()
+	public ItemInfiniteSteak(Properties properties) {
+		super(properties
 				.food(Foods.COOKED_BEEF)
 				.stacksTo(1)
 				.rarity(Rarity.RARE));
 	}
 
-	@OnlyIn(Dist.CLIENT)
 	@Override
-	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> list, TooltipFlag flag) {
-		super.appendHoverText(stack, context, list, flag);
-		list.add(Lang.Items.INFINITE_STEAK_TOOLTIP.translateColored(ChatFormatting.GRAY));
-		list.add(Lang.COST.translateColored(ChatFormatting.RED, EMCFormat.getComponent(Config.server.infiniteSteakCost.get()).setStyle(ColorStyle.GRAY)));
+	public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
+		super.appendHoverText(stack, context, display, tooltip, flag);
+		tooltip.accept(Lang.Items.INFINITE_STEAK_TOOLTIP.translateColored(ChatFormatting.GRAY));
+		tooltip.accept(Lang.COST.translateColored(ChatFormatting.RED, EMCFormat.getComponent(Config.server.infiniteSteakCost.get()).setStyle(ColorStyle.GRAY)));
 	}
 
 	@Override
@@ -46,37 +43,31 @@ public class ItemInfiniteSteak extends Item {
 		return Items.COOKED_BEEF.getUseDuration(stack, entity);
 	}
 
-	@Nullable
+	//26.3 Item#use returns an InteractionResult instead of an InteractionResultHolder<ItemStack>
 	@Override
-	public FoodProperties getFoodProperties(ItemStack stack, @Nullable LivingEntity entity) {
-		return Items.COOKED_BEEF.getFoodProperties(stack, entity);
-	}
-
-	@Override
-	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
-		ItemStack stack = player.getItemInHand(hand);
+	public InteractionResult use(Level level, Player player, InteractionHand hand) {
 		@Nullable IKnowledgeProvider provider = Util.getKnowledgeProvider(player);
-		if (!player.canEat(false) || Config.server.infiniteSteakCost.get() == 0 || provider == null || provider.getEmc().compareTo(BigInteger.valueOf(Config.server.infiniteSteakCost.get())) < 0) return InteractionResultHolder.fail(stack);
+		if (!player.canEat(false) || Config.server.infiniteSteakCost.get() == 0 || provider == null || provider.getEmc().compareTo(BigInteger.valueOf(Config.server.infiniteSteakCost.get())) < 0) return InteractionResult.FAIL;
 		player.startUsingItem(hand);
-		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+		return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
 	}
 
+	//26.3 replaced LivingEntity#eat with the minecraft:consumable data component, super#finishUsingItem runs it
 	@Override
 	public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity entity) {
 		if (!(entity instanceof ServerPlayer player) || level.isClientSide()) return stack;
 		@Nullable IKnowledgeProvider provider = Util.getKnowledgeProvider(player);
 		if (provider == null) {
-			player.displayClientMessage(Lang.FAILED_TO_GET_KNOWLEDGE_PROVIDER.translateColored(ChatFormatting.RED, player.getDisplayName()), true);
+			player.sendOverlayMessage(Lang.FAILED_TO_GET_KNOWLEDGE_PROVIDER.translateColored(ChatFormatting.RED, player.getDisplayName()));
 			return stack;
 		}
 		BigInteger emc = provider.getEmc().subtract(BigInteger.valueOf(Config.server.infiniteSteakCost.get()));
 		if (emc.compareTo(BigInteger.ZERO) < 0) {
-			player.displayClientMessage(Lang.Items.INFINITE_STEAK_NOT_ENOUGH_EMC.translateColored(ChatFormatting.RED, Component.literal(Integer.toString(Config.server.infiniteSteakCost.get()))), true);
+			player.sendOverlayMessage(Lang.Items.INFINITE_STEAK_NOT_ENOUGH_EMC.translateColored(ChatFormatting.RED, Component.literal(Integer.toString(Config.server.infiniteSteakCost.get()))));
 			return stack;
 		}
 		provider.setEmc(emc);
 		provider.syncEmc(player);
-		player.eat(level, new ItemStack(Items.COOKED_BEEF));
-		return stack;
+		return super.finishUsingItem(stack, level, entity);
 	}
 }

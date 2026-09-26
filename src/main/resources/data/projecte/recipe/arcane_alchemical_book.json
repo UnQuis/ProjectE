@@ -6,15 +6,9 @@
     "SFS"
   ],
   "key": {
-    "B": {
-      "item": "projecte:master_alchemical_book"
-    },
-    "S": {
-      "item": "projecte:final_star_shard"
-    },
-    "F": {
-      "item": "projecte:final_star"
-    }
+    "B": "projecte:master_alchemical_book",
+    "S": "projecte:final_star_shard",
+    "F": "projecte:final_star"
   },
   "result": {
     "id": "projecte:arcane_alchemical_book"

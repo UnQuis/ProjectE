@@ -18,19 +18,19 @@ public class SunExposureHelper {
 	}
 
 	public static boolean wearingProtectiveBoots(ServerPlayer player) {
-		return automaticProtection(player) || player.getInventory().getArmor(EquipmentSlot.FEET.getIndex()).is(PROTECTIVE_ITEMS);
+		return automaticProtection(player) || player.getItemBySlot(EquipmentSlot.FEET).is(PROTECTIVE_ITEMS);
 	}
 
 	public static boolean wearingProtectiveLeggings(ServerPlayer player) {
-		return automaticProtection(player) || player.getInventory().getArmor(EquipmentSlot.LEGS.getIndex()).is(PROTECTIVE_ITEMS);
+		return automaticProtection(player) || player.getItemBySlot(EquipmentSlot.LEGS).is(PROTECTIVE_ITEMS);
 	}
 
 	public static boolean wearingProtectiveChestplate(ServerPlayer player) {
-		return automaticProtection(player) || player.getInventory().getArmor(EquipmentSlot.CHEST.getIndex()).is(PROTECTIVE_ITEMS);
+		return automaticProtection(player) || player.getItemBySlot(EquipmentSlot.CHEST).is(PROTECTIVE_ITEMS);
 	}
 
 	public static boolean wearingProtectiveHelmet(ServerPlayer player) {
-		return automaticProtection(player) || player.getInventory().getArmor(EquipmentSlot.HEAD.getIndex()).is(PROTECTIVE_ITEMS);
+		return automaticProtection(player) || player.getItemBySlot(EquipmentSlot.HEAD).is(PROTECTIVE_ITEMS);
 	}
 
 	// percentage, 0-100

@@ -2,21 +2,11 @@
   "type": "minecraft:crafting_shapeless",
   "group": "projecte:fuel/white",
   "ingredients": [
-    {
-      "item": "projecte:philosophers_stone"
-    },
-    {
-      "item": "projecte:orange_fuel"
-    },
-    {
-      "item": "projecte:orange_fuel"
-    },
-    {
-      "item": "projecte:orange_fuel"
-    },
-    {
-      "item": "projecte:orange_fuel"
-    }
+    "projecte:philosophers_stone",
+    "projecte:orange_fuel",
+    "projecte:orange_fuel",
+    "projecte:orange_fuel",
+    "projecte:orange_fuel"
   ],
   "result": {
     "id": "projecte:white_fuel"

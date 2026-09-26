@@ -111,7 +111,8 @@ public record CapabilityAlchemicalBookLocations(ItemAlchemicalBook.Mode mode, @N
 				throw new BookError.WrongDimensionError();
 			}
 
-			player.teleportTo(level, x, y, z, player.getYRot(), player.getXRot());
+			//26.3 teleportTo takes the set of relative components to keep instead of a plain rotation pair
+			player.teleportTo(level, x, y, z, Set.of(), player.getYRot(), player.getXRot(), true);
 		}
 
 		public double distanceFrom(BlockPos pos) {
@@ -150,17 +151,18 @@ public record CapabilityAlchemicalBookLocations(ItemAlchemicalBook.Mode mode, @N
 			tag.putInt(TagNames.Y, y);
 			tag.putInt(TagNames.Z, z);
 			tag.putInt(TagNames.INDEX, index);
-			tag.putString(TagNames.DIMENSION, dimension.location().toString());
+			tag.putString(TagNames.DIMENSION, dimension.identifier().toString());
 			return tag;
 		}
 
+		//26.3 the CompoundTag getters return Optional, so the values are unwrapped with their zero defaults
 		public static TeleportLocation deserialize(CompoundTag tag) {
-			String name = tag.getString(TagNames.NAME);
-			int x = tag.getInt(TagNames.X);
-			int y = tag.getInt(TagNames.Y);
-			int z = tag.getInt(TagNames.Z);
-			int index = tag.getInt(TagNames.INDEX);
-			ResourceKey<Level> dimension = ResourceKey.create(Registries.DIMENSION, Identifier.parse(tag.getString(TagNames.DIMENSION)));
+			String name = tag.getString(TagNames.NAME).orElse("");
+			int x = tag.getInt(TagNames.X).orElse(0);
+			int y = tag.getInt(TagNames.Y).orElse(0);
+			int z = tag.getInt(TagNames.Z).orElse(0);
+			int index = tag.getInt(TagNames.INDEX).orElse(0);
+			ResourceKey<Level> dimension = ResourceKey.create(Registries.DIMENSION, Identifier.parse(tag.getString(TagNames.DIMENSION).orElse("minecraft:overworld")));
 			return new TeleportLocation(name, x, y, z, dimension, index);
 		}
 
@@ -199,7 +201,7 @@ public record CapabilityAlchemicalBookLocations(ItemAlchemicalBook.Mode mode, @N
 			}
 
 			public DimensionNotFoundError(ResourceKey<Level> level) {
-				this(Component.translatable(level.location().toLanguageKey()));
+				this(Component.translatable(level.identifier().toLanguageKey()));
 			}
 
 			public DimensionNotFoundError(String name) {
@@ -570,10 +572,19 @@ public record CapabilityAlchemicalBookLocations(ItemAlchemicalBook.Mode mode, @N
 			this.locations = ImmutableList.copyOf(locations);
 		}
 
+		/**
+		 * {@link moze_intel.projecte.expansion.registries.ExpansionAttachmentTypes#ALCHEMICAL_BOOK_LOCATIONS} hands this
+		 * method reference to {@code AttachmentType.Builder#copyHandler}, whose signature has the attachment itself as
+		 * the first parameter (26.3).
+		 */
+		public static AlchemicalBookLocationData newCopy(AlchemicalBookLocationData attachment, IAttachmentHolder holder, HolderLookup.Provider registries) {
+			return attachment.copy(holder, registries);
+		}
+
 		@Nullable
-		public CapabilityAlchemicalBookLocations.AlchemicalBookLocationData copy(IAttachmentHolder holder, HolderLookup.Provider registries) {
+		public AlchemicalBookLocationData copy(IAttachmentHolder holder, HolderLookup.Provider registries) {
 			List<TeleportLocation> locationsCopy = new ArrayList<>();
-			for (TeleportLocation location : getLocations()) {
+			for (TeleportLocation location : locations) {
 				locationsCopy.add(location.copy());
 			}
 			return new AlchemicalBookLocationData(locationsCopy);

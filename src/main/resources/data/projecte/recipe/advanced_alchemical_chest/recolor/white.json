@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shapeless",
   "group": "projecte:advanced_alchemical_chest/white",
   "ingredients": [
-    {
-      "tag": "projecte:advanced_alchemical_chest"
-    },
-    {
-      "item": "minecraft:white_dye"
-    }
+    "#projecte:advanced_alchemical_chest",
+    "minecraft:white_dye"
   ],
   "result": {
     "id": "projecte:white_advanced_alchemical_chest"

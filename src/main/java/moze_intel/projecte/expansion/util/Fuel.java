@@ -7,9 +7,20 @@ import moze_intel.projecte.expansion.registries.ExpansionItems;
 import moze_intel.projecte.gameObjs.registration.impl.BlockRegistryObject;
 import moze_intel.projecte.gameObjs.registration.impl.ItemRegistryObject;
 import moze_intel.projecte.gameObjs.registries.PEItems;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.component.CookingFuel;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.storage.loot.LootContext;
+import net.minecraft.world.level.storage.loot.LootParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
+import net.minecraft.world.level.storage.loot.providers.number.ints.ResolvableInt;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.server.ServerLifecycleHooks;
 
 import javax.annotation.Nullable;
 import java.math.BigInteger;
@@ -17,6 +28,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Supplier;
 
 @SuppressWarnings("unused")
@@ -70,11 +82,28 @@ public enum Fuel {
 	}
 
 	public int getBurnTime() {
-		return getBurnTime(null);
+		return item == null ? -1 : resolveBurnTime(new ItemStack(PEItems.AETERNALIS_FUEL.get()));
 	}
 
-	public int getBurnTime(@Nullable RecipeType<?> type) {
-		return item == null ? -1 : new ItemStack(PEItems.AETERNALIS_FUEL.get()).getBurnTime(type);
+	/**
+	 * 26.3 removed {@code ItemStack#getBurnTime}, the burn time now lives in the {@code minecraft:cooking_fuel} component as
+	 * a {@link net.minecraft.world.level.storage.loot.providers.number.ints.ResolvableInt}, which is resolved through a
+	 * loot context. This is the same lookup ProjectE's own matter furnace does.
+	 */
+	private static int resolveBurnTime(ItemStack stack) {
+		CookingFuel cookingFuel = stack.get(DataComponents.COOKING_FUEL);
+		if (cookingFuel == null) return 0;
+		MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
+		if (server == null) {
+			//Without a server there is no loot context, so only a hard coded constant can be resolved
+			return cookingFuel.burnTime() instanceof ResolvableInt.Constant constant ? constant.value() : 0;
+		}
+		ServerLevel level = server.overworld();
+		LootContext context = new LootContext.Builder(new LootParams.Builder(level)
+				.withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(BlockPos.ZERO))
+				.withParameter(LootContextParams.TOOL, ItemStack.EMPTY)
+				.create(LootContextParamSets.BLOCK)).create(Optional.empty());
+		return cookingFuel.burnTime().get(context, 0);
 	}
 
 	public long getCollectorEMCLimit() {
@@ -100,8 +129,8 @@ public enum Fuel {
 	private void register(RegistrationType reg) {
 		if (this.existingItem != null) return;
 		switch (reg) {
-			case ITEM -> item = ExpansionItems.ITEMS.register(String.format("%s_fuel", name), () -> new ItemFuel(this));
-			case BLOCK -> blockItem = ExpansionBlocks.BLOCKS.register(String.format("%s_fuel_block", name), () -> new Block(Block.Properties.of().requiresCorrectToolForDrops().strength(0.5F, 1.5F)), block -> new FuelBlockItem(this));
+			case ITEM -> item = ExpansionItems.ITEMS.registerSimple(String.format("%s_fuel", name), properties -> new ItemFuel(properties, this));
+			case BLOCK -> blockItem = ExpansionBlocks.BLOCKS.register(String.format("%s_fuel_block", name), properties -> new Block(properties.requiresCorrectToolForDrops().strength(0.5F, 1.5F)), (block, itemProperties) -> new FuelBlockItem(this, itemProperties));
 		}
 	}
 

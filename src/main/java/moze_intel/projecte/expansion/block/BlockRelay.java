@@ -1,12 +1,11 @@
 package moze_intel.projecte.expansion.block;
 
-import com.mojang.serialization.MapCodec;
 import moze_intel.projecte.expansion.block.entity.BlockEntityRelay;
 import moze_intel.projecte.expansion.config.Config;
 import moze_intel.projecte.expansion.registries.ExpansionBlockEntityTypes;
-import moze_intel.projecte.expansion.registries.ExpansionBlockTypes;
 import moze_intel.projecte.expansion.util.*;
 import moze_intel.projecte.gameObjs.IMatterType;
+import moze_intel.projecte.gameObjs.blocks.IBlockTooltip;
 import moze_intel.projecte.gameObjs.blocks.IMatterBlock;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -25,13 +24,11 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.function.Consumer;
 
-public class BlockRelay extends Block implements IHasMatter, EntityBlock, IMatterBlock {
+public class BlockRelay extends Block implements IHasMatter, EntityBlock, IMatterBlock, IBlockTooltip {
 	private final Matter matter;
 
 	public BlockRelay(BlockBehaviour.Properties properties, Matter matter) {
@@ -39,8 +36,8 @@ public class BlockRelay extends Block implements IHasMatter, EntityBlock, IMatte
 		this.matter = matter;
 	}
 
-	public static BlockBehaviour.Properties getProperties(Matter matter) {
-		return Block.Properties.of().strength(getDestroyTime(matter), getExplosionResistance(matter)).requiresCorrectToolForDrops().lightLevel((state) -> Math.min(matter.ordinal(), 15));
+	public static BlockBehaviour.Properties getProperties(BlockBehaviour.Properties properties, Matter matter) {
+		return properties.strength(getDestroyTime(matter), getExplosionResistance(matter)).requiresCorrectToolForDrops().lightLevel((state) -> Math.min(matter.ordinal(), 15));
 	}
 
 	private static float getDestroyTime(Matter matter) {
@@ -76,14 +73,13 @@ public class BlockRelay extends Block implements IHasMatter, EntityBlock, IMatte
 		return new BlockEntityRelay(pos, state);
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	//26.3 removed Block#appendHoverText, the tooltip lines are served through IBlockTooltip and PEBlockItem
 	@Override
-	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> list, TooltipFlag tooltipFlag) {
-		super.appendHoverText(stack, context, list, tooltipFlag);
-		list.add(Lang.Blocks.RELAY_TOOLTIP.translateColored(ChatFormatting.GRAY));
-		list.add(Lang.Blocks.RELAY_BONUS.translateColored(ChatFormatting.GRAY, EMCFormat.getComponent(getMatter().getRelayBonusForTicks(Config.server.tickDelay.get())).setStyle(ColorStyle.GREEN)));
-		list.add(Lang.Blocks.RELAY_TRANSFER.translateColored(ChatFormatting.GRAY, getMatter().getRelayTransferComponent().setStyle(ColorStyle.GREEN)));
-		list.add(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
+	public void appendBlockTooltip(ItemStack stack, Item.TooltipContext context, Consumer<Component> tooltip, TooltipFlag tooltipFlag) {
+		tooltip.accept(Lang.Blocks.RELAY_TOOLTIP.translateColored(ChatFormatting.GRAY));
+		tooltip.accept(Lang.Blocks.RELAY_BONUS.translateColored(ChatFormatting.GRAY, EMCFormat.getComponent(getMatter().getRelayBonusForTicks(Config.server.tickDelay.get())).setStyle(ColorStyle.GREEN)));
+		tooltip.accept(Lang.Blocks.RELAY_TRANSFER.translateColored(ChatFormatting.GRAY, getMatter().getRelayTransferComponent().setStyle(ColorStyle.GREEN)));
+		tooltip.accept(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
 	}
 
 	@Nullable
@@ -95,7 +91,7 @@ public class BlockRelay extends Block implements IHasMatter, EntityBlock, IMatte
 
 	@Override
 	public PushReaction getPistonPushReaction(BlockState state) {
-		return PushReaction.BLOCK;
+		return PushReaction.POPPED;
 	}
 
 	@Override
@@ -103,8 +99,4 @@ public class BlockRelay extends Block implements IHasMatter, EntityBlock, IMatte
 		return matter.mapColor == null ? super.getMapColor(state, level, pos, defaultColor) : matter.mapColor.get();
 	}
 
-	@Override
-	protected MapCodec<? extends Block> codec() {
-		return ExpansionBlockTypes.RELAY.get();
-	}
 }

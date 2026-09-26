@@ -2,18 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "group": "projecte:star",
   "ingredients": [
-    {
-      "item": "projecte:gargantuan_star_vier"
-    },
-    {
-      "item": "projecte:gargantuan_star_vier"
-    },
-    {
-      "item": "projecte:gargantuan_star_vier"
-    },
-    {
-      "item": "projecte:gargantuan_star_vier"
-    }
+    "projecte:gargantuan_star_vier",
+    "projecte:gargantuan_star_vier",
+    "projecte:gargantuan_star_vier",
+    "projecte:gargantuan_star_vier"
   ],
   "result": {
     "id": "projecte:gargantuan_star_sphere"

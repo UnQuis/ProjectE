@@ -7,21 +7,11 @@
     "HLH"
   ],
   "key": {
-    "D": {
-      "item": "projecte:dark_matter"
-    },
-    "L": {
-      "item": "projecte:low_covalence_dust"
-    },
-    "M": {
-      "item": "projecte:medium_covalence_dust"
-    },
-    "H": {
-      "item": "projecte:high_covalence_dust"
-    },
-    "B": {
-      "item": "projecte:light_blue_alchemical_bag"
-    }
+    "D": "projecte:dark_matter",
+    "L": "projecte:low_covalence_dust",
+    "M": "projecte:medium_covalence_dust",
+    "H": "projecte:high_covalence_dust",
+    "B": "projecte:light_blue_alchemical_bag"
   },
   "result": {
     "id": "projecte:light_blue_advanced_alchemical_chest"

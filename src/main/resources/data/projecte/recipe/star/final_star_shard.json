@@ -7,12 +7,8 @@
     "SSS"
   ],
   "key": {
-    "S": {
-      "item": "projecte:colossal_star_omega"
-    },
-    "N": {
-      "item": "minecraft:nether_star"
-    }
+    "S": "projecte:colossal_star_omega",
+    "N": "minecraft:nether_star"
   },
   "result": {
     "id": "projecte:final_star_shard"

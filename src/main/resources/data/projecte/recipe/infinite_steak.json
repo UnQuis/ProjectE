@@ -6,12 +6,8 @@
     "SSS"
   ],
   "key": {
-    "S": {
-      "item": "minecraft:cooked_beef"
-    },
-    "T": {
-      "item": "projecte:transmutation_tablet"
-    }
+    "S": "minecraft:cooked_beef",
+    "T": "projecte:transmutation_tablet"
   },
   "result": {
     "id": "projecte:infinite_steak"

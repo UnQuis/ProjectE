@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "group": "projecte:matter/basic",
   "ingredients": [
-    {
-      "item": "projecte:relay_mk1"
-    }
+    "projecte:relay_mk1"
   ],
   "result": {
     "id": "projecte:basic_relay"

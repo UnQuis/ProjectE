@@ -1,10 +1,10 @@
 package moze_intel.projecte.expansion.integrations.curios;
 
+import java.util.Optional;
 import moze_intel.projecte.integration.curios.TransmutationTableCurios;
 import net.minecraft.world.entity.player.Player;
-import net.neoforged.neoforge.items.IItemHandlerModifiable;
-
-import java.util.Optional;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 
 /**
  * The "transmutation_tablet" curios slot already exists in ProjectE as
@@ -19,7 +19,8 @@ public class CuriosIntegration {
 		return TransmutationTableCurios.modLoaded();
 	}
 
-	public static Optional<IItemHandlerModifiable> getCuriosInventory(Player player) {
+	//26.3: Curios itself moved from IItemHandlerModifiable to ResourceHandler<ItemResource>
+	public static Optional<ResourceHandler<ItemResource>> getCuriosInventory(Player player) {
 		return TransmutationTableCurios.getCuriosInventory(player);
 	}
 }

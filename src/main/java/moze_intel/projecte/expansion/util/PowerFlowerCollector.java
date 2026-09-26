@@ -11,7 +11,7 @@ import javax.annotation.Nullable;
 import java.math.BigInteger;
 import java.util.*;
 
-@EventBusSubscriber(modid = PECore.MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = PECore.MODID)
 public class PowerFlowerCollector {
 	private static final Map<UUID, BigInteger> stored = new HashMap<>();
 	private static int tick = 0;

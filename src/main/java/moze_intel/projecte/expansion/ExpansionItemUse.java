@@ -28,7 +28,7 @@ public final class ExpansionItemUse {
 	 * @return If the interaction was handled, in which case the bag should not open its own gui
 	 */
 	public static boolean trySetAdvancedChestColor(Level level, Player player, InteractionHand hand) {
-		if (level.isClientSide) {
+		if (level.isClientSide()) {
 			return false;
 		}
 		BlockEntity blockEntity = getTargetedBlockEntity(player);
@@ -46,7 +46,7 @@ public final class ExpansionItemUse {
 	 * @return If the interaction was handled, in which case the stone should not transmute anything
 	 */
 	public static boolean tryToggleNbtFilter(Level level, @Nullable Player player, BlockPos pos) {
-		if (level.isClientSide || player == null) {
+		if (level.isClientSide() || player == null) {
 			return false;
 		}
 		if (level.getBlockEntity(pos) instanceof BlockEntityNBTFilterable filterable) {

@@ -16,7 +16,7 @@ public class ExpansionAttachmentTypes {
 	public static final PEDeferredHolder<AttachmentType<?>, AttachmentType<AlchemicalBookLocationData>> ALCHEMICAL_BOOK_LOCATIONS = ATTACHMENT_TYPES.register("alchemical_book_locations",
 			() -> AttachmentType.builder(AlchemicalBookLocationData::new)
 					.serialize(MapCodec.assumeMapUnsafe(AlchemicalBookLocationData.CODEC))
-					.copyHandler(AlchemicalBookLocationData::copy)
+					.copyHandler(AlchemicalBookLocationData::newCopy)
 					.copyOnDeath()
 					.build()
 	);

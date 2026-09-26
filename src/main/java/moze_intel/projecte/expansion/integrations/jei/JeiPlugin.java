@@ -7,22 +7,30 @@ import mezz.jei.api.runtime.IJeiRuntime;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.expansion.util.SearchSync;
 import net.minecraft.resources.Identifier;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 @mezz.jei.api.JeiPlugin
 public class JeiPlugin implements IModPlugin {
+	//Note: distinct from ProjectE's own plugin uid (PECore.rl("main")), otherwise JEI rejects the duplicate
+	private static final Identifier UID = PECore.rl("jei_plugin");
+
+	@Nullable
 	public static IJeiRuntime RUNTIME;
 
+	@NotNull
+	@Override
 	public Identifier getPluginUid() {
-		return PECore.rl("jei_plugin");
+		return UID;
 	}
 
 	@Override
-	public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
+	public void registerRecipeTransferHandlers(@NotNull IRecipeTransferRegistration registration) {
 		registration.addRecipeTransferHandler(new ArcaneCraftingTransferHandler(), RecipeTypes.CRAFTING);
 	}
 
 	@Override
-	public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
+	public void onRuntimeAvailable(@NotNull IJeiRuntime jeiRuntime) {
 		RUNTIME = jeiRuntime;
 		SearchSync.register(new SearchSync("jei", text -> {
 			if (RUNTIME != null) RUNTIME.getIngredientFilter().setFilterText(text);

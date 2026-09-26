@@ -3,6 +3,12 @@ package moze_intel.projecte.gameObjs.items;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.function.Consumer;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * Short functional descriptions for the ProjectExpansion items that were merged into ProjectE.
@@ -32,6 +38,27 @@ public final class ExpansionItemDescriptions {
 	 */
 	public static String key(String id) {
 		return "pe.item." + id + ".desc";
+	}
+
+	/**
+	 * Adds the description of the given item, if it has one, to the given tooltip.
+	 * <p>
+	 * The id is taken from the registry, with the namespace stripped, and normalized the same way
+	 * {@link ItemDescriptions} normalizes its keys, so colored variants resolve to the same entry.
+	 */
+	public static void addDescription(@NotNull ItemStack stack, @NotNull Consumer<Component> tooltip) {
+		if (stack.isEmpty()) {
+			return;
+		}
+		Identifier id = BuiltInRegistries.ITEM.getKey(stack.getItem());
+		String name = DESCRIPTIONS.get(normalize(id.getPath()));
+		if (name != null) {
+			tooltip.accept(Component.translatable(key(id.getPath())));
+		}
+	}
+
+	private static String normalize(String name) {
+		return name.startsWith("colored_") ? name.substring("colored_".length()) : name;
 	}
 
 	private static Map<String, String> build() {

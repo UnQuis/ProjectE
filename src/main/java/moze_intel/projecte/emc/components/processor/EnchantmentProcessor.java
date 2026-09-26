@@ -5,6 +5,7 @@ import java.util.function.LongSupplier;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.components.DataComponentProcessor;
 import moze_intel.projecte.config.PEConfigTranslations;
+import moze_intel.projecte.expansion.ExpansionSettings;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;

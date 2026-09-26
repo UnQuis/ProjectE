@@ -19,10 +19,10 @@ public class BlockEntityNBTFilterable extends BlockEntityOwnable {
 		boolean status = getFilterStatus();
 		if(status) {
 			setFilterStatus(false);
-			player.displayClientMessage(Lang.NBT_FILTER_DISABLED.translateColored(ChatFormatting.RED), true);
+			player.sendOverlayMessage(Lang.NBT_FILTER_DISABLED.translateColored(ChatFormatting.RED));
 		} else {
 			setFilterStatus(true);
-			player.displayClientMessage(Lang.NBT_FILTER_ENABLED.translateColored(ChatFormatting.GREEN), true);
+			player.sendOverlayMessage(Lang.NBT_FILTER_ENABLED.translateColored(ChatFormatting.GREEN));
 		}
 	}
 

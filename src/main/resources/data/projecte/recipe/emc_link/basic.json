@@ -7,21 +7,11 @@
     "HML"
   ],
   "key": {
-    "L": {
-      "item": "projecte:low_covalence_dust"
-    },
-    "M": {
-      "item": "projecte:medium_covalence_dust"
-    },
-    "H": {
-      "item": "projecte:high_covalence_dust"
-    },
-    "T": {
-      "item": "projecte:transmutation_tablet"
-    },
-    "C": {
-      "item": "projecte:condenser_mk1"
-    }
+    "L": "projecte:low_covalence_dust",
+    "M": "projecte:medium_covalence_dust",
+    "H": "projecte:high_covalence_dust",
+    "T": "projecte:transmutation_tablet",
+    "C": "projecte:condenser_mk1"
   },
   "result": {
     "id": "projecte:basic_emc_link"

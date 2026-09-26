@@ -178,45 +178,45 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
 
 		if (player.isCrouching()) {
 			if (itemStack.isEmpty()) {
-				player.displayClientMessage(Lang.Blocks.EMC_LINK_NOT_SET.translateColored(ChatFormatting.RED), true);
+				player.sendOverlayMessage(Lang.Blocks.EMC_LINK_NOT_SET.translateColored(ChatFormatting.RED));
 				return InteractionResult.CONSUME;
 			}
 			if (inHand.isEmpty()) {
 				setInternalItem(ItemStack.EMPTY);
-				player.displayClientMessage(Lang.Blocks.EMC_LINK_CLEARED.translateColored(ChatFormatting.RED), true);
+				player.sendOverlayMessage(Lang.Blocks.EMC_LINK_CLEARED.translateColored(ChatFormatting.RED));
 				return InteractionResult.SUCCESS;
 			}
 		}
 
 		if (itemStack.isEmpty()) {
 			if (inHand.isEmpty()) {
-				player.displayClientMessage(Lang.Blocks.EMC_LINK_NOT_SET.translateColored(ChatFormatting.RED), true);
+				player.sendOverlayMessage(Lang.Blocks.EMC_LINK_NOT_SET.translateColored(ChatFormatting.RED));
 				return InteractionResult.CONSUME;
 			}
 			if (!itemHandler.isValid(0, ItemResource.of(inHand))) {
-				player.displayClientMessage(Lang.Blocks.EMC_LINK_EMPTY_HAND.translateColored(ChatFormatting.RED, Component.translatable(itemStack.getItem().toString()).setStyle(ColorStyle.BLUE)), true);
+				player.sendOverlayMessage(Lang.Blocks.EMC_LINK_EMPTY_HAND.translateColored(ChatFormatting.RED, Component.translatable(itemStack.getItem().toString()).setStyle(ColorStyle.BLUE)));
 				return InteractionResult.CONSUME;
 			}
 			setInternalItem(inHand);
-			player.displayClientMessage(Lang.Blocks.EMC_LINK_SET.translateColored(ChatFormatting.GREEN, Component.literal(itemStack.getItem().toString()).setStyle(ColorStyle.BLUE)), true);
+			player.sendOverlayMessage(Lang.Blocks.EMC_LINK_SET.translateColored(ChatFormatting.GREEN, Component.literal(itemStack.getItem().toString()).setStyle(ColorStyle.BLUE)));
 			return InteractionResult.SUCCESS;
 		}
 
 		Fluid fluid = fluidHandler.getFluid();
 		if(fluid != null && fluidHandler.isValid() && inHand.getItem() instanceof BucketItem && ((BucketItem) inHand.getItem()).content == Fluids.EMPTY) {
 			if(Config.server.limitEmcLinkVendor.get() && remainingFluid < 1000) {
-				player.displayClientMessage(Lang.Blocks.EMC_LINK_NO_EXPORT_REMAINING.translateColored(ChatFormatting.RED), true);
+				player.sendOverlayMessage(Lang.Blocks.EMC_LINK_NO_EXPORT_REMAINING.translateColored(ChatFormatting.RED));
 				return InteractionResult.CONSUME;
 			}
 			long cost = fluidHandler.getFluidCost(1000);
 			@Nullable IKnowledgeProvider provider = Util.getKnowledgeProvider(owner);
 			if(provider == null) {
-				player.displayClientMessage(Lang.FAILED_TO_GET_KNOWLEDGE_PROVIDER.translateColored(ChatFormatting.RED, Util.getPlayer(owner) == null ? owner : Objects.requireNonNull(Util.getPlayer(owner)).getDisplayName()), true);
+				player.sendOverlayMessage(Lang.FAILED_TO_GET_KNOWLEDGE_PROVIDER.translateColored(ChatFormatting.RED, Util.getPlayer(owner) == null ? owner : Objects.requireNonNull(Util.getPlayer(owner)).getDisplayName()));
 				return InteractionResult.FAIL;
 			}
 			BigInteger playerEmc = provider.getEmc();
 			if(playerEmc.compareTo(BigInteger.valueOf(cost)) < 0) {
-				player.displayClientMessage(Lang.Blocks.EMC_LINK_NOT_ENOUGH_EMC.translateColored(ChatFormatting.RED, Component.literal(EMCFormat.format(BigInteger.valueOf(IEMCProxy.INSTANCE.getValue(itemStack)))).setStyle(ColorStyle.GREEN)), true);
+				player.sendOverlayMessage(Lang.Blocks.EMC_LINK_NOT_ENOUGH_EMC.translateColored(ChatFormatting.RED, Component.literal(EMCFormat.format(BigInteger.valueOf(IEMCProxy.INSTANCE.getValue(itemStack)))).setStyle(ColorStyle.GREEN)));
 				return InteractionResult.CONSUME;
 			}
 			//26.3 has no FluidUtil#tryFillContainer, the transfer API based interaction helper does the whole job
@@ -236,12 +236,12 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
 
 		if (inHand.isEmpty() || itemStack.is(inHand.getItem())) {
 			if (Config.server.limitEmcLinkVendor.get() && remainingExport <= 0) {
-				player.displayClientMessage(Lang.Blocks.EMC_LINK_NO_EXPORT_REMAINING.translateColored(ChatFormatting.RED), true);
+				player.sendOverlayMessage(Lang.Blocks.EMC_LINK_NO_EXPORT_REMAINING.translateColored(ChatFormatting.RED));
 				return InteractionResult.CONSUME;
 			}
 			ItemStack extract = itemHandler.extractItemInternal(0, itemStack.getMaxStackSize(), Config.server.limitEmcLinkVendor.get());
 			if (extract.isEmpty()) {
-				player.displayClientMessage(Lang.Blocks.EMC_LINK_NOT_ENOUGH_EMC.translateColored(ChatFormatting.RED, Component.literal(EMCFormat.format(BigInteger.valueOf(IEMCProxy.INSTANCE.getValue(itemStack)))).setStyle(ColorStyle.GREEN)), true);
+				player.sendOverlayMessage(Lang.Blocks.EMC_LINK_NOT_ENOUGH_EMC.translateColored(ChatFormatting.RED, Component.literal(EMCFormat.format(BigInteger.valueOf(IEMCProxy.INSTANCE.getValue(itemStack)))).setStyle(ColorStyle.GREEN)));
 				return InteractionResult.CONSUME;
 			}
 			//26.3 has no ItemHandlerHelper#giveItemToPlayer, the vanilla inventory takes the stack and drops the rest
@@ -249,7 +249,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
 			return InteractionResult.SUCCESS;
 		}
 
-		player.displayClientMessage(Lang.Blocks.EMC_LINK_EMPTY_HAND.translateColored(ChatFormatting.RED), true);
+		player.sendOverlayMessage(Lang.Blocks.EMC_LINK_EMPTY_HAND.translateColored(ChatFormatting.RED));
 		return InteractionResult.CONSUME;
 	}
 
@@ -514,11 +514,15 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
 				cost = getFluidCost(maxDrain);
 			}
 			if (transaction != null) {
+				//Note: The journal runs when the transaction commits, so it has to capture the values as they are now,
+				// not whatever the local variables may hold later on
+				final int drained = maxDrain;
+				final long emcCost = cost;
 				new RootCommitJournal(() -> {
-					if(!isFinal) remainingFluid -= maxDrain;
+					if(!isFinal) remainingFluid -= drained;
 					markDirty();
 					if(!isFreeFluid()) {
-						provider.setEmc(emc.subtract(BigInteger.valueOf(cost)));
+						provider.setEmc(emc.subtract(BigInteger.valueOf(emcCost)));
 						provider.syncEmc(Objects.requireNonNull(Util.getPlayer(owner)));
 					}
 				}).updateSnapshots(transaction);

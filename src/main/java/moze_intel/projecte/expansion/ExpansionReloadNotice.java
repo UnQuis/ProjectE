@@ -28,6 +28,6 @@ public final class ExpansionReloadNotice {
 			return PELang.RELOAD_NOTICE::translate;
 		}
 		return () -> Lang.Commands.RELOAD_NOTICE.translate(Component.literal(RELOAD_COMMAND).withStyle(Style.EMPTY.withColor(ChatFormatting.RED)
-				.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, RELOAD_COMMAND))));
+				.withClickEvent(new ClickEvent.SuggestCommand(RELOAD_COMMAND))));
 	}
 }

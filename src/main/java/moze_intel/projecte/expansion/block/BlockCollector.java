@@ -1,16 +1,14 @@
 package moze_intel.projecte.expansion.block;
 
-import com.mojang.serialization.MapCodec;
+import moze_intel.projecte.api.capabilities.PECapabilities;
+import moze_intel.projecte.api.capabilities.item.IItemEmcHolder;
 import moze_intel.projecte.expansion.block.entity.BlockEntityCollector;
 import moze_intel.projecte.expansion.config.Config;
 import moze_intel.projecte.expansion.registries.ExpansionBlockEntityTypes;
-import moze_intel.projecte.expansion.registries.ExpansionBlockTypes;
 import moze_intel.projecte.expansion.util.*;
-import moze_intel.projecte.api.capabilities.PECapabilities;
-import moze_intel.projecte.api.capabilities.item.IItemEmcHolder;
 import moze_intel.projecte.gameObjs.IMatterType;
-import moze_intel.projecte.gameObjs.block_entities.CollectorMK1BlockEntity;
 import moze_intel.projecte.gameObjs.blocks.BlockDirection;
+import moze_intel.projecte.gameObjs.blocks.IBlockTooltip;
 import moze_intel.projecte.gameObjs.blocks.IMatterBlock;
 import moze_intel.projecte.utils.MathUtils;
 import moze_intel.projecte.utils.WorldHelper;
@@ -35,16 +33,17 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.function.Consumer;
 
 @SuppressWarnings("deprecation")
-public class BlockCollector extends BlockDirection implements IHasMatter, EntityBlock, IMatterBlock {
+public class BlockCollector extends BlockDirection implements IHasMatter, EntityBlock, IMatterBlock, IBlockTooltip {
 	private final Matter matter;
 
 	public BlockCollector(BlockBehaviour.Properties properties, Matter matter) {
@@ -52,8 +51,8 @@ public class BlockCollector extends BlockDirection implements IHasMatter, Entity
 		this.matter = matter;
 	}
 
-	public static BlockBehaviour.Properties getProperties(Matter matter) {
-		return Block.Properties.of().strength(getDestroyTime(matter), getExplosionResistance(matter)).requiresCorrectToolForDrops().lightLevel((state) -> Math.min(matter.ordinal(), 15));
+	public static BlockBehaviour.Properties getProperties(BlockBehaviour.Properties properties, Matter matter) {
+		return properties.strength(getDestroyTime(matter), getExplosionResistance(matter)).requiresCorrectToolForDrops().lightLevel((state) -> Math.min(matter.ordinal(), 15));
 	}
 
 	private static float getDestroyTime(Matter matter) {
@@ -88,17 +87,16 @@ public class BlockCollector extends BlockDirection implements IHasMatter, Entity
 		return Util.getMatterForProjectE(getMatter());
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	//26.3 removed Block#appendHoverText, the tooltip lines are served through IBlockTooltip and PEBlockItem
 	@Override
-	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> list, TooltipFlag tooltipFlag) {
-		super.appendHoverText(stack, context, list, tooltipFlag);
-		list.add(Lang.Blocks.COLLECTOR_TOOLTIP.translateColored(ChatFormatting.GRAY));
-		list.add(Lang.Blocks.COLLECTOR_EMC.translateColored(ChatFormatting.GRAY, EMCFormat.getComponent(getMatter().getCollectorOutputForTicks(Config.server.tickDelay.get())).setStyle(ColorStyle.GREEN)));
+	public void appendBlockTooltip(ItemStack stack, Item.TooltipContext context, Consumer<Component> tooltip, TooltipFlag tooltipFlag) {
+		tooltip.accept(Lang.Blocks.COLLECTOR_TOOLTIP.translateColored(ChatFormatting.GRAY));
+		tooltip.accept(Lang.Blocks.COLLECTOR_EMC.translateColored(ChatFormatting.GRAY, EMCFormat.getComponent(getMatter().getCollectorOutputForTicks(Config.server.tickDelay.get())).setStyle(ColorStyle.GREEN)));
 		if(stack.getCount() > 1) {
-			list.add(Lang.Blocks.COLLECTOR_STACK_EMC.translateColored(ChatFormatting.GRAY, EMCFormat.getComponent(getMatter().getCollectorOutputForTicks(Config.server.tickDelay.get()).multiply(BigDecimal.valueOf(stack.getCount()))).setStyle(ColorStyle.GREEN)));
+			tooltip.accept(Lang.Blocks.COLLECTOR_STACK_EMC.translateColored(ChatFormatting.GRAY, EMCFormat.getComponent(getMatter().getCollectorOutputForTicks(Config.server.tickDelay.get()).multiply(BigDecimal.valueOf(stack.getCount()))).setStyle(ColorStyle.GREEN)));
 		}
-		list.add(Lang.Blocks.COLLECTOR_MAX_STORAGE.translateColored(ChatFormatting.GRAY, EMCFormat.getComponent(Fuel.getCollectorEMCLimit(getMatter())).setStyle(ColorStyle.GREEN)));
-		list.add(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
+		tooltip.accept(Lang.Blocks.COLLECTOR_MAX_STORAGE.translateColored(ChatFormatting.GRAY, EMCFormat.getComponent(Fuel.getCollectorEMCLimit(getMatter())).setStyle(ColorStyle.GREEN)));
+		tooltip.accept(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
 	}
 
 	@Nullable
@@ -110,7 +108,7 @@ public class BlockCollector extends BlockDirection implements IHasMatter, Entity
 
 	@Override
 	public PushReaction getPistonPushReaction(BlockState state) {
-		return PushReaction.BLOCK;
+		return PushReaction.POPPED;
 	}
 
 	@Override
@@ -127,25 +125,23 @@ public class BlockCollector extends BlockDirection implements IHasMatter, Entity
 	}
 
 	@Override
-	@Deprecated
-	public boolean hasAnalogOutputSignal(BlockState state) {
+	protected boolean hasAnalogOutputSignal(BlockState state) {
 		return true;
 	}
 
 	@Override
-	@Deprecated
-	public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
-		CollectorMK1BlockEntity collector = WorldHelper.getBlockEntity(CollectorMK1BlockEntity.class, level, pos, true);
+	protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
+		BlockEntityCollector collector = WorldHelper.getBlockEntity(BlockEntityCollector.class, level, pos, true);
 		if (collector == null) {
 			//If something went wrong fallback to default implementation
-			return super.getAnalogOutputSignal(state, level, pos);
+			return super.getAnalogOutputSignal(state, level, pos, direction);
 		}
-		net.neoforged.neoforge.items.IItemHandler handler = WorldHelper.getCapability(level, Capabilities.ItemHandler.BLOCK, pos, state, collector, Direction.UP);
+		ResourceHandler<ItemResource> handler = WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, state, collector, Direction.UP);
 		if (handler == null) {
 			//If something went wrong fallback to default implementation
-			return super.getAnalogOutputSignal(state, level, pos);
+			return super.getAnalogOutputSignal(state, level, pos, direction);
 		}
-		ItemStack charging = handler.getStackInSlot(CollectorMK1BlockEntity.UPGRADING_SLOT);
+		ItemStack charging = ItemUtil.getStack(handler, BlockEntityCollector.UPGRADING_SLOT);
 		if (charging.isEmpty()) {
 			return MathUtils.scaleToRedstone(collector.getStoredEmc(), collector.getMaximumEmc());
 		}
@@ -157,25 +153,8 @@ public class BlockCollector extends BlockDirection implements IHasMatter, Entity
 	}
 
 	@Override
-	@Deprecated
-	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (state.getBlock() != newState.getBlock()) {
-			BlockEntityCollector collector = WorldHelper.getBlockEntity(BlockEntityCollector.class, level, pos);
-			if (collector != null) {
-				//Clear the ghost slot so calling super doesn't drop the item in it
-				collector.clearLocked();
-			}
-			super.onRemove(state, level, pos, newState, isMoving);
-		}
-	}
-
-	@Override
 	public MapColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MapColor defaultColor) {
 		return matter.mapColor == null ? super.getMapColor(state, level, pos, defaultColor) : matter.mapColor.get();
 	}
 
-	@Override
-	protected MapCodec<? extends Block> codec() {
-		return ExpansionBlockTypes.COLLECTOR.get();
-	}
 }

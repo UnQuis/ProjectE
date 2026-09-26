@@ -1,7 +1,6 @@
 package moze_intel.projecte.expansion.gui;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.vertex.PoseStack;
 import java.math.BigInteger;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.api.proxy.IEMCProxy;
@@ -26,6 +25,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.player.Inventory;
 import net.neoforged.neoforge.common.ModConfigSpec;
+import org.joml.Matrix3x2fStack;
 import org.jetbrains.annotations.NotNull;
 
 public class GUIArcaneTransmutationTablet extends PEContainerScreen<ContainerArcaneTransmutationTablet> {
@@ -172,17 +172,20 @@ public class GUIArcaneTransmutationTablet extends PEContainerScreen<ContainerArc
 			inv.unlearnFlag--;
 		}
 
-		PoseStack pose = graphics.pose();
+		//26.3: the GUI transform is a 2D Matrix3x2fStack, so the "draw on top of the slots" part of the old
+		// translate(x, y, 1000) is now done by moving to the next render stratum
+		graphics.nextStratum();
+		Matrix3x2fStack pose = graphics.pose();
 		for (PXOutputSlot slot : menu.getOutputSlots()) {
 			long value = IEMCProxy.INSTANCE.getValue(slot.getItem());
 			if (value <= 0) continue;
 			BigInteger count = emc.equals(BigInteger.ZERO) ? emc : emc.divide(BigInteger.valueOf(value));
 			String countFmt = EMCFormat.formatForceShort(count);
-			pose.pushPose();
-			pose.translate(slot.x + 17, slot.y + 12, 1000F);
-			pose.scale(0.5F, 0.5F, 1F);
+			pose.pushMatrix();
+			pose.translate(slot.x + 17, slot.y + 12);
+			pose.scale(0.5F, 0.5F);
 			graphics.text(font, countFmt, -font.width(countFmt), 0, 0xFFFFFF, true);
-			pose.popPose();
+			pose.popMatrix();
 		}
 	}
 

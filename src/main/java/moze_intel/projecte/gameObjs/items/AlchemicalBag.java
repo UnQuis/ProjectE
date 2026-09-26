@@ -3,6 +3,7 @@ package moze_intel.projecte.gameObjs.items;
 import java.util.Objects;
 import moze_intel.projecte.api.capabilities.IAlchBagProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
+import moze_intel.projecte.expansion.ExpansionItemUse;
 import moze_intel.projecte.gameObjs.container.AlchBagContainer;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
 import moze_intel.projecte.gameObjs.registries.PEItems;

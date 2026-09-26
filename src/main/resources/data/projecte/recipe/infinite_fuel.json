@@ -6,12 +6,8 @@
     "CCC"
   ],
   "key": {
-    "C": {
-      "item": "minecraft:coal"
-    },
-    "T": {
-      "item": "projecte:transmutation_tablet"
-    }
+    "C": "minecraft:coal",
+    "T": "projecte:transmutation_tablet"
   },
   "result": {
     "id": "projecte:infinite_fuel"

@@ -1,6 +1,8 @@
 package moze_intel.projecte.expansion;
 
+import com.mojang.logging.LogUtils;
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.expansion.item.ItemInfiniteFuel;
 import moze_intel.projecte.expansion.registries.ExpansionAttachmentTypes;
 import moze_intel.projecte.expansion.registries.ExpansionAttributes;
 import moze_intel.projecte.expansion.registries.ExpansionBlockEntityTypes;
@@ -17,7 +19,6 @@ import moze_intel.projecte.expansion.util.Fuel;
 import moze_intel.projecte.expansion.util.Matter;
 import moze_intel.projecte.expansion.util.Star;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
-import com.mojang.logging.LogUtils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -82,6 +83,8 @@ public class ExpansionCore {
 				ItemStack stack = player.getInventory().getItem(i);
 				if (stack.getItem().equals(ExpansionItems.INFINITE_FUEL.get()) && !stack.has(ExpansionDataComponentTypes.OWNER.get())) {
 					stack.set(ExpansionDataComponentTypes.OWNER.get(), new ExpansionDataComponentTypes.OwnerData(player.getUUID(), player.getName().getString()));
+					//The burn time is a data component in 26.3, so it has to be written now that the owner is known
+					ItemInfiniteFuel.stampBurnTime(stack);
 					continue;
 				}
 				boolean hasEnch = EnchantmentHelper.getTagEnchantmentLevel(event.getServer().registryAccess().holderOrThrow(ExpansionEnchantments.ALCHEMICAL_COLLECTION), stack) > 0;

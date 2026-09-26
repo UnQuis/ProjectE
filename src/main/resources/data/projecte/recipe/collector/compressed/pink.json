@@ -7,9 +7,7 @@
     "CCC"
   ],
   "key": {
-    "C": {
-      "item": "projecte:pink_collector"
-    }
+    "C": "projecte:pink_collector"
   },
   "result": {
     "id": "projecte:pink_compressed_collector"

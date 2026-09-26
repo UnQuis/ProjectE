@@ -1,26 +1,15 @@
 package moze_intel.projecte.expansion.events;
 
-import moze_intel.projecte.PECore;
-import moze_intel.projecte.expansion.integrations.top.TOPIntegration;
-import moze_intel.projecte.integration.IntegrationHelper;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.ModList;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.lifecycle.InterModEnqueueEvent;
-
 /**
- * 26.3 note: {@code EventBusSubscriber} no longer has a {@code bus} attribute; {@link InterModEnqueueEvent}
- * is an {@code IModBusEvent} so FML puts it on the mod bus on its own.
+ * Placeholder for the addon's inter mod communication.
+ * <p>
+ * The only IMC message it ever sent was the TheOneProbe registration, and TheOneProbe has no Minecraft 26.3 build
+ * (the same reason {@code TOPIntegration} is a stub now). The class is kept so the shape of the code does not
+ * change, and so there is an obvious place to add the next integration that does ship for 26.3.
  */
-@EventBusSubscriber(modid = PECore.MODID)
-public class IMCEvents {
+public final class IMCEvents {
 	private IMCEvents() {}
 
-	@SubscribeEvent
-	public static void interModEnqueueEvent(InterModEnqueueEvent event) {
-		ModList modList = ModList.get();
-		if (modList.isLoaded(IntegrationHelper.TOP_MODID)) {
-			TOPIntegration.sendIMC(event);
-		}
-	}
+	//Note: TheOneProbe has no Minecraft 26.3 build, so there is nothing to send it here anymore. The
+	//TOPIntegration class is kept as a stub so the code shape (and the IMC hook) stays the same for when 26.3 lands.
 }

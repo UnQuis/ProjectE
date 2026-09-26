@@ -7,18 +7,10 @@
     "RRR"
   ],
   "key": {
-    "L": {
-      "item": "projecte:dark_emc_link"
-    },
-    "C": {
-      "item": "projecte:dark_compressed_collector"
-    },
-    "R": {
-      "item": "projecte:dark_relay"
-    },
-    "P": {
-      "item": "projecte:basic_power_flower"
-    }
+    "L": "projecte:dark_emc_link",
+    "C": "projecte:dark_compressed_collector",
+    "R": "projecte:dark_relay",
+    "P": "projecte:basic_power_flower"
   },
   "result": {
     "id": "projecte:dark_power_flower"

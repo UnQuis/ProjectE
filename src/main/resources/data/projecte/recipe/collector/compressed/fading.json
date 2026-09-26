@@ -7,9 +7,7 @@
     "CCC"
   ],
   "key": {
-    "C": {
-      "item": "projecte:fading_collector"
-    }
+    "C": "projecte:fading_collector"
   },
   "result": {
     "id": "projecte:fading_compressed_collector"

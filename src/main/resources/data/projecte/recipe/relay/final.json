@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shapeless",
   "group": "projecte:matter/final",
   "ingredients": [
-    {
-      "item": "projecte:fading_relay"
-    },
-    {
-      "item": "projecte:final_star_shard"
-    }
+    "projecte:fading_relay",
+    "projecte:final_star_shard"
   ],
   "result": {
     "id": "projecte:final_relay"

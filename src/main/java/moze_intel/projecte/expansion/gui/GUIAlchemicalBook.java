@@ -26,14 +26,11 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-@OnlyIn(Dist.CLIENT)
 public class GUIAlchemicalBook extends Screen {
 	private final List<CapabilityAlchemicalBookLocations.TeleportLocation> locations = new ArrayList<>();
 	private @Nullable CapabilityAlchemicalBookLocations.TeleportLocation backLocation = null;
@@ -224,6 +221,12 @@ public class GUIAlchemicalBook extends Screen {
 		public ButtonClose(int x, int y) {
 			super(Button.builder(Lang.GUI.ALCHEMICAL_BOOK_CLOSE.translate(), (button) -> player.closeContainer()).pos(x, y).size(40, 20));
 		}
+
+		@Override
+		protected void extractContents(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+			extractDefaultSprite(graphics);
+			extractDefaultLabel(graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE));
+		}
 	}
 
 	private class ButtonCreate extends Button {
@@ -233,11 +236,17 @@ public class GUIAlchemicalBook extends Screen {
 		}
 
 		@Override
+		protected void extractContents(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+			extractDefaultSprite(graphics);
+			extractDefaultLabel(graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE));
+		}
+
+		@Override
 		public void onClick(@NotNull MouseButtonEvent event, boolean doubleClick) {
 			if (name == null) {
 				return;
 			}
-			PacketDistributor.sendToServer(new PacketCreateTeleportLocation(name, player, hand));
+			ClientPacketDistributor.sendToServer(new PacketCreateTeleportLocation(name, player, hand));
 		}
 
 		private void setName(String name) {
@@ -247,7 +256,13 @@ public class GUIAlchemicalBook extends Screen {
 
 	private class ButtonDelete extends Button {
 		public ButtonDelete(int x, int y, int w, int h, String name) {
-			super(Button.builder(Component.literal("X"), (button) -> PacketDistributor.sendToServer(new PacketDeleteTeleportLocation(name, player, hand))).pos(x, y).size(w, h));
+			super(Button.builder(Component.literal("X"), (button) -> ClientPacketDistributor.sendToServer(new PacketDeleteTeleportLocation(name, player, hand))).pos(x, y).size(w, h));
+		}
+
+		@Override
+		protected void extractContents(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+			extractDefaultSprite(graphics);
+			extractDefaultLabel(graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE));
 		}
 	}
 
@@ -257,23 +272,22 @@ public class GUIAlchemicalBook extends Screen {
 		final boolean hasEnoughEMC;
 		public ButtonTeleport(int x, int y, int w, int h, CapabilityAlchemicalBookLocations.TeleportLocation location) {
 			super(Button.builder(Component.literal(location.name()), (button) -> {
-				PacketDistributor.sendToServer(new PacketTeleportToLocation(location.name(), player, hand));
+				ClientPacketDistributor.sendToServer(new PacketTeleportToLocation(location.name(), player, hand));
 				player.closeContainer();
 			}).pos(x, y).size(w, h));
 			this.location = location;
 			this.hasEnoughEMC = GUIAlchemicalBook.this.canTeleport(location);
 			this.canTeleport = acrossDimensions || location.dimension().equals(player.level().dimension());
 			this.active = canTeleport && hasEnoughEMC;
+			//26.3: a widget now shows the Tooltip that was set on it, there is no per-render tooltip hook left.
+			//This one never changes after construction, so setting it once is the same as the old render override
+			setTooltip(Tooltip.create(getTeleportationTooltip(location, canTeleport)));
 		}
 
 		@Override
-		protected void extractWidgetRenderState(@NotNull GuiGraphicsExtractor graphics, int pMouseX, int pMouseY, float unknown) {
-			//26.3: widgets no longer push tooltips while rendering, they hand a Tooltip to the widget and
-			// AbstractWidget#extractRenderState shows it when hovered/focused
-			if(isHoveredOrFocused()) {
-				setTooltip(Tooltip.create(getTeleportationTooltip(location, canTeleport)));
-			}
-			super.extractWidgetRenderState(graphics, pMouseX, pMouseY, unknown);
+		protected void extractContents(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+			extractDefaultSprite(graphics);
+			extractDefaultLabel(graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE));
 		}
 	}
 
@@ -281,20 +295,13 @@ public class GUIAlchemicalBook extends Screen {
 		private @Nullable CapabilityAlchemicalBookLocations.TeleportLocation location;
 		private boolean canTeleport;
 		public ButtonBack(int x, int y, int w, int h) {
-			super(Button.builder(Lang.GUI.ALCHEMICAL_BOOK_BACK.translate(), (button) -> PacketDistributor.sendToServer(new PacketTeleportBack(player, hand))).pos(x, y).size(w, h));
+			super(Button.builder(Lang.GUI.ALCHEMICAL_BOOK_BACK.translate(), (button) -> ClientPacketDistributor.sendToServer(new PacketTeleportBack(player, hand))).pos(x, y).size(w, h));
 		}
 
 		@Override
-		protected void extractWidgetRenderState(@NotNull GuiGraphicsExtractor graphics, int pMouseX, int pMouseY, float unknown) {
-			if(isHoveredOrFocused()) {
-				if(location == null) {
-					setTooltip(Tooltip.create(Lang.GUI.ALCHEMICAL_BOOK_NO_BACK_LOCATION.translate()));
-					super.extractWidgetRenderState(graphics, pMouseX, pMouseY, unknown);
-					return;
-				}
-				setTooltip(Tooltip.create(getTeleportationTooltip(location, canTeleport)));
-			}
-			super.extractWidgetRenderState(graphics, pMouseX, pMouseY, unknown);
+		protected void extractContents(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+			extractDefaultSprite(graphics);
+			extractDefaultLabel(graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE));
 		}
 
 		public void updateLocation(@Nullable CapabilityAlchemicalBookLocations.TeleportLocation location) {
@@ -302,10 +309,13 @@ public class GUIAlchemicalBook extends Screen {
 				this.active = false;
 				this.location = null;
 				this.canTeleport = false;
+				//26.3: a static Tooltip instead of the "no back location" text that used to be pushed while rendering
+				setTooltip(Tooltip.create(Lang.GUI.ALCHEMICAL_BOOK_NO_BACK_LOCATION.translate()));
 			} else {
 				this.active = true;
 				this.location = location;
 				this.canTeleport = acrossDimensions || location.dimension().equals(player.level().dimension());
+				setTooltip(Tooltip.create(getTeleportationTooltip(location, canTeleport)));
 			}
 		}
 	}
@@ -315,12 +325,24 @@ public class GUIAlchemicalBook extends Screen {
 			super(Button.builder(Lang.PREVIOUS.translate(), (button) -> GUIAlchemicalBook.this.previousPage()).pos(x, y).size(w, h));
 			this.active = active;
 		}
+
+		@Override
+		protected void extractContents(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+			extractDefaultSprite(graphics);
+			extractDefaultLabel(graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE));
+		}
 	}
 
 	private class ButtonNext extends Button {
 		public ButtonNext(int x, int y, int w, int h, boolean active) {
 			super(Button.builder(Lang.NEXT.translate(), (button) -> GUIAlchemicalBook.this.nextPage()).pos(x, y).size(w, h));
 			this.active = active;
+		}
+
+		@Override
+		protected void extractContents(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+			extractDefaultSprite(graphics);
+			extractDefaultLabel(graphics.textRendererForWidget(this, GuiGraphicsExtractor.HoveredTextEffects.NONE));
 		}
 	}
 

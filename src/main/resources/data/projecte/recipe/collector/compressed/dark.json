@@ -7,9 +7,7 @@
     "CCC"
   ],
   "key": {
-    "C": {
-      "item": "projecte:dark_collector"
-    }
+    "C": "projecte:dark_collector"
   },
   "result": {
     "id": "projecte:dark_compressed_collector"

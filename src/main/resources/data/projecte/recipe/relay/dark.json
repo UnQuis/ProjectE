@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shapeless",
   "group": "projecte:matter/dark",
   "ingredients": [
-    {
-      "item": "projecte:basic_relay"
-    },
-    {
-      "item": "projecte:dark_matter"
-    }
+    "projecte:basic_relay",
+    "projecte:dark_matter"
   ],
   "result": {
     "id": "projecte:dark_relay"

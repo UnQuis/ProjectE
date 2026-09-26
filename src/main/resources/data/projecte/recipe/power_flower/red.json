@@ -7,15 +7,9 @@
     "RRR"
   ],
   "key": {
-    "L": {
-      "item": "projecte:red_emc_link"
-    },
-    "C": {
-      "item": "projecte:red_compressed_collector"
-    },
-    "R": {
-      "item": "projecte:red_relay"
-    }
+    "L": "projecte:red_emc_link",
+    "C": "projecte:red_compressed_collector",
+    "R": "projecte:red_relay"
   },
   "result": {
     "id": "projecte:red_power_flower"

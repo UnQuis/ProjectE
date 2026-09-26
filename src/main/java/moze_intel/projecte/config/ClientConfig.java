@@ -91,23 +91,4 @@ public class ClientConfig extends BasePEConfig {
 		return ModConfig.Type.CLIENT;
 	}
 
-	@Override
-	public String getFileName() {
-		return "client";
-	}
-
-	@Override
-	public String getTranslation() {
-		return "Client Config";
-	}
-
-	@Override
-	public ModConfigSpec getConfigSpec() {
-		return configSpec;
-	}
-
-	@Override
-	public ModConfig.Type getConfigType() {
-		return ModConfig.Type.CLIENT;
-	}
 }

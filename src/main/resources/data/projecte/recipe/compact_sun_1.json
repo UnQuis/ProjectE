@@ -6,15 +6,9 @@
     "HSH"
   ],
   "key": {
-    "Y": {
-      "item": "projecte:yellow_matter"
-    },
-    "S": {
-      "item": "projecte:final_star"
-    },
-    "H": {
-      "item": "projecte:final_star_shard"
-    }
+    "Y": "projecte:yellow_matter",
+    "S": "projecte:final_star",
+    "H": "projecte:final_star_shard"
   },
   "result": {
     "id": "projecte:compact_sun"

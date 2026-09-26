@@ -8,6 +8,7 @@ import moze_intel.projecte.expansion.util.Lang;
 import moze_intel.projecte.expansion.util.Matter;
 import moze_intel.projecte.expansion.util.Util;
 import moze_intel.projecte.gameObjs.IMatterType;
+import moze_intel.projecte.gameObjs.blocks.IBlockTooltip;
 import moze_intel.projecte.gameObjs.blocks.IMatterBlock;
 import moze_intel.projecte.utils.WorldHelper;
 import net.minecraft.ChatFormatting;
@@ -32,20 +33,18 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.function.Consumer;
 
-public class BlockTransmutationInterface extends Block implements EntityBlock, IMatterBlock {
+public class BlockTransmutationInterface extends Block implements EntityBlock, IMatterBlock, IBlockTooltip {
 	public BlockTransmutationInterface(BlockBehaviour.Properties properties) {
 		super(properties);
 		this.registerDefaultState(this.stateDefinition.any().setValue(BlockEntityNBTFilterable.FILTER, true));
 	}
 
-	public static BlockBehaviour.Properties getProperties() {
-		return Block.Properties.of().strength(1_000_000, 2_000_000).requiresCorrectToolForDrops().lightLevel((state) -> 15);
+	public static BlockBehaviour.Properties getProperties(BlockBehaviour.Properties properties) {
+		return properties.strength(1_000_000, 2_000_000).requiresCorrectToolForDrops().lightLevel(state -> 15);
 	}
 
 	@Override
@@ -59,12 +58,11 @@ public class BlockTransmutationInterface extends Block implements EntityBlock, I
 		return new BlockEntityTransmutationInterface(pos, state);
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	//26.3 removed Block#appendHoverText, the tooltip lines are served through IBlockTooltip and PEBlockItem
 	@Override
-	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> list, TooltipFlag tooltipFlag) {
-		super.appendHoverText(stack, context, list, tooltipFlag);
-		list.add(Lang.Blocks.TRANSMUTATION_INTERFACE_TOOLTIP.translateColored(ChatFormatting.GRAY));
-		list.add(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
+	public void appendBlockTooltip(ItemStack stack, Item.TooltipContext context, Consumer<Component> tooltip, TooltipFlag tooltipFlag) {
+		tooltip.accept(Lang.Blocks.TRANSMUTATION_INTERFACE_TOOLTIP.translateColored(ChatFormatting.GRAY));
+		tooltip.accept(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
 	}
 
 	@Override
@@ -99,7 +97,7 @@ public class BlockTransmutationInterface extends Block implements EntityBlock, I
 
 	@Override
 	public PushReaction getPistonPushReaction(BlockState state) {
-		return PushReaction.BLOCK;
+		return PushReaction.POPPED;
 	}
 
 	@Override

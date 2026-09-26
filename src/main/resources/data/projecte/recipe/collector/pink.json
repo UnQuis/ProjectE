@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shapeless",
   "group": "projecte:matter/pink",
   "ingredients": [
-    {
-      "item": "projecte:magenta_collector"
-    },
-    {
-      "item": "projecte:pink_matter"
-    }
+    "projecte:magenta_collector",
+    "projecte:pink_matter"
   ],
   "result": {
     "id": "projecte:pink_collector"

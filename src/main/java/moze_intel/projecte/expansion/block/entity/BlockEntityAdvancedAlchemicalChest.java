@@ -1,5 +1,6 @@
 package moze_intel.projecte.expansion.block.entity;
 
+import moze_intel.projecte.expansion.block.BlockAdvancedAlchemicalChest;
 import moze_intel.projecte.expansion.gui.container.ContainerAdvancedAlchemicalChest;
 import moze_intel.projecte.expansion.registries.ExpansionBlockEntityTypes;
 import moze_intel.projecte.expansion.util.*;
@@ -11,7 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
@@ -52,7 +53,7 @@ public class BlockEntityAdvancedAlchemicalChest extends BlockEntityOwnable imple
 		}
 
 		@Override
-		protected boolean isOwnContainer(Player player) {
+		public boolean isOwnContainer(Player player) {
 			return player.containerMenu instanceof ContainerAdvancedAlchemicalChest chest && chest.blockEntityMatches(BlockEntityAdvancedAlchemicalChest.this);
 		}
 	};
@@ -135,14 +136,15 @@ public class BlockEntityAdvancedAlchemicalChest extends BlockEntityOwnable imple
 		return provider.getBag(getColor());
 	}
 
-	public ItemInteractionResult handleItemActivation(Player player, ItemStack stack) {
+	//26.3 has no ItemInteractionResult any more, useItemOn returns a plain InteractionResult
+	public InteractionResult handleItemActivation(Player player, ItemStack stack) {
 		if(!super.handleActivation(player, BlockEntityOwnable.ActivationType.CHECK_OWNERSHIP)) {
-			return ItemInteractionResult.FAIL;
+			return InteractionResult.FAIL;
 		}
 
 		if(stack.isEmpty()) {
-			player.displayClientMessage(Lang.Blocks.ADVANCED_ALCHEMICAL_CHEST_INVALID_ITEM.translate(), true);
-			return ItemInteractionResult.FAIL;
+			player.sendOverlayMessage(Lang.Blocks.ADVANCED_ALCHEMICAL_CHEST_INVALID_ITEM.translate());
+			return InteractionResult.FAIL;
 		}
 
 		if(stack.getItem() instanceof AlchemicalBag bag) {
@@ -157,12 +159,12 @@ public class BlockEntityAdvancedAlchemicalChest extends BlockEntityOwnable imple
 				level.setBlockEntity(newBlockEntity);
 				Util.markDirty(level, worldPosition);
 			}
-			player.displayClientMessage(Lang.Blocks.ADVANCED_ALCHEMICAL_CHEST_COLOR_SET.translate(bag.color.getName()), true);
+			player.sendOverlayMessage(Lang.Blocks.ADVANCED_ALCHEMICAL_CHEST_COLOR_SET.translate(bag.color.getName()));
 		} else {
-			player.displayClientMessage(Lang.Blocks.ADVANCED_ALCHEMICAL_CHEST_INVALID_ITEM.translate(), true);
+			player.sendOverlayMessage(Lang.Blocks.ADVANCED_ALCHEMICAL_CHEST_INVALID_ITEM.translate());
 		}
 
-		return ItemInteractionResult.CONSUME;
+		return InteractionResult.CONSUME;
 	}
 
 	@SuppressWarnings("unused")

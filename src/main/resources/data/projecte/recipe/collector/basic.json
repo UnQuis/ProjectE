@@ -7,18 +7,10 @@
     "GFG"
   ],
   "key": {
-    "G": {
-      "item": "minecraft:glowstone"
-    },
-    "A": {
-      "item": "projecte:aeternalis_fuel_block"
-    },
-    "S": {
-      "tag": "c:glass_blocks"
-    },
-    "F": {
-      "item": "minecraft:furnace"
-    }
+    "G": "minecraft:glowstone",
+    "A": "projecte:aeternalis_fuel_block",
+    "S": "#c:glass_blocks",
+    "F": "minecraft:furnace"
   },
   "result": {
     "id": "projecte:basic_collector"

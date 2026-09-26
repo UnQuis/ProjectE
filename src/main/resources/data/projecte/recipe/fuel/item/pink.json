@@ -2,21 +2,11 @@
   "type": "minecraft:crafting_shapeless",
   "group": "projecte:fuel/pink",
   "ingredients": [
-    {
-      "item": "projecte:philosophers_stone"
-    },
-    {
-      "item": "projecte:magenta_fuel"
-    },
-    {
-      "item": "projecte:magenta_fuel"
-    },
-    {
-      "item": "projecte:magenta_fuel"
-    },
-    {
-      "item": "projecte:magenta_fuel"
-    }
+    "projecte:philosophers_stone",
+    "projecte:magenta_fuel",
+    "projecte:magenta_fuel",
+    "projecte:magenta_fuel",
+    "projecte:magenta_fuel"
   ],
   "result": {
     "id": "projecte:pink_fuel"

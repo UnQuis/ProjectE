@@ -1,12 +1,11 @@
 package moze_intel.projecte.expansion.block;
 
-import com.mojang.serialization.MapCodec;
 import moze_intel.projecte.expansion.block.entity.BlockEntityEMCLink;
 import moze_intel.projecte.expansion.block.entity.BlockEntityNBTFilterable;
 import moze_intel.projecte.expansion.registries.ExpansionBlockEntityTypes;
-import moze_intel.projecte.expansion.registries.ExpansionBlockTypes;
 import moze_intel.projecte.expansion.util.*;
 import moze_intel.projecte.gameObjs.IMatterType;
+import moze_intel.projecte.gameObjs.blocks.IBlockTooltip;
 import moze_intel.projecte.gameObjs.blocks.IMatterBlock;
 import moze_intel.projecte.utils.WorldHelper;
 import net.minecraft.ChatFormatting;
@@ -32,13 +31,11 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.function.Consumer;
 
-public class BlockEMCLink extends Block implements IHasMatter, EntityBlock, IMatterBlock {
+public class BlockEMCLink extends Block implements IHasMatter, EntityBlock, IMatterBlock, IBlockTooltip {
 	private final Matter matter;
 
 	public BlockEMCLink(BlockBehaviour.Properties properties, Matter matter) {
@@ -47,8 +44,8 @@ public class BlockEMCLink extends Block implements IHasMatter, EntityBlock, IMat
 		this.registerDefaultState(this.stateDefinition.any().setValue(BlockEntityNBTFilterable.FILTER, true));
 	}
 
-	public static BlockBehaviour.Properties getProperties(Matter matter) {
-		return BlockBehaviour.Properties.of().strength(getDestroyTime(matter), getExplosionResistance(matter)).requiresCorrectToolForDrops().lightLevel((state) -> Math.min(matter.ordinal(), 15));
+	public static BlockBehaviour.Properties getProperties(BlockBehaviour.Properties properties, Matter matter) {
+		return properties.strength(getDestroyTime(matter), getExplosionResistance(matter)).requiresCorrectToolForDrops().lightLevel((state) -> Math.min(matter.ordinal(), 15));
 	}
 
 	private static float getDestroyTime(Matter matter) {
@@ -83,16 +80,15 @@ public class BlockEMCLink extends Block implements IHasMatter, EntityBlock, IMat
 		return new BlockEntityEMCLink(pos, state);
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	//26.3 removed Block#appendHoverText, the tooltip lines are served through IBlockTooltip and PEBlockItem
 	@Override
-	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> list, TooltipFlag tooltipFlag) {
-		super.appendHoverText(stack, context, list, tooltipFlag);
-		list.add(Lang.Blocks.EMC_LINK_TOOLTIP.translateColored(ChatFormatting.GRAY));
-		list.add(Lang.Blocks.EMC_LINK_LIMIT_ITEMS.translateColored(ChatFormatting.GRAY, getMatter().getEMCLinkItemLimitComponent()));
-		list.add(Lang.Blocks.EMC_LINK_LIMIT_FLUIDS.translateColored(ChatFormatting.GRAY, getMatter().getEMCLinkFluidLimitComponent()));
-		list.add(Lang.Blocks.EMC_LINK_FLUID_EXPORT_EFFICIENCY.translateColored(ChatFormatting.GRAY, Component.literal(getMatter().getFluidEfficiencyPercentage() + "%").setStyle(ColorStyle.GREEN)));
-		list.add(Lang.Blocks.EMC_LINK_LIMIT_EMC.translateColored(ChatFormatting.GRAY, getMatter().getEMCLinkEMCLimitComponent()));
-		list.add(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
+	public void appendBlockTooltip(ItemStack stack, Item.TooltipContext context, Consumer<Component> tooltip, TooltipFlag tooltipFlag) {
+		tooltip.accept(Lang.Blocks.EMC_LINK_TOOLTIP.translateColored(ChatFormatting.GRAY));
+		tooltip.accept(Lang.Blocks.EMC_LINK_LIMIT_ITEMS.translateColored(ChatFormatting.GRAY, getMatter().getEMCLinkItemLimitComponent()));
+		tooltip.accept(Lang.Blocks.EMC_LINK_LIMIT_FLUIDS.translateColored(ChatFormatting.GRAY, getMatter().getEMCLinkFluidLimitComponent()));
+		tooltip.accept(Lang.Blocks.EMC_LINK_FLUID_EXPORT_EFFICIENCY.translateColored(ChatFormatting.GRAY, Component.literal(getMatter().getFluidEfficiencyPercentage() + "%").setStyle(ColorStyle.GREEN)));
+		tooltip.accept(Lang.Blocks.EMC_LINK_LIMIT_EMC.translateColored(ChatFormatting.GRAY, getMatter().getEMCLinkEMCLimitComponent()));
+		tooltip.accept(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
 	}
 
 	@Override
@@ -126,7 +122,7 @@ public class BlockEMCLink extends Block implements IHasMatter, EntityBlock, IMat
 
 	@Override
 	public PushReaction getPistonPushReaction(BlockState state) {
-		return PushReaction.BLOCK;
+		return PushReaction.POPPED;
 	}
 
 	@Override
@@ -134,8 +130,4 @@ public class BlockEMCLink extends Block implements IHasMatter, EntityBlock, IMat
 		return matter.mapColor == null ? super.getMapColor(state, level, pos, defaultColor) : matter.mapColor.get();
 	}
 
-	@Override
-	protected MapCodec<? extends Block> codec() {
-		return ExpansionBlockTypes.EMC_LINK.get();
-	}
 }

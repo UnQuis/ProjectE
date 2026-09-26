@@ -1,7 +1,5 @@
 package moze_intel.projecte.expansion.block;
 
-import com.mojang.serialization.MapCodec;
-import moze_intel.projecte.expansion.registries.ExpansionBlockTypes;
 import moze_intel.projecte.expansion.util.IHasMatter;
 import moze_intel.projecte.expansion.util.Matter;
 import moze_intel.projecte.expansion.util.Util;
@@ -22,8 +20,8 @@ public class BlockMatter extends Block implements IHasMatter, IMatterBlock {
 		this.matter = matter;
 	}
 
-	public static BlockBehaviour.Properties getProperties(Matter matter) {
-		return BlockBehaviour.Properties.of().strength(2_000_000, 6_000_000).requiresCorrectToolForDrops().lightLevel((state) -> Math.min(matter.ordinal(), 15));
+	public static BlockBehaviour.Properties getProperties(BlockBehaviour.Properties properties, Matter matter) {
+		return properties.strength(2_000_000, 6_000_000).requiresCorrectToolForDrops().lightLevel((state) -> Math.min(matter.ordinal(), 15));
 	}
 
 	@Override
@@ -39,10 +37,5 @@ public class BlockMatter extends Block implements IHasMatter, IMatterBlock {
 	@Override
 	public MapColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MapColor defaultColor) {
 		return matter.mapColor == null ? super.getMapColor(state, level, pos, defaultColor) : matter.mapColor.get();
-	}
-
-	@Override
-	protected MapCodec<? extends Block> codec() {
-		return ExpansionBlockTypes.MATTER_BLOCK.get();
 	}
 }

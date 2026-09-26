@@ -19,23 +19,24 @@ public class ExpansionDamageSources {
 	private final DamageSource stareAtSun;
 
 	public ExpansionDamageSources(RegistryAccess registry) {
-		this.damageTypes = registry.registryOrThrow(Registries.DAMAGE_TYPE);
+		//26.3 RegistryAccess only exposes lookup(...), registryOrThrow was removed
+		this.damageTypes = registry.lookupOrThrow(Registries.DAMAGE_TYPE);
 		this.walkOnSun = this.source(ExpansionDamageTypes.WALK_ON_SUN);
 		this.stareAtSun = this.source(ExpansionDamageTypes.STARE_AT_SUN);
 	}
 
 	private DamageSource source(ResourceKey<DamageType> damageType) {
-		return new DamageSource(this.damageTypes.getHolderOrThrow(damageType));
+		return new DamageSource(this.damageTypes.get(damageType.identifier()).orElseThrow());
 	}
 
 	@SuppressWarnings("unused")
 	private DamageSource source(ResourceKey<DamageType> damageType, @Nullable Entity causingEntity) {
-		return new DamageSource(this.damageTypes.getHolderOrThrow(damageType), causingEntity);
+		return new DamageSource(this.damageTypes.get(damageType.identifier()).orElseThrow(), causingEntity);
 	}
 
 	@SuppressWarnings("unused")
 	private DamageSource source(ResourceKey<DamageType> damageType, @Nullable Entity causingEntity, @Nullable Entity directEntity) {
-		return new DamageSource(this.damageTypes.getHolderOrThrow(damageType), causingEntity, directEntity);
+		return new DamageSource(this.damageTypes.get(damageType.identifier()).orElseThrow(), causingEntity, directEntity);
 	}
 
 	public DamageSource walkOnSun() {

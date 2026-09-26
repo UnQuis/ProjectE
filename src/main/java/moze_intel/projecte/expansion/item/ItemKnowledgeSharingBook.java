@@ -17,56 +17,58 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.function.Consumer;
 import java.util.Objects;
 import java.util.UUID;
 
 public class ItemKnowledgeSharingBook extends Item {
 	@SuppressWarnings("unused")
-	public ItemKnowledgeSharingBook() {
-		super(new Properties().stacksTo(1).rarity(Rarity.RARE));
+	public ItemKnowledgeSharingBook(Properties properties) {
+		super(properties.stacksTo(1).rarity(Rarity.RARE));
 	}
 
+	//26.3 Item#use returns an InteractionResult instead of an InteractionResultHolder<ItemStack>
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+	public InteractionResult use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 		if(player.isCrouching()) {
 			if(!level.isClientSide()) {
 				ExpansionDataComponentTypes.OwnerData data = new ExpansionDataComponentTypes.OwnerData(player.getUUID(), player.getName().getString());
 				stack.set(ExpansionDataComponentTypes.OWNER, data);
 				level.playSound(null, player.position().x, player.position().y, player.position().z, ExpansionSoundEvents.KNOWLEDGE_SHARING_BOOK_STORE.get(), SoundSource.PLAYERS, 0.8F, 0.8F + level.getRandom().nextFloat() * 0.4F);
-				player.displayClientMessage(Lang.Items.KNOWLEDGE_SHARING_BOOK_STORED.translateColored(ChatFormatting.GREEN), true);
+				player.sendOverlayMessage(Lang.Items.KNOWLEDGE_SHARING_BOOK_STORED.translateColored(ChatFormatting.GREEN));
 			}
 			
-			return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+			return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
 		} else {
 			ExpansionDataComponentTypes.OwnerData data = stack.get(ExpansionDataComponentTypes.OWNER);
 			if(data != null) {
 				UUID owner = data.uuid();
 				if(player.getUUID().equals(owner)) {
-					player.displayClientMessage(Lang.Items.KNOWLEDGE_SHARING_BOOK_SELF.translateColored(ChatFormatting.RED), true);
-					return InteractionResultHolder.fail(stack);
+					player.sendOverlayMessage(Lang.Items.KNOWLEDGE_SHARING_BOOK_SELF.translateColored(ChatFormatting.RED));
+					return InteractionResult.FAIL;
 				}
 				if(!level.isClientSide()) {
 					@Nullable IKnowledgeProvider ownerProvider = Util.getKnowledgeProvider(owner);
 					@Nullable IKnowledgeProvider learnerProvider = Util.getKnowledgeProvider(player);
 					if(ownerProvider == null) {
-						player.displayClientMessage(Lang.FAILED_TO_GET_KNOWLEDGE_PROVIDER.translateColored(ChatFormatting.RED, Util.getPlayer(owner) == null ? owner : Objects.requireNonNull(Util.getPlayer(owner)).getDisplayName()), true);
-						return InteractionResultHolder.fail(stack);
+						player.sendOverlayMessage(Lang.FAILED_TO_GET_KNOWLEDGE_PROVIDER.translateColored(ChatFormatting.RED, Util.getPlayer(owner) == null ? owner : Objects.requireNonNull(Util.getPlayer(owner)).getDisplayName()));
+						return InteractionResult.FAIL;
 					}
 					if(learnerProvider == null) {
-						player.displayClientMessage(Lang.FAILED_TO_GET_KNOWLEDGE_PROVIDER.translateColored(ChatFormatting.RED, player.getDisplayName()), true);
-						return InteractionResultHolder.fail(stack);
+						player.sendOverlayMessage(Lang.FAILED_TO_GET_KNOWLEDGE_PROVIDER.translateColored(ChatFormatting.RED, player.getDisplayName()));
+						return InteractionResult.FAIL;
 					}
 					long learned = 0;
 					for(ItemInfo info : ownerProvider.getKnowledge()) {
@@ -85,10 +87,10 @@ public class ItemKnowledgeSharingBook extends Item {
 						if(learned > 100) {
 							player.sendSystemMessage(Lang.Items.KNOWLEDGE_SHARING_BOOK_LEARNED_OVER_100.translateColored(ChatFormatting.GREEN, learned - 100));
 						}
-						player.displayClientMessage(Lang.Items.KNOWLEDGE_SHARING_BOOK_LEARNED_TOTAL.translateColored(ChatFormatting.GREEN, learned, Component.literal(Util.getOwner(stack).name()).setStyle(ColorStyle.AQUA)), true);
+						player.sendOverlayMessage(Lang.Items.KNOWLEDGE_SHARING_BOOK_LEARNED_TOTAL.translateColored(ChatFormatting.GREEN, learned, Component.literal(Util.getOwner(stack).name()).setStyle(ColorStyle.AQUA)));
 						level.playSound(null, player.position().x, player.position().y, player.position().z, ExpansionSoundEvents.KNOWLEDGE_SHARING_BOOK_USE.get(), SoundSource.PLAYERS, 0.8F, 0.8F + level.getRandom().nextFloat() * 0.4F);
 					} else {
-						player.displayClientMessage(Lang.Items.KNOWLEDGE_SHARING_BOOK_NO_NEW_KNOWLEDGE.translateColored(ChatFormatting.RED), true);
+						player.sendOverlayMessage(Lang.Items.KNOWLEDGE_SHARING_BOOK_NO_NEW_KNOWLEDGE.translateColored(ChatFormatting.RED));
 						level.playSound(null, player.position().x, player.position().y, player.position().z, ExpansionSoundEvents.KNOWLEDGE_SHARING_BOOK_USE_NONE.get(), SoundSource.PLAYERS, 0.8F, 0.8F + level.getRandom().nextFloat() * 0.4F);
 					}
 
@@ -101,15 +103,15 @@ public class ItemKnowledgeSharingBook extends Item {
 								.xRot(-player.getRotationVector().x * 0.017453292F)
 								.yRot(-player.getRotationVector().y * 0.017453292F)
 								.add(player.position().x, player.position().y + (double) player.getEyeHeight(), player.position().z);
-						serverLevel.sendParticles(learned > 0 ? new ItemParticleOption(ParticleTypes.ITEM, stack) : ParticleTypes.SMOKE, v2.x, v2.y, v2.z, 1, v1.x, v1.y + 0.05D, v1.z, 0.0D);
+						serverLevel.sendParticles(learned > 0 ? new ItemParticleOption(ParticleTypes.ITEM, stack.getItem()) : ParticleTypes.SMOKE, v2.x, v2.y, v2.z, 1, v1.x, v1.y + 0.05D, v1.z, 0.0D);
 					}
 				}
 
 				 stack.shrink(1);
-				return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+				return level.isClientSide() ? InteractionResult.SUCCESS : InteractionResult.CONSUME;
 			} else {
-				player.displayClientMessage(Lang.Items.KNOWLEDGE_SHARING_BOOK_NO_OWNER.translateColored(ChatFormatting.RED), true);
-				return InteractionResultHolder.fail(stack);
+				player.sendOverlayMessage(Lang.Items.KNOWLEDGE_SHARING_BOOK_NO_OWNER.translateColored(ChatFormatting.RED));
+				return InteractionResult.FAIL;
 			}
 		}
 	}
@@ -119,11 +121,12 @@ public class ItemKnowledgeSharingBook extends Item {
 		return stack.has(ExpansionDataComponentTypes.OWNER);
 	}
 
+	//26.3 appendHoverText takes a TooltipDisplay and a Consumer<Component> instead of a List<Component>
 	@Override
-	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-		super.appendHoverText(stack, context, tooltip, flag);
+	public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
+		super.appendHoverText(stack, context, display, tooltip, flag);
 		if(stack.has(ExpansionDataComponentTypes.OWNER)) {
-			tooltip.add(Lang.Items.KNOWLEDGE_SHARING_BOOK_SELECTED.translateColored(ChatFormatting.GRAY, Component.literal(Objects.requireNonNull(stack.get(ExpansionDataComponentTypes.OWNER)).name()).setStyle(ColorStyle.AQUA)));
+			tooltip.accept(Lang.Items.KNOWLEDGE_SHARING_BOOK_SELECTED.translateColored(ChatFormatting.GRAY, Component.literal(Objects.requireNonNull(stack.get(ExpansionDataComponentTypes.OWNER)).name()).setStyle(ColorStyle.AQUA)));
 		}
 	}
 }

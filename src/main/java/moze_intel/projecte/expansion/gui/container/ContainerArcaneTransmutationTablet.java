@@ -6,7 +6,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multiset;
 import java.math.BigInteger;
 import java.util.*;
-import javax.annotation.Nullable;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.proxy.IEMCProxy;
@@ -26,15 +25,17 @@ import moze_intel.projecte.gameObjs.items.Tome;
 import moze_intel.projecte.gameObjs.registration.impl.ContainerTypeRegistryObject;
 import moze_intel.projecte.network.packets.to_server.SearchUpdatePKT;
 import moze_intel.projecte.utils.ItemHelper;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.core.component.DataComponentPatch;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.Prediction;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingInput;
 import net.minecraft.world.item.crafting.CraftingRecipe;
@@ -42,8 +43,10 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 	private static final int[] ROTATION_SLOTS = {0, 1, 2, 5, 8, 7, 6, 3};
@@ -133,7 +136,7 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 	}
 
 	@Override
-	protected Slot addSlot(Slot slot) {
+	protected @NotNull Slot addSlot(@NotNull Slot slot) {
 		switch (slot) {
 			case PXInputSlot inputSlot -> this.inputSlots.add(inputSlot);
 			case PXOutputSlot outputSlot -> this.outputSlots.add(outputSlot);
@@ -143,15 +146,15 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 	}
 
 	@Override
-	public void removed(Player player) {
+	public void removed(@NotNull Player player) {
 		super.removed(player);
 		if (!player.isAlive() || player instanceof ServerPlayer serverPlayer && serverPlayer.hasDisconnected()) {
-			player.drop(unlearn.getItem(), false);
+			player.drop(unlearn.getItem(), false, Prediction.PREDICTED);
 			for (ItemStack stack : this.craftSlots.getItems()) {
-				player.drop(stack, false);
+				player.drop(stack, false, Prediction.PREDICTED);
 			}
 			for (int i = 0; i < this.resultSlots.getContainerSize(); i++) {
-				player.drop(this.resultSlots.getItem(i), false);
+				player.drop(this.resultSlots.getItem(i), false, Prediction.PREDICTED);
 			}
 		} else {
 			Util.returnToInventoryOrTransmutation(playerInv, player, provider, unlearn.getItem(), false, true);
@@ -165,7 +168,7 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 	}
 
 	@Override
-	public ItemStack quickMoveStack(Player player, int slotIndex) {
+	public @NotNull ItemStack quickMoveStack(@NotNull Player player, int slotIndex) {
 		if (this.tryGetSlot(slotIndex) instanceof PXCraftingSlot slot && slot.hasItem()) {
 			ItemStack itemStack = slot.getItem().copy();
 			this.moveItemStackTo(itemStack, PLAYER, (PLAYER + PLAYER_COUNT - 1), true);
@@ -178,7 +181,8 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 			if (slot != null && slot.hasItem()) {
 				ItemStack itemStack1 = slot.getItem();
 				ItemStack itemStack = itemStack1.copy();
-				itemStack1.getItem().onCraftedBy(itemStack, player.level(), player);
+				//26.3: Item#onCraftedBy no longer takes the level, it is reached off the player
+				itemStack.getItem().onCraftedBy(itemStack, player);
 				if (!this.moveItemStackTo(itemStack1, PLAYER, (PLAYER + PLAYER_COUNT - 1), true)) {
 					return ItemStack.EMPTY;
 				}
@@ -196,7 +200,7 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 
 				slot.onTake(player, itemStack1);
 				if (slotIndex == 0) {
-					player.drop(itemStack1, false);
+					player.drop(itemStack1, false, Prediction.PREDICTED);
 				}
 
 				return itemStack;
@@ -222,7 +226,8 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 				//Note: We can just set the size here as newStack is a copy stack used for modifications
 				stack.setCount(stack.getMaxStackSize());
 				//Check how much we can fit of the stack
-				int itemsRoomFor = stack.getCount() - ItemHelper.simulateFit(player.getInventory().items, stack);
+				//26.3: Inventory#items is private now, getNonEquipmentItems() is the accessor PE itself uses
+				int itemsRoomFor = stack.getCount() - ItemHelper.simulateFit(player.getInventory().getNonEquipmentItems(), stack);
 				if (itemsRoomFor == 1) {
 					long availableEMC = transmutationInventory.getAvailableEmcAsLong();
 					if (itemEmc > availableEMC) {
@@ -234,7 +239,9 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 						transmutationInventory.removeEmc(BigInteger.valueOf(itemEmc));
 					}
 					stack.setCount(1);
-					ItemHandlerHelper.insertItemStacked(player.getCapability(Capabilities.ItemHandler.ENTITY), stack, false);
+					//26.3: ItemHandlerHelper is gone, the entity's item capability is a ResourceHandler<ItemResource>
+					// and ItemUtil#insertItemReturnRemaining is the transactional equivalent
+					ItemUtil.insertItemReturnRemaining(player.getCapability(Capabilities.Item.ENTITY), stack, false, null);
 				} else if (itemsRoomFor > 1) {
 					BigInteger availableEMC = transmutationInventory.getAvailableEmc();
 					BigInteger emc = BigInteger.valueOf(itemEmc);
@@ -255,7 +262,7 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 					}
 					//Set the stack size to what we found the max value is we have room for (capped at the stack's own max size)
 					stack.setCount(itemsRoomFor);
-					ItemHandlerHelper.insertItemStacked(player.getCapability(Capabilities.ItemHandler.ENTITY), stack, false);
+					ItemUtil.insertItemReturnRemaining(player.getCapability(Capabilities.Item.ENTITY), stack, false, null);
 				}
 			}
 		} else if (slotIndex >= (OUTPUT + OUTPUT_COUNT) && slotIndex < CRAFTING) {
@@ -288,23 +295,24 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 	}
 
 	@Override
-	public void clickPostValidate(int slotIndex, int dragType, ClickType clickType, Player player) {
-		if (player.level().isClientSide && transmutationInventory.getHandlerForSlot(slotIndex) == transmutationInventory.outputs && tryGetSlot(slotIndex) instanceof Slot slot) {
-			PacketDistributor.sendToServer(new SearchUpdatePKT(transmutationInventory.getIndexFromSlot(slotIndex), slot.getItem()));
+	public void clickPostValidate(int slotIndex, int dragType, @NotNull ContainerInput clickType, @NotNull Player player) {
+		//26.3: Level#isClientSide became a method, and serverbound payloads go through ClientPacketDistributor
+		if (player.level().isClientSide() && transmutationInventory.getHandlerForSlot(slotIndex) == transmutationInventory.outputs && tryGetSlot(slotIndex) instanceof Slot slot) {
+			ClientPacketDistributor.sendToServer(new SearchUpdatePKT(transmutationInventory.getIndexFromSlot(slotIndex), slot.getItem()));
 		}
 		super.clickPostValidate(slotIndex, dragType, clickType, player);
 	}
 
 	@Override
-	public boolean canDragTo(Slot slot) {
+	public boolean canDragTo(@NotNull Slot slot) {
 		return !(slot instanceof SlotConsume || slot instanceof SlotUnlearn || slot instanceof SlotInput || slot instanceof SlotLock || slot instanceof SlotOutput);
 	}
 
 	@Override
-	public void clicked(int slotId, int dragType, ClickType clickType, Player player) {
-		if (clickType == ClickType.QUICK_MOVE) skipRefill = true;
-		super.clicked(slotId, dragType, clickType, player);;
-		if (clickType == ClickType.QUICK_MOVE) skipRefill = false;
+	public void clicked(int slotId, int dragType, @NotNull ContainerInput clickType, @NotNull Player player) {
+		if (clickType == ContainerInput.QUICK_MOVE) skipRefill = true;
+		super.clicked(slotId, dragType, clickType, player);
+		if (clickType == ContainerInput.QUICK_MOVE) skipRefill = false;
 	}
 
 	@Override
@@ -314,17 +322,18 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 	}
 
 	protected static void slotChangedCraftingGrid(ContainerArcaneTransmutationTablet menu, Level level, Player player, CraftingContainer crafting, ResultContainer result) {
-		if (!level.isClientSide) {
-			CraftingInput input = CraftingInput.of(3, 3, crafting.getItems());
-			RegistryAccess registryAccess = level.registryAccess();
+		if (!level.isClientSide() && level instanceof ServerLevel serverLevel) {
 			ServerPlayer serverPlayer = (ServerPlayer) player;
+			CraftingInput input = CraftingInput.of(3, 3, crafting.getItems());
 			ItemStack stack = ItemStack.EMPTY;
-			Optional<RecipeHolder<CraftingRecipe>> optional = (Objects.requireNonNull(level.getServer())).getRecipeManager().getRecipeFor(RecipeType.CRAFTING, input, level);
+			//26.3: the recipe manager is reached through the ServerLevel's RecipeAccess and
+			//ResultContainer#setRecipeUsed no longer needs the level/player
+			Optional<RecipeHolder<CraftingRecipe>> optional = serverLevel.recipeAccess().getRecipeFor(RecipeType.CRAFTING, input, serverLevel);
 			if (optional.isPresent()) {
 				RecipeHolder<CraftingRecipe> recipe = optional.get();
-				if (result.setRecipeUsed(level, serverPlayer, recipe)) {
-					stack = recipe.value().assemble(input, registryAccess);
-				}
+				result.setRecipeUsed(recipe);
+				//26.3: Recipe#assemble no longer takes a RegistryAccess
+				stack = recipe.value().assemble(input);
 			}
 
 			result.setItem(0, stack);
@@ -336,7 +345,7 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 	}
 
 	@Override
-	public boolean canTakeItemForPickAll(ItemStack stack, Slot slot) {
+	public boolean canTakeItemForPickAll(@NotNull ItemStack stack, @NotNull Slot slot) {
 		return slot.container != this.resultSlots && super.canTakeItemForPickAll(stack, slot);
 	}
 
@@ -491,23 +500,23 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 
 	/** @apiNote only call on server */
 	public void balanceCrafting() {
-		ArrayListMultimap<CompoundTag, ItemStack> map = ArrayListMultimap.create();
-		Multiset<CompoundTag> itemCount = HashMultiset.create();
+		//26.3: ItemStack#save(HolderLookup.Provider, CompoundTag) is gone, so the stacks are grouped by item +
+		// component patch (exactly what the "same NBT ignoring count" grouping amounted to) instead of by tag
+		ArrayListMultimap<ItemStackKey, ItemStack> map = ArrayListMultimap.create();
+		Multiset<ItemStackKey> itemCount = HashMultiset.create();
 
-		RegistryAccess registryAccess = player.registryAccess();
 		for (int i = 0; i < craftSlots.getContainerSize(); i++) {
 			ItemStack stack = craftSlots.getItem(i);
 			if (!stack.isEmpty() && stack.getMaxStackSize() > 1) {
-				CompoundTag tag = (CompoundTag) stack.save(registryAccess, new CompoundTag());
-				tag.remove("count");
-				map.put(tag, stack);
-				itemCount.add(tag, stack.getCount());
+				ItemStackKey key = new ItemStackKey(stack);
+				map.put(key, stack);
+				itemCount.add(key, stack.getCount());
 			}
 		}
 
-		for (CompoundTag tag : map.keySet()) {
-			List<ItemStack> list = map.get(tag);
-			int totalCount = itemCount.count(tag);
+		for (ItemStackKey key : map.keySet()) {
+			List<ItemStack> list = map.get(key);
+			int totalCount = itemCount.count(key);
 			int countPerStack = totalCount / list.size();
 			int restCount = totalCount % list.size();
 
@@ -578,7 +587,7 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 
 	/** @apiNote only call on client */
 	public void action(PacketArcaneTransmutationTabletSmallButton.Action action) {
-		PacketDistributor.sendToServer(new PacketArcaneTransmutationTabletSmallButton(action));
+		ClientPacketDistributor.sendToServer(new PacketArcaneTransmutationTabletSmallButton(action));
 	}
 
 	public IKnowledgeProvider getProvider() {
@@ -591,5 +600,16 @@ public class ContainerArcaneTransmutationTablet extends PEHandContainer {
 
 	public ImmutableList<PXOutputSlot> getOutputSlots() {
 		return ImmutableList.copyOf(outputSlots);
+	}
+
+	/**
+	 * 26.3 replacement for the NBT of an {@link ItemStack} minus its count, which is what the addon's
+	 * {@code balanceCrafting} used to group equal stacks by.
+	 */
+	private record ItemStackKey(Item item, DataComponentPatch patch) {
+		ItemStackKey(ItemStack stack) {
+			//Note: ItemStack#getComponentsPatch() hands back an immutable view, so it is safe to keep around
+			this(stack.getItem(), stack.getComponentsPatch());
+		}
 	}
 }

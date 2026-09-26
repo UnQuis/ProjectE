@@ -52,7 +52,7 @@ public enum Lang implements ILangEntry {
 
 	private String key;
 	Lang(String type, String... path) {
-		this(net.minecraft.Util.makeDescriptionId(type, PECore.rl(String.join(".", path))));
+		this(net.minecraft.util.Util.makeDescriptionId(type, PECore.rl(String.join(".", path))));
 	}
 
 	Lang(String key) {
@@ -145,7 +145,7 @@ public enum Lang implements ILangEntry {
 
 		private String key;
 		Blocks(String... path) {
-			this.key = net.minecraft.Util.makeDescriptionId("block", PECore.rl(String.join(".", path)));
+			this.key = net.minecraft.util.Util.makeDescriptionId("block", PECore.rl(String.join(".", path)));
 		}
 
 		@Override
@@ -264,7 +264,7 @@ public enum Lang implements ILangEntry {
 
 		private String key;
 		Commands(String... path) {
-			this.key = net.minecraft.Util.makeDescriptionId("command", PECore.rl(String.join(".", path)));
+			this.key = net.minecraft.util.Util.makeDescriptionId("command", PECore.rl(String.join(".", path)));
 		}
 
 		@Override
@@ -345,7 +345,7 @@ public enum Lang implements ILangEntry {
 		private String key;
 
 		Items(String... path) {
-			this.key = net.minecraft.Util.makeDescriptionId("item", PECore.rl(String.join(".", path)));
+			this.key = net.minecraft.util.Util.makeDescriptionId("item", PECore.rl(String.join(".", path)));
 		}
 
 		@Override
@@ -406,7 +406,7 @@ public enum Lang implements ILangEntry {
 		private String key;
 
 		GUI(String... path) {
-			this.key = net.minecraft.Util.makeDescriptionId("gui", PECore.rl(String.join(".", path)));
+			this.key = net.minecraft.util.Util.makeDescriptionId("gui", PECore.rl(String.join(".", path)));
 		}
 
 		@Override
@@ -448,7 +448,7 @@ public enum Lang implements ILangEntry {
 		private String key;
 
 		Configuration(String... path) {
-			this.key = net.minecraft.Util.makeDescriptionId("configuration", PECore.rl(String.join(".", path)));
+			this.key = net.minecraft.util.Util.makeDescriptionId("configuration", PECore.rl(String.join(".", path)));
 		}
 
 		@Override

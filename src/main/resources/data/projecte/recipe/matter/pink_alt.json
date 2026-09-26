@@ -7,12 +7,8 @@
     "FFF"
   ],
   "key": {
-    "F": {
-      "item": "projecte:magenta_fuel"
-    },
-    "M": {
-      "item": "projecte:magenta_matter"
-    }
+    "F": "projecte:magenta_fuel",
+    "M": "projecte:magenta_matter"
   },
   "result": {
     "id": "projecte:pink_matter"

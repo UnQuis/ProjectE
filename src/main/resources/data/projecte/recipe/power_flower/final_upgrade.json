@@ -7,18 +7,10 @@
     "RRR"
   ],
   "key": {
-    "L": {
-      "item": "projecte:final_emc_link"
-    },
-    "C": {
-      "item": "projecte:final_compressed_collector"
-    },
-    "R": {
-      "item": "projecte:final_relay"
-    },
-    "P": {
-      "item": "projecte:fading_power_flower"
-    }
+    "L": "projecte:final_emc_link",
+    "C": "projecte:final_compressed_collector",
+    "R": "projecte:final_relay",
+    "P": "projecte:fading_power_flower"
   },
   "result": {
     "id": "projecte:final_power_flower"

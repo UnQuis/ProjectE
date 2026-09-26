@@ -2,21 +2,11 @@
   "type": "minecraft:crafting_shapeless",
   "group": "projecte:fuel/lime",
   "ingredients": [
-    {
-      "item": "projecte:philosophers_stone"
-    },
-    {
-      "item": "projecte:green_fuel"
-    },
-    {
-      "item": "projecte:green_fuel"
-    },
-    {
-      "item": "projecte:green_fuel"
-    },
-    {
-      "item": "projecte:green_fuel"
-    }
+    "projecte:philosophers_stone",
+    "projecte:green_fuel",
+    "projecte:green_fuel",
+    "projecte:green_fuel",
+    "projecte:green_fuel"
   ],
   "result": {
     "id": "projecte:lime_fuel"

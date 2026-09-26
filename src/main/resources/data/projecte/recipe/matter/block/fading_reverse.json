@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "group": "projecte:fuel/fading",
   "ingredients": [
-    {
-      "item": "projecte:fading_matter_block"
-    }
+    "projecte:fading_matter_block"
   ],
   "result": {
     "id": "projecte:fading_matter",

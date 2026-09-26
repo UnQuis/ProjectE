@@ -7,15 +7,9 @@
     "RRR"
   ],
   "key": {
-    "L": {
-      "item": "projecte:cyan_emc_link"
-    },
-    "C": {
-      "item": "projecte:cyan_compressed_collector"
-    },
-    "R": {
-      "item": "projecte:cyan_relay"
-    }
+    "L": "projecte:cyan_emc_link",
+    "C": "projecte:cyan_compressed_collector",
+    "R": "projecte:cyan_relay"
   },
   "result": {
     "id": "projecte:cyan_power_flower"

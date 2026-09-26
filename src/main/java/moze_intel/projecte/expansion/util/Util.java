@@ -23,6 +23,7 @@ import moze_intel.projecte.network.packets.to_client.SyncWorldTransmutations;
 import moze_intel.projecte.world_transmutation.WorldTransmutationManager;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.UUIDUtil;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.ClickEvent;
@@ -31,7 +32,7 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
-import net.minecraft.network.protocol.game.ClientboundContainerSetSlotPacket;
+import net.minecraft.network.protocol.game.ClientboundSetPlayerInventoryPacket;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.MinecraftServer;
@@ -376,7 +377,7 @@ public class Util {
 		player.openMenu(new TransmutationContainerProvider(hand), (buf) -> {
 			buf.writeBoolean(true);
 			buf.writeEnum(hand);
-			buf.writeByte(player.getInventory().selected);
+			buf.writeByte(player.getInventory().getSelectedSlot());
 		});
 	}
 
@@ -424,10 +425,9 @@ public class Util {
 					playerInv.add(slot, moved);
 
 					if (player instanceof ServerPlayer serverPlayer) {
-						serverPlayer.connection.send(new ClientboundContainerSetSlotPacket(
-								ClientboundContainerSetSlotPacket.PLAYER_INVENTORY, 0,
-								slot, playerInv.getItem(slot)
-						));
+						//26.3 replaced ClientboundContainerSetSlotPacket for the player inventory with
+						//ClientboundSetPlayerInventoryPacket
+						serverPlayer.connection.send(new ClientboundSetPlayerInventoryPacket(slot, playerInv.getItem(slot)));
 					}
 
 					continue;

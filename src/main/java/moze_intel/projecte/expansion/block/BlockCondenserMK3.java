@@ -1,11 +1,10 @@
 package moze_intel.projecte.expansion.block;
 
-import com.mojang.serialization.MapCodec;
 import moze_intel.projecte.expansion.block.entity.BlockEntityCondenserMK3;
 import moze_intel.projecte.expansion.registries.ExpansionBlockEntityTypes;
-import moze_intel.projecte.expansion.registries.ExpansionBlockTypes;
 import moze_intel.projecte.expansion.util.Lang;
 import moze_intel.projecte.gameObjs.block_entities.EmcChestBlockEntity;
+import moze_intel.projecte.gameObjs.blocks.IBlockTooltip;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import moze_intel.projecte.utils.WorldHelper;
 import net.minecraft.ChatFormatting;
@@ -24,7 +23,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.ScheduledTickAccess;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
@@ -32,7 +32,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Fluids;
@@ -41,25 +41,24 @@ import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.capabilities.Capabilities;
-import net.neoforged.neoforge.items.IItemHandler;
-import net.neoforged.neoforge.items.ItemHandlerHelper;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
+import net.neoforged.neoforge.transfer.item.ItemResource;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
+import java.util.function.Consumer;
 
-public class BlockCondenserMK3 extends BaseEntityBlock implements SimpleWaterloggedBlock {
-	public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
+public class BlockCondenserMK3 extends BaseEntityBlock implements SimpleWaterloggedBlock, IBlockTooltip {
+	public static final EnumProperty<Direction> FACING = HorizontalDirectionalBlock.FACING;
 	private static final VoxelShape SHAPE = Block.box(1.0D, 0.0D, 1.0D, 15.0D, 14.0D, 15.0D);
 	public BlockCondenserMK3(Properties properties) {
 		super(properties);
 		this.registerDefaultState(getStateDefinition().any().setValue(FACING, Direction.NORTH).setValue(BlockStateProperties.WATERLOGGED, false));
 	}
 
-	public static Properties getProperties() {
-		return Properties.of().mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(10, 3_600_000);
+	public static Properties getProperties(Properties properties) {
+		return properties.mapColor(MapColor.STONE).instrument(NoteBlockInstrument.BASEDRUM).requiresCorrectToolForDrops().strength(10, 3_600_000);
 	}
 
 	@Override
@@ -69,12 +68,11 @@ public class BlockCondenserMK3 extends BaseEntityBlock implements SimpleWaterlog
 		builder.add(BlockStateProperties.WATERLOGGED);
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	//26.3 removed Block#appendHoverText, the tooltip lines are served through IBlockTooltip and PEBlockItem
 	@Override
-	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> list, TooltipFlag tooltipFlag) {
-		super.appendHoverText(stack, context, list, tooltipFlag);
-		list.add(Lang.Blocks.CONDENSER_MK3_TOOLTIP2.translateColored(ChatFormatting.GRAY));
-		list.add(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
+	public void appendBlockTooltip(ItemStack stack, Item.TooltipContext context, Consumer<Component> tooltip, TooltipFlag tooltipFlag) {
+		tooltip.accept(Lang.Blocks.CONDENSER_MK3_TOOLTIP2.translateColored(ChatFormatting.GRAY));
+		tooltip.accept(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
 	}
 
 	@Override
@@ -92,13 +90,12 @@ public class BlockCondenserMK3 extends BaseEntityBlock implements SimpleWaterlog
 		return SHAPE;
 	}
 	@Override
-	@Deprecated
-	public RenderShape getRenderShape(BlockState state) {
-		return RenderShape.ENTITYBLOCK_ANIMATED;
+	protected RenderShape getRenderShape(BlockState state) {
+		//26.3 RenderShape only has INVISIBLE and MODEL, the animated shape is selected by the block entity renderer
+		return RenderShape.INVISIBLE;
 	}
 
 	@Override
-	@Deprecated
 	protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult rtr) {
 		if (level.isClientSide()) {
 			return InteractionResult.SUCCESS;
@@ -107,14 +104,13 @@ public class BlockCondenserMK3 extends BaseEntityBlock implements SimpleWaterlog
 		if (chest != null) {
 			player.openMenu(chest, pos);
 			player.awardStat(Stats.OPEN_CHEST);
-			PiglinAi.angerNearbyPiglins(player, true);
+			PiglinAi.angerNearbyPiglins((ServerLevel) level, player, true);
 		}
 		return InteractionResult.CONSUME;
 	}
 
 	@Override
-	@Deprecated
-	public boolean triggerEvent(BlockState state, Level level, BlockPos pos, int id, int param) {
+	protected boolean triggerEvent(BlockState state, Level level, BlockPos pos, int id, int param) {
 		super.triggerEvent(state, level, pos, id, param);
 		return triggerBlockEntityEvent(state, level, pos, id, param);
 	}
@@ -126,8 +122,7 @@ public class BlockCondenserMK3 extends BaseEntityBlock implements SimpleWaterlog
 	}
 
 	@Override
-	@Deprecated
-	public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+	protected void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
 		EmcChestBlockEntity chest = WorldHelper.getBlockEntity(EmcChestBlockEntity.class, level, pos);
 		if (chest != null) {
 			chest.recheckOpen();
@@ -135,47 +130,31 @@ public class BlockCondenserMK3 extends BaseEntityBlock implements SimpleWaterlog
 	}
 
 	@Override
-	@Deprecated
-	public boolean hasAnalogOutputSignal(BlockState state) {
+	protected boolean hasAnalogOutputSignal(BlockState state) {
 		return true;
 	}
 
 	@Override
-	@Deprecated
-	public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
-		return ItemHandlerHelper.calcRedstoneFromInventory(WorldHelper.getCapability(level, Capabilities.ItemHandler.BLOCK, pos, state, null, null));
+	protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos, Direction direction) {
+		ResourceHandler<ItemResource> handler = WorldHelper.getCapability(level, Capabilities.Item.BLOCK, pos, state, null, null);
+		return handler == null ? 0 : ResourceHandlerUtil.getRedstoneSignalFromResourceHandler(handler);
 	}
 
 	@Override
-	@Deprecated
-	public FluidState getFluidState(BlockState state) {
+	protected FluidState getFluidState(BlockState state) {
 		return state.getValue(BlockStateProperties.WATERLOGGED) ? Fluids.WATER.getSource(false) : super.getFluidState(state);
 	}
 
 	@Override
-	@Deprecated
-	public BlockState updateShape(BlockState state, Direction facing, BlockState facingState, LevelAccessor level, BlockPos currentPos, BlockPos facingPos) {
+	protected BlockState updateShape(BlockState state, LevelReader level, ScheduledTickAccess ticks, BlockPos pos, Direction directionToNeighbour, BlockPos neighbourPos, BlockState neighbourState, RandomSource random) {
 		if (state.getValue(BlockStateProperties.WATERLOGGED)) {
-			level.scheduleTick(currentPos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
+			ticks.scheduleTick(pos, Fluids.WATER, Fluids.WATER.getTickDelay(level));
 		}
-		return super.updateShape(state, facing, facingState, level, currentPos, facingPos);
+		return super.updateShape(state, level, ticks, pos, directionToNeighbour, neighbourPos, neighbourState, random);
 	}
 
 	@Override
-	@Deprecated
-	public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-		if (state.getBlock() != newState.getBlock()) {
-			for (Direction direction : Direction.values()) {
-				IItemHandler handler = WorldHelper.getCapability(level, Capabilities.ItemHandler.BLOCK, pos, state, null, direction);
-				WorldHelper.dropInventory(handler, level, pos);
-			}
-			super.onRemove(state, level, pos, newState, isMoving);
-		}
-	}
-
-	@Override
-	@Deprecated
-	public void attack(BlockState state, Level level, BlockPos pos, Player player) {
+	protected void attack(BlockState state, Level level, BlockPos pos, Player player) {
 		if (!level.isClientSide()) {
 			ItemStack stack = player.getMainHandItem();
 			if (!stack.isEmpty() && stack.is(PEItems.PHILOSOPHERS_STONE)) {
@@ -185,18 +164,13 @@ public class BlockCondenserMK3 extends BaseEntityBlock implements SimpleWaterlog
 	}
 
 	@Deprecated
-	public BlockState rotate(BlockState state, Rotation rot) {
+	protected BlockState rotate(BlockState state, Rotation rot) {
 		return state.setValue(FACING, rot.rotate(state.getValue(FACING)));
 	}
 
 	@Deprecated
-	public BlockState mirror(BlockState state, Mirror mirrorIn) {
+	protected BlockState mirror(BlockState state, Mirror mirrorIn) {
 		return state.rotate(mirrorIn.getRotation(state.getValue(FACING)));
-	}
-
-	@Override
-	protected MapCodec<? extends BaseEntityBlock> codec() {
-		return ExpansionBlockTypes.CONDENSER_MK3.get();
 	}
 
 	@Override

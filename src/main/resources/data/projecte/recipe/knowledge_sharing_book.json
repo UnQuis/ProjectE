@@ -6,15 +6,9 @@
     "VNV"
   ],
   "key": {
-    "V": {
-      "item": "projecte:violet_matter"
-    },
-    "N": {
-      "item": "minecraft:nether_star"
-    },
-    "B": {
-      "item": "minecraft:book"
-    }
+    "V": "projecte:violet_matter",
+    "N": "minecraft:nether_star",
+    "B": "minecraft:book"
   },
   "result": {
     "id": "projecte:knowledge_sharing_book"

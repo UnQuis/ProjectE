@@ -13,55 +13,54 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
 import net.minecraft.world.level.Level;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.network.PacketDistributor;
 import net.neoforged.neoforge.network.codec.NeoForgeStreamCodecs;
 
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.function.Consumer;
 
 public class ItemAlchemicalBook extends Item {
 	private final Tier tier;
-	public ItemAlchemicalBook(Tier tier) {
-		super(new Properties().rarity(tier.getRarity()).stacksTo(1).fireResistant());
+	public ItemAlchemicalBook(Properties properties,Tier tier) {
+		super(properties.rarity(tier.getRarity()).stacksTo(1).fireResistant());
 		this.tier = tier;
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	//26.3 appendHoverText takes a TooltipDisplay and a Consumer<Component> instead of a List<Component>
 	@Override
-	public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> list, TooltipFlag tooltipFlag) {
-		super.appendHoverText(stack, context, list, tooltipFlag);
-		list.add(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP.translateColored(ChatFormatting.GRAY));
+	public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag tooltipFlag) {
+		super.appendHoverText(stack, context, display, tooltip, tooltipFlag);
+		tooltip.accept(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP.translateColored(ChatFormatting.GRAY));
 		switch(tier) {
-			case BASIC -> list.add(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP_BASIC.translateColored(ChatFormatting.RED, CapabilityAlchemicalBookLocations.BASIC_DISTANCE_RATIO));
+			case BASIC -> tooltip.accept(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP_BASIC.translateColored(ChatFormatting.RED, CapabilityAlchemicalBookLocations.BASIC_DISTANCE_RATIO));
 			case ADVANCED -> {
-				list.add(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP_ADVANCED.translateColored(ChatFormatting.RED, CapabilityAlchemicalBookLocations.ADVANCED_DISTANCE_RATIO));
-				list.add(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP_BIND.translateColored(ChatFormatting.GREEN));
+				tooltip.accept(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP_ADVANCED.translateColored(ChatFormatting.RED, CapabilityAlchemicalBookLocations.ADVANCED_DISTANCE_RATIO));
+				tooltip.accept(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP_BIND.translateColored(ChatFormatting.GREEN));
 			}
 			case MASTER -> {
-				list.add(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP_MASTER.translateColored(ChatFormatting.RED, CapabilityAlchemicalBookLocations.MASTER_DISTANCE_RATIO));
-				list.add(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP_BIND.translateColored(ChatFormatting.GREEN));
-				list.add(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP_ACROSS_DIMENSIONS.translateColored(ChatFormatting.GREEN));
+				tooltip.accept(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP_MASTER.translateColored(ChatFormatting.RED, CapabilityAlchemicalBookLocations.MASTER_DISTANCE_RATIO));
+				tooltip.accept(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP_BIND.translateColored(ChatFormatting.GREEN));
+				tooltip.accept(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP_ACROSS_DIMENSIONS.translateColored(ChatFormatting.GREEN));
 			}
 			case ARCANE -> {
-				list.add(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP_ARCANE.translateColored(ChatFormatting.RED, CapabilityAlchemicalBookLocations.ARCANE_DISTANCE_RATIO));
-				list.add(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP_BIND.translateColored(ChatFormatting.GREEN));
-				list.add(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP_ACROSS_DIMENSIONS.translateColored(ChatFormatting.GREEN));
+				tooltip.accept(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP_ARCANE.translateColored(ChatFormatting.RED, CapabilityAlchemicalBookLocations.ARCANE_DISTANCE_RATIO));
+				tooltip.accept(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP_BIND.translateColored(ChatFormatting.GREEN));
+				tooltip.accept(Lang.Items.ALCHEMICAL_BOOK_TOOLTIP_ACROSS_DIMENSIONS.translateColored(ChatFormatting.GREEN));
 			}
 		}
 		if(getMode(stack) == Mode.PLAYER) {
 			Player player = getPlayer(stack);
-			list.add(Lang.Items.ALCHEMICAL_BOOK_BOUND_TO.translateColored(ChatFormatting.RED, player == null ? Component.literal(Util.getOwner(stack).name()).withStyle(ChatFormatting.DARK_AQUA) : player.getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA)));
+			tooltip.accept(Lang.Items.ALCHEMICAL_BOOK_BOUND_TO.translateColored(ChatFormatting.RED, player == null ? Component.literal(Util.getOwner(stack).name()).withStyle(ChatFormatting.DARK_AQUA) : player.getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA)));
 		}
-		list.add(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
+		tooltip.accept(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
 	}
 
 	public @Nullable ServerPlayer getPlayer(ItemStack stack) {
@@ -138,8 +137,9 @@ public class ItemAlchemicalBook extends Item {
 		return tier;
 	}
 
+	//26.3 Item#use returns an InteractionResult instead of an InteractionResultHolder<ItemStack>
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+	public InteractionResult use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
 		if(!level.isClientSide()) {
 			if(player.isCrouching() && getTier().canBindToPlayer()) {
@@ -147,7 +147,7 @@ public class ItemAlchemicalBook extends Item {
 				if (getMode(stack) == Mode.PLAYER && data != null) {
 					if(!data.uuid().equals(player.getUUID())) {
 						player.sendSystemMessage(Lang.NOT_OWNER.translateColored(ChatFormatting.RED, Component.literal(data.name()).withStyle(ChatFormatting.DARK_AQUA)));
-						return InteractionResultHolder.fail(stack);
+						return InteractionResult.FAIL;
 					} else {
 						stack.remove(ExpansionDataComponentTypes.OWNER);
 						player.sendSystemMessage(Lang.Items.ALCHEMICAL_BOOK_NO_LONGER_BOUND.translateColored(ChatFormatting.GREEN, data.name()));
@@ -162,12 +162,12 @@ public class ItemAlchemicalBook extends Item {
 					PacketDistributor.sendToPlayer((ServerPlayer) player, new PacketOpenAlchemicalBookGUI(hand, CapabilityAlchemicalBookLocations.from(stack).getLocations(), getMode(stack), canEdit(stack, (ServerPlayer) player)));
 				} catch (CapabilityAlchemicalBookLocations.BookError.OwnerOfflineError ignore) {
 					player.sendSystemMessage(Lang.Items.ALCHEMICAL_BOOK_OWNER_NOT_ONLINE.translateColored(ChatFormatting.RED));
-					return InteractionResultHolder.fail(stack);
+					return InteractionResult.FAIL;
 				}
 			}
 		}
 
-		return InteractionResultHolder.success(stack);
+		return InteractionResult.SUCCESS;
 	}
 
 	public static boolean canEdit(ItemStack stack, ServerPlayer player) {
@@ -181,7 +181,8 @@ public class ItemAlchemicalBook extends Item {
 		Config.AlchemicalBookEditLevel editLevel = Config.server.editOthersAlchemicalBooks.get();
 
 		if(editLevel == Config.AlchemicalBookEditLevel.ENABLED) return true;
-		if(player.hasPermissions(Commands.LEVEL_GAMEMASTERS) && editLevel == Config.AlchemicalBookEditLevel.OP_ONLY) return true;
+		//26.3 permission levels are PermissionCheck objects tested against the player's PermissionSet
+		if(Commands.LEVEL_GAMEMASTERS.check(player.permissions()) && editLevel == Config.AlchemicalBookEditLevel.OP_ONLY) return true;
 		return owner.equals(player);
 	}
 

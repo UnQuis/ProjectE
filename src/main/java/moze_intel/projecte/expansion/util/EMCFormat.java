@@ -1,9 +1,11 @@
 package moze_intel.projecte.expansion.util;
 
 import moze_intel.projecte.expansion.config.Config;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.fml.loading.FMLEnvironment;
 
 import javax.annotation.Nullable;
 import java.math.BigDecimal;
@@ -127,7 +129,7 @@ public class EMCFormat extends DecimalFormat {
 		public FormatOptions none() { this.none = true; return this; }
 
 		public boolean shouldFormat() {
-			return !none && (force || (Config.client.formatEMC.get() && (ignoreShift || !Screen.hasShiftDown())));
+			return !none && (force || (Config.client.formatEMC.get() && (ignoreShift || !hasShiftDown())));
 		}
 
 		public boolean useShortNames() {
@@ -139,6 +141,14 @@ public class EMCFormat extends DecimalFormat {
 		}
 
 		public static FormatOptions create() { return new FormatOptions(); }
+	}
+
+	/**
+	 * Common code may not touch client only classes, so the shift check is guarded and only ever executed on the client
+	 * (26.3 also removed the static {@code Screen#hasShiftDown}).
+	 */
+	private static boolean hasShiftDown() {
+		return FMLEnvironment.getDist() == Dist.CLIENT && Minecraft.getInstance().hasShiftDown();
 	}
 
 	public static class EMCFormatWrapper {

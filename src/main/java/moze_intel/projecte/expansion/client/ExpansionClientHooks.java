@@ -49,12 +49,13 @@ public final class ExpansionClientHooks {
 			if (player == null) {
 				return;
 			}
-			Minecraft.getInstance().setScreen(new GUIAlchemicalBook(player, hand, locations, canEdit));
+			//26.3: the open screen lives on Gui, and it is a screen() accessor rather than a field
+			Minecraft.getInstance().gui.setScreen(new GUIAlchemicalBook(player, hand, locations, canEdit));
 		}
 
 		@Override
 		public void sync(List<TeleportLocation> locations, boolean canEdit) {
-			Screen current = Minecraft.getInstance().screen;
+			Screen current = Minecraft.getInstance().gui.screen();
 			if (current instanceof GUIAlchemicalBook gui) {
 				gui.setLocations(locations, canEdit);
 			}

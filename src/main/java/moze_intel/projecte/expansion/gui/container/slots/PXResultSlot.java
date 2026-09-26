@@ -13,6 +13,7 @@ import net.minecraft.world.inventory.CraftingContainer;
 import net.minecraft.world.inventory.ResultContainer;
 import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.item.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
 public class PXResultSlot extends ResultSlot {
 	private final CraftingContainer craftSlots;
@@ -26,7 +27,7 @@ public class PXResultSlot extends ResultSlot {
 	}
 
 	@Override
-	public void onTake(Player player, ItemStack stack) {
+	public void onTake(@NotNull Player player, @NotNull ItemStack stack) {
 		learnResult(stack);
 		List<ItemStack> previousItems = craftSlots.getItems().stream().map(ItemStack::copy).collect(Collectors.toCollection(ArrayList::new));
 		super.onTake(player, stack);
@@ -46,7 +47,8 @@ public class PXResultSlot extends ResultSlot {
 	}
 
 	protected void refillAfterTake(List<ItemStack> items) {
-		if (player.level().isClientSide || tablet.skipRefill) return;
+		//26.3: Level#isClientSide became a method
+		if (player.level().isClientSide() || tablet.skipRefill) return;
 		List<ItemStack> currentItems = craftSlots.getItems().stream().map(ItemStack::copy).collect(Collectors.toCollection(ArrayList::new));
 
 		for (int i = 0; i < currentItems.size(); i++) {
@@ -74,7 +76,7 @@ public class PXResultSlot extends ResultSlot {
 	}
 
 	@Override
-	public void set(ItemStack stack) {
+	public void set(@NotNull ItemStack stack) {
 		super.set(stack);
 		tablet.isCrafting = !stack.isEmpty(); // used for the arrow
 	}

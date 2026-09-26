@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "group": "projecte:fuel/magenta",
   "ingredients": [
-    {
-      "item": "projecte:magenta_fuel_block"
-    }
+    "projecte:magenta_fuel_block"
   ],
   "result": {
     "id": "projecte:magenta_fuel",

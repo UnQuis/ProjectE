@@ -6,6 +6,7 @@ import moze_intel.projecte.expansion.item.ItemCompressedCollector;
 import moze_intel.projecte.expansion.registries.ExpansionBlocks;
 import moze_intel.projecte.expansion.registries.ExpansionItems;
 import moze_intel.projecte.gameObjs.EnumMatterType;
+import moze_intel.projecte.gameObjs.items.PEBlockItem;
 import moze_intel.projecte.gameObjs.IMatterType;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import moze_intel.projecte.gameObjs.registries.PEItems;
@@ -16,7 +17,6 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.tags.TagKey;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.item.*;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.material.MapColor;
 
@@ -314,22 +314,22 @@ public enum Matter implements StringRepresentable, IMatterType {
 		switch (reg) {
 			case MATTER -> {
 				if (hasItem) {
-					itemMatter = ExpansionItems.ITEMS.register(String.format("%s_matter", name), () -> new Item(new Item.Properties().rarity(getRarity())));
+					itemMatter = ExpansionItems.ITEMS.registerSimple(String.format("%s_matter", name), properties -> new Item(properties.rarity(getRarity())));
 				}
 			}
 
 			case MATTER_BLOCK -> {
 				if (hasBlock) {
-					blockMatterBlock = ExpansionBlocks.BLOCKS.register(String.format("%s_matter_block", name), () -> new BlockMatter(BlockMatter.getProperties(this), this), block -> new BlockItem(block, new Item.Properties().rarity(getRarity())));
+					blockMatterBlock = ExpansionBlocks.BLOCKS.register(String.format("%s_matter_block", name), properties -> new BlockMatter(BlockMatter.getProperties(properties, this), this), (block, itemProperties) -> PEBlockItem.of(block, itemProperties.rarity(getRarity())));
 				}
 			}
 
-			case COLLECTOR -> collector = ExpansionBlocks.BLOCKS.register(String.format("%s_collector", name), () -> new BlockCollector(BlockCollector.getProperties(this), this), block -> new BlockItem(block, new Item.Properties().rarity(getRarity())));
+			case COLLECTOR -> collector = ExpansionBlocks.BLOCKS.register(String.format("%s_collector", name), properties -> new BlockCollector(BlockCollector.getProperties(properties, this), this), (block, itemProperties) -> PEBlockItem.of(block, itemProperties.rarity(getRarity())));
 
-			case COMPRESSED_COLLECTOR -> itemCompressedCollector = ExpansionItems.ITEMS.register(String.format("%s_compressed_collector", name), () -> new ItemCompressedCollector(this));
-			case POWER_FLOWER -> powerFlower = ExpansionBlocks.BLOCKS.register(String.format("%s_power_flower", name), () -> new BlockPowerFlower(BlockPowerFlower.getProperties(this), this), block -> new BlockItem(block, new Item.Properties().rarity(getRarity())));
-			case RELAY -> relay = ExpansionBlocks.BLOCKS.register(String.format("%s_relay", name), () -> new BlockRelay(BlockRelay.getProperties(this), this), block -> new BlockItem(block, new Item.Properties().rarity(getRarity())));
-			case EMC_LINK -> emcLink = ExpansionBlocks.BLOCKS.register(String.format("%s_emc_link", name), () -> new BlockEMCLink(BlockEMCLink.getProperties(this), this), block -> new BlockItem(block, new Item.Properties().rarity(getRarity())));
+			case COMPRESSED_COLLECTOR -> itemCompressedCollector = ExpansionItems.ITEMS.registerSimple(String.format("%s_compressed_collector", name), properties -> new ItemCompressedCollector(properties, this));
+			case POWER_FLOWER -> powerFlower = ExpansionBlocks.BLOCKS.register(String.format("%s_power_flower", name), properties -> new BlockPowerFlower(BlockPowerFlower.getProperties(properties, this), this), (block, itemProperties) -> PEBlockItem.of(block, itemProperties.rarity(getRarity())));
+			case RELAY -> relay = ExpansionBlocks.BLOCKS.register(String.format("%s_relay", name), properties -> new BlockRelay(BlockRelay.getProperties(properties, this), this), (block, itemProperties) -> PEBlockItem.of(block, itemProperties.rarity(getRarity())));
+			case EMC_LINK -> emcLink = ExpansionBlocks.BLOCKS.register(String.format("%s_emc_link", name), properties -> new BlockEMCLink(BlockEMCLink.getProperties(properties, this), this), (block, itemProperties) -> PEBlockItem.of(block, itemProperties.rarity(getRarity())));
 		}
 	}
 
@@ -389,11 +389,6 @@ public enum Matter implements StringRepresentable, IMatterType {
 	@Override
 	public int getEnchantmentValue() {
 		return 0;
-	}
-
-	@Override
-	public Ingredient getRepairIngredient() {
-		return Ingredient.EMPTY;
 	}
 
 	private enum RegistrationType {

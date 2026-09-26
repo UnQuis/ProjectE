@@ -56,10 +56,10 @@ public class BlockEntityOwnable extends BlockEntityBase {
 	// return true if ownership not checked, or if passed
 	public boolean handleActivation(Player player, ActivationType activationType) {
 		switch (activationType) {
-			case DISPLAY_NAME -> player.displayClientMessage(Component.literal(ownerName), true);
+			case DISPLAY_NAME -> player.sendOverlayMessage(Component.literal(ownerName));
 			case CHECK_OWNERSHIP -> {
 				if (!owner.equals(player.getUUID())) {
-					player.displayClientMessage(Lang.NOT_OWNER.translateColored(ChatFormatting.RED, Component.literal(ownerName).setStyle(ColorStyle.RED)), true);
+					player.sendOverlayMessage(Lang.NOT_OWNER.translateColored(ChatFormatting.RED, Component.literal(ownerName).setStyle(ColorStyle.RED)));
 					return false;
 				}
 			}

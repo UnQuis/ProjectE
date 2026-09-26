@@ -1,6 +1,5 @@
 package moze_intel.projecte.expansion.integrations.jei;
 
-import com.mojang.blaze3d.vertex.PoseStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -8,21 +7,22 @@ import mezz.jei.api.constants.RecipeTypes;
 import mezz.jei.api.gui.ingredient.IRecipeSlotView;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.RecipeIngredientRole;
-import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
+import mezz.jei.api.recipe.types.IRecipeType;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.expansion.gui.container.ContainerArcaneTransmutationTablet;
 import moze_intel.projecte.expansion.net.packets.to_server.PacketArcaneTransmutationTabletRecipeTransfer;
 import moze_intel.projecte.expansion.registries.ExpansionMenus;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
-import net.neoforged.neoforge.network.PacketDistributor;
+import net.neoforged.neoforge.client.network.ClientPacketDistributor;
 import org.jetbrains.annotations.Nullable;
+import org.joml.Matrix3x2fStack;
 
 public class ArcaneCraftingTransferHandler implements IRecipeTransferHandler<ContainerArcaneTransmutationTablet, RecipeHolder<CraftingRecipe>> {
 	public static final int BLUE_SLOT_HIGHLIGHT_COLOR = 1073742079;
@@ -41,7 +41,7 @@ public class ArcaneCraftingTransferHandler implements IRecipeTransferHandler<Con
 	}
 
 	@Override
-	public RecipeType<RecipeHolder<CraftingRecipe>> getRecipeType() {
+	public IRecipeType<RecipeHolder<CraftingRecipe>> getRecipeType() {
 		return RecipeTypes.CRAFTING;
 	}
 
@@ -50,7 +50,8 @@ public class ArcaneCraftingTransferHandler implements IRecipeTransferHandler<Con
 		List<Integer> slots = new ArrayList<>();
 
 		for(int i = 1; i < ingredients.size(); ++i) {
-			ItemStack[] items = (ingredients.get(i)).getItemStacks().toArray(ItemStack[]::new);
+			//26.3: JEI 31 hands back a Stream of stacks rather than a List
+			List<ItemStack> items = ingredients.get(i).getItemStacks().toList();
 			boolean found = false;
 			if (ingredients.get(i).isEmpty()) {
 				found = true;
@@ -71,6 +72,7 @@ public class ArcaneCraftingTransferHandler implements IRecipeTransferHandler<Con
 		return slots;
 	}
 
+	@Override
 	public @Nullable IRecipeTransferError transferRecipe(ContainerArcaneTransmutationTablet container, RecipeHolder<CraftingRecipe> recipe, IRecipeSlotsView iRecipeSlotsView, Player player, boolean transferAll, boolean doTransfer) {
 		if (doTransfer) {
 			List<List<ItemStack>> itemStack = new ArrayList<>();
@@ -78,14 +80,16 @@ public class ArcaneCraftingTransferHandler implements IRecipeTransferHandler<Con
 			emptyStack.add(ItemStack.EMPTY);
 
 			for(int i = 1; i < iRecipeSlotsView.getSlotViews().size(); ++i) {
-				if (iRecipeSlotsView.getSlotViews().get(i).getItemStacks().toList().isEmpty()) {
+				List<ItemStack> stacks = iRecipeSlotsView.getSlotViews().get(i).getItemStacks().toList();
+				if (stacks.isEmpty()) {
 					itemStack.add(emptyStack);
 				} else {
-					itemStack.add(iRecipeSlotsView.getSlotViews().get(i).getItemStacks().toList());
+					itemStack.add(stacks);
 				}
 			}
 
-			PacketDistributor.sendToServer(new PacketArcaneTransmutationTabletRecipeTransfer(itemStack, transferAll));
+			//26.3: serverbound payloads go through ClientPacketDistributor
+			ClientPacketDistributor.sendToServer(new PacketArcaneTransmutationTabletRecipeTransfer(itemStack, transferAll));
 			return null;
 		} else {
 			List<Integer> missing = this.findMissingSlots(iRecipeSlotsView, container, player);
@@ -96,18 +100,22 @@ public class ArcaneCraftingTransferHandler implements IRecipeTransferHandler<Con
 	}
 
 	private record ErrorRenderer(IRecipeSlotsView iRecipeSlotsView, List<Integer> missing, int color) implements IRecipeTransferError {
-		public IRecipeTransferError.Type getType() {
+		@Override
+		public Type getType() {
 			return Type.COSMETIC;
 		}
 
+		@Override
 		public int getButtonHighlightColor() {
 			return 0;
 		}
 
-		public void showError(GuiGraphics guiGraphics, int mouseX, int mouseY, IRecipeSlotsView slots, int recipeX, int recipeY) {
-			PoseStack poseStack = guiGraphics.pose();
-			poseStack.pushPose();
-			poseStack.translate((float)recipeX, (float)recipeY, 0.0F);
+		@Override
+		public void showError(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, IRecipeSlotsView slots, int recipeX, int recipeY) {
+			//26.3: the GUI transform is a 2D Matrix3x2fStack, translate takes (x, y) only
+			Matrix3x2fStack poseStack = guiGraphics.pose();
+			poseStack.pushMatrix();
+			poseStack.translate(recipeX, recipeY);
 
 			for(int i = 0; i < this.iRecipeSlotsView.getSlotViews().size(); ++i) {
 				if (this.missing.contains(i)) {
@@ -115,7 +123,7 @@ public class ArcaneCraftingTransferHandler implements IRecipeTransferHandler<Con
 				}
 			}
 
-			poseStack.popPose();
+			poseStack.popMatrix();
 		}
 	}
 }

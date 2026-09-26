@@ -58,9 +58,9 @@ public enum Star {
 
 	private void register(StarType reg) {
 		switch (reg) {
-			case MAGNUM -> itemMagnum = ExpansionItems.ITEMS.register(String.format("magnum_star_%s", name), () -> new ItemStar(reg, this));
-			case COLOSSAL -> itemColossal = ExpansionItems.ITEMS.register(String.format("colossal_star_%s", name), () -> new ItemStar(reg, this));
-			case GARGANTUAN -> itemGargantuan = ExpansionItems.ITEMS.register(String.format("gargantuan_star_%s", name), () -> new ItemStar(reg, this));
+			case MAGNUM -> itemMagnum = ExpansionItems.ITEMS.registerSimple(String.format("magnum_star_%s", name), properties -> new ItemStar(properties, reg, this));
+			case COLOSSAL -> itemColossal = ExpansionItems.ITEMS.registerSimple(String.format("colossal_star_%s", name), properties -> new ItemStar(properties, reg, this));
+			case GARGANTUAN -> itemGargantuan = ExpansionItems.ITEMS.registerSimple(String.format("gargantuan_star_%s", name), properties -> new ItemStar(properties, reg, this));
 		}
 	}
 

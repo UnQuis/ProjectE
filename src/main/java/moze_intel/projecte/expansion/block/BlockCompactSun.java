@@ -6,6 +6,7 @@ import moze_intel.projecte.expansion.util.Matter;
 import moze_intel.projecte.expansion.util.SunExposureHelper;
 import moze_intel.projecte.expansion.util.Util;
 import moze_intel.projecte.gameObjs.IMatterType;
+import moze_intel.projecte.gameObjs.blocks.IBlockTooltip;
 import moze_intel.projecte.gameObjs.blocks.IMatterBlock;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
@@ -23,33 +24,30 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
-import java.util.List;
+import java.util.function.Consumer;
 
-public class BlockCompactSun extends Block implements IMatterBlock {
+public class BlockCompactSun extends Block implements IMatterBlock, IBlockTooltip {
 	public BlockCompactSun(BlockBehaviour.Properties properties) {
 		super(properties);
 	}
 
-	public static BlockBehaviour.Properties getProperties() {
-		return BlockBehaviour.Properties.of().strength(2_000_000, 6_000_000).requiresCorrectToolForDrops().lightLevel((state) -> 15);
+	public static BlockBehaviour.Properties getProperties(BlockBehaviour.Properties properties) {
+		return properties.strength(2_000_000, 6_000_000).requiresCorrectToolForDrops().lightLevel(state -> 15);
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	//26.3 removed Block#appendHoverText, the tooltip lines are served through IBlockTooltip and PEBlockItem
 	@Override
-	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> list, TooltipFlag tooltipFlag) {
-		super.appendHoverText(stack, context, list, tooltipFlag);
-		list.add(Lang.Blocks.COMPACT_SUN_TOOLTIP.translateColored(ChatFormatting.GRAY));
-		list.add(Lang.Blocks.COMPACT_SUN_TOOLTIP2.translateColored(ChatFormatting.GRAY, Util.getSunBonus()));
-		list.add(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
+	public void appendBlockTooltip(ItemStack stack, Item.TooltipContext context, Consumer<Component> tooltip, TooltipFlag tooltipFlag) {
+		tooltip.accept(Lang.Blocks.COMPACT_SUN_TOOLTIP.translateColored(ChatFormatting.GRAY));
+		tooltip.accept(Lang.Blocks.COMPACT_SUN_TOOLTIP2.translateColored(ChatFormatting.GRAY, Util.getSunBonus()));
+		tooltip.accept(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
 	}
 
 	@Override
 	public PushReaction getPistonPushReaction(BlockState state) {
-		return PushReaction.BLOCK;
+		return PushReaction.POPPED;
 	}
 
 	@Override

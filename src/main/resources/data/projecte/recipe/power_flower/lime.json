@@ -7,15 +7,9 @@
     "RRR"
   ],
   "key": {
-    "L": {
-      "item": "projecte:lime_emc_link"
-    },
-    "C": {
-      "item": "projecte:lime_compressed_collector"
-    },
-    "R": {
-      "item": "projecte:lime_relay"
-    }
+    "L": "projecte:lime_emc_link",
+    "C": "projecte:lime_compressed_collector",
+    "R": "projecte:lime_relay"
   },
   "result": {
     "id": "projecte:lime_power_flower"

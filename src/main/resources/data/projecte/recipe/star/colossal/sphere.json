@@ -2,18 +2,10 @@
   "type": "minecraft:crafting_shapeless",
   "group": "projecte:star",
   "ingredients": [
-    {
-      "item": "projecte:colossal_star_vier"
-    },
-    {
-      "item": "projecte:colossal_star_vier"
-    },
-    {
-      "item": "projecte:colossal_star_vier"
-    },
-    {
-      "item": "projecte:colossal_star_vier"
-    }
+    "projecte:colossal_star_vier",
+    "projecte:colossal_star_vier",
+    "projecte:colossal_star_vier",
+    "projecte:colossal_star_vier"
   ],
   "result": {
     "id": "projecte:colossal_star_sphere"

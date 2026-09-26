@@ -1,13 +1,11 @@
 package moze_intel.projecte.expansion.integrations.top;
 
-import java.util.function.Function;
-import mcjty.theoneprobe.api.*;
-import moze_intel.projecte.PECore;
+import java.util.function.Consumer;
 import moze_intel.projecte.expansion.integrations.Common;
 import moze_intel.projecte.expansion.integrations.IDataProvider;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -15,25 +13,24 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * 26.3 note: The One Probe has not been ported to 26.3, so this class can no longer implement
+ * {@code mcjty.theoneprobe.api.IProbeInfoProvider} (nor {@code Function<ITheOneProbe, Void>}).
+ * The tooltip building itself is unchanged and still lives in {@link Common}; only the The One Probe facing glue
+ * is gone, and it can be restored without touching this file's logic once the API exists again.
+ *
+ * @see TOPIntegration
+ */
 @SuppressWarnings("unused")
-public class ProbeInfoProvider implements IProbeInfoProvider, Function<ITheOneProbe, Void> {
-	@Override
-	public void addProbeInfo(ProbeMode mode, IProbeInfo probeInfo, Player player, Level level, BlockState blockState, IProbeHitData data) {
-		Common.registerCommonTooltips(probeInfo::mcText, new DataProvider(player, level, blockState, data));
+public class ProbeInfoProvider {
+	/**
+	 * Feeds the addon's block tooltips into a sink, which is what a Waila/TOP style provider does.
+	 */
+	public void addProbeInfo(Consumer<Component> sink, IDataProvider provider) {
+		Common.registerCommonTooltips(sink, provider);
 	}
 
-	@Override
-	public ResourceLocation getID() {
-		return PECore.rl("plugin");
-	}
-
-	@Override
-	public Void apply(ITheOneProbe iTheOneProbe) {
-		iTheOneProbe.registerProvider(this);
-		return null;
-	}
-
-	public record DataProvider(Player player, Level level, BlockState state, IProbeHitData data) implements IDataProvider {
+	public record DataProvider(Player player, Level level, BlockState state, HitData data) implements IDataProvider {
 		@Override
 		public BlockPos getBlockPos() {
 			return data.getPos();
@@ -68,5 +65,15 @@ public class ProbeInfoProvider implements IProbeInfoProvider, Function<ITheOnePr
 		public Direction getSide() {
 			return data.getSideHit();
 		}
+	}
+
+	/**
+	 * The bits of {@code mcjty.theoneprobe.api.IProbeHitData} this class actually used, kept so the record above
+	 * keeps its shape without the missing dependency.
+	 */
+	public interface HitData {
+		BlockPos getPos();
+
+		Direction getSideHit();
 	}
 }

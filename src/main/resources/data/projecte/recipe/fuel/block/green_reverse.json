@@ -2,9 +2,7 @@
   "type": "minecraft:crafting_shapeless",
   "group": "projecte:fuel/green",
   "ingredients": [
-    {
-      "item": "projecte:green_fuel_block"
-    }
+    "projecte:green_fuel_block"
   ],
   "result": {
     "id": "projecte:green_fuel",

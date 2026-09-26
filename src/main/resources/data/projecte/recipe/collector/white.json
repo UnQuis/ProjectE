@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shapeless",
   "group": "projecte:matter/white",
   "ingredients": [
-    {
-      "item": "projecte:orange_collector"
-    },
-    {
-      "item": "projecte:white_matter"
-    }
+    "projecte:orange_collector",
+    "projecte:white_matter"
   ],
   "result": {
     "id": "projecte:white_collector"

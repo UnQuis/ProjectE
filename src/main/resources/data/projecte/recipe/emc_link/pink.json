@@ -7,21 +7,11 @@
     "HML"
   ],
   "key": {
-    "L": {
-      "item": "projecte:low_covalence_dust"
-    },
-    "M": {
-      "item": "projecte:medium_covalence_dust"
-    },
-    "H": {
-      "item": "projecte:high_covalence_dust"
-    },
-    "T": {
-      "item": "projecte:pink_matter"
-    },
-    "C": {
-      "item": "projecte:magenta_emc_link"
-    }
+    "L": "projecte:low_covalence_dust",
+    "M": "projecte:medium_covalence_dust",
+    "H": "projecte:high_covalence_dust",
+    "T": "projecte:pink_matter",
+    "C": "projecte:magenta_emc_link"
   },
   "result": {
     "id": "projecte:pink_emc_link"

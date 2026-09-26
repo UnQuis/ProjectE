@@ -9,6 +9,7 @@ import com.mojang.datafixers.util.Either;
 import moze_intel.projecte.PEPermissions;
 import moze_intel.projecte.api.nss.NSSItem;
 import moze_intel.projecte.config.CustomEMCParser;
+import moze_intel.projecte.expansion.ExpansionReloadNotice;
 import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;

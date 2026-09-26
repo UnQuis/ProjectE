@@ -8,6 +8,7 @@ import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import moze_intel.projecte.utils.WorldHelper;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagAppender;
 import net.minecraft.resources.ResourceKey;
@@ -125,6 +126,39 @@ public class PEBlockTagsProvider extends BlockTagsProvider {
 				PETags.Blocks.MINEABLE_WITH_PE_HAMMER, BlockTags.MINEABLE_WITH_SHOVEL);
 
 		tag(BlockTags.WALL_POST_OVERRIDE).add(projecteBlock(PEBlocks.INTERDICTION_TORCH));
+		addExpansionTags();
+	}
+
+	private void addExpansionTags() {
+		//Tags of the content that used to live in the ProjectExpansion addon
+		tag(PETags.Blocks.EXPANSION_NEEDS_DARK_MATTER_TOOL).add(
+				projecteBlock("dark_collector"), projecteBlock("dark_power_flower"), projecteBlock("dark_relay"), projecteBlock("dark_emc_link"));
+				//Tags of the content that used to live in the ProjectExpansion addon
+		tag(PETags.Blocks.EXPANSION_NEEDS_RED_MATTER_TOOL).add(
+				projecteBlock("magenta_matter_block"), projecteBlock("pink_matter_block"), projecteBlock("purple_matter_block"),
+				projecteBlock("violet_matter_block"), projecteBlock("blue_matter_block"), projecteBlock("cyan_matter_block"),
+				projecteBlock("green_matter_block"), projecteBlock("lime_matter_block"), projecteBlock("yellow_matter_block"),
+				projecteBlock("orange_matter_block"), projecteBlock("white_matter_block"), projecteBlock("fading_matter_block"),
+				projecteBlock("compact_sun"), projecteBlock("red_collector"), projecteBlock("magenta_collector"), projecteBlock("pink_collector"),
+				projecteBlock("purple_collector"), projecteBlock("violet_collector"), projecteBlock("blue_collector"), projecteBlock("cyan_collector"),
+				projecteBlock("green_collector"), projecteBlock("lime_collector"), projecteBlock("yellow_collector"), projecteBlock("orange_collector"),
+				projecteBlock("white_collector"), projecteBlock("fading_collector"), projecteBlock("final_collector"),
+				projecteBlock("red_power_flower"), projecteBlock("magenta_power_flower"), projecteBlock("pink_power_flower"),
+				projecteBlock("purple_power_flower"), projecteBlock("violet_power_flower"), projecteBlock("blue_power_flower"),
+				projecteBlock("cyan_power_flower"), projecteBlock("green_power_flower"), projecteBlock("lime_power_flower"),
+				projecteBlock("yellow_power_flower"), projecteBlock("orange_power_flower"), projecteBlock("white_power_flower"),
+				projecteBlock("fading_power_flower"), projecteBlock("final_power_flower"), projecteBlock("red_relay"), projecteBlock("magenta_relay"),
+				projecteBlock("pink_relay"), projecteBlock("purple_relay"), projecteBlock("violet_relay"), projecteBlock("blue_relay"),
+				projecteBlock("cyan_relay"), projecteBlock("green_relay"), projecteBlock("lime_relay"), projecteBlock("yellow_relay"),
+				projecteBlock("orange_relay"), projecteBlock("white_relay"), projecteBlock("fading_relay"), projecteBlock("final_relay"),
+				projecteBlock("red_emc_link"), projecteBlock("magenta_emc_link"), projecteBlock("pink_emc_link"), projecteBlock("purple_emc_link"),
+				projecteBlock("violet_emc_link"), projecteBlock("blue_emc_link"), projecteBlock("cyan_emc_link"), projecteBlock("green_emc_link"),
+				projecteBlock("lime_emc_link"), projecteBlock("yellow_emc_link"), projecteBlock("orange_emc_link"), projecteBlock("white_emc_link"),
+				projecteBlock("fading_emc_link"), projecteBlock("final_emc_link"));
+	}
+
+	private static ResourceKey<Block> projecteBlock(String name) {
+		return ResourceKey.create(Registries.BLOCK, PECore.rl(name));
 	}
 
 	private void addImmuneBlocks(TagKey<Block> tag, TagKey<Block>... additional) {

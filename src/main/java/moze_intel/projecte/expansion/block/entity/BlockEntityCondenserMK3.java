@@ -74,7 +74,7 @@ public class BlockEntityCondenserMK3 extends BlockEntityBase implements IChestLi
 		}
 
 		@Override
-		protected boolean isOwnContainer(Player player) {
+		public boolean isOwnContainer(Player player) {
 			return player.containerMenu instanceof ContainerCondenserMK3Input input && input.blockEntityMatches(BlockEntityCondenserMK3.this) ||
 					player.containerMenu instanceof ContainerCondenserMK3Output output && output.blockEntityMatches(BlockEntityCondenserMK3.this);
 		}

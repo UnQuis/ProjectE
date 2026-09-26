@@ -1,13 +1,12 @@
 package moze_intel.projecte.expansion.block;
 
-import com.mojang.serialization.MapCodec;
 import moze_intel.projecte.expansion.block.entity.BlockEntityOwnable;
 import moze_intel.projecte.expansion.block.entity.BlockEntityPowerFlower;
 import moze_intel.projecte.expansion.config.Config;
 import moze_intel.projecte.expansion.registries.ExpansionBlockEntityTypes;
-import moze_intel.projecte.expansion.registries.ExpansionBlockTypes;
 import moze_intel.projecte.expansion.util.*;
 import moze_intel.projecte.gameObjs.IMatterType;
+import moze_intel.projecte.gameObjs.blocks.IBlockTooltip;
 import moze_intel.projecte.gameObjs.blocks.IMatterBlock;
 import moze_intel.projecte.utils.WorldHelper;
 import net.minecraft.ChatFormatting;
@@ -34,14 +33,12 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 
 import javax.annotation.Nullable;
 import java.math.BigInteger;
-import java.util.List;
+import java.util.function.Consumer;
 
-public class BlockPowerFlower extends Block implements IHasMatter, EntityBlock, IMatterBlock {
+public class BlockPowerFlower extends Block implements IHasMatter, EntityBlock, IMatterBlock, IBlockTooltip {
 	private static final VoxelShape SHAPE = Shapes.or(
 			box(0, 0, 0, 16, 1, 16),
 			box(3.5, 4, 6.5, 12.5, 13, 9.5),
@@ -58,8 +55,8 @@ public class BlockPowerFlower extends Block implements IHasMatter, EntityBlock, 
 		this.matter = matter;
 	}
 
-	public static BlockBehaviour.Properties getProperties(Matter matter) {
-		return Block.Properties.of().strength(getDestroyTime(matter), getExplosionResistance(matter)).lightLevel((state) -> Math.min(matter.ordinal(), 15));
+	public static BlockBehaviour.Properties getProperties(BlockBehaviour.Properties properties, Matter matter) {
+		return properties.strength(getDestroyTime(matter), getExplosionResistance(matter)).lightLevel((state) -> Math.min(matter.ordinal(), 15));
 	}
 
 	private static float getDestroyTime(Matter matter) {
@@ -100,16 +97,15 @@ public class BlockPowerFlower extends Block implements IHasMatter, EntityBlock, 
 		return SHAPE;
 	}
 
-	@OnlyIn(Dist.CLIENT)
+	//26.3 removed Block#appendHoverText, the tooltip lines are served through IBlockTooltip and PEBlockItem
 	@Override
-	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> list, TooltipFlag tooltipFlag) {
-		super.appendHoverText(stack, context, list, tooltipFlag);
-		list.add(Lang.Blocks.POWER_FLOWER_TOOLTIP.translateColored(ChatFormatting.GRAY, Component.literal(Integer.toString(Config.server.tickDelay.get())).setStyle(ColorStyle.GREEN), Component.literal(Config.server.tickDelay.get() == 1 ? "" : "s").setStyle(ColorStyle.GRAY)));
-		list.add(Lang.Blocks.POWER_FLOWER_EMC.translateColored(ChatFormatting.GRAY, EMCFormat.getComponent(getMatter().getPowerFlowerOutput()).setStyle(ColorStyle.GREEN)));
+	public void appendBlockTooltip(ItemStack stack, Item.TooltipContext context, Consumer<Component> tooltip, TooltipFlag tooltipFlag) {
+		tooltip.accept(Lang.Blocks.POWER_FLOWER_TOOLTIP.translateColored(ChatFormatting.GRAY, Component.literal(Integer.toString(Config.server.tickDelay.get())).setStyle(ColorStyle.GREEN), Component.literal(Config.server.tickDelay.get() == 1 ? "" : "s").setStyle(ColorStyle.GRAY)));
+		tooltip.accept(Lang.Blocks.POWER_FLOWER_EMC.translateColored(ChatFormatting.GRAY, EMCFormat.getComponent(getMatter().getPowerFlowerOutput()).setStyle(ColorStyle.GREEN)));
 		if(stack.getCount() > 1) {
-			list.add(Lang.Blocks.POWER_FLOWER_STACK_EMC.translateColored(ChatFormatting.GRAY, EMCFormat.getComponent(getMatter().getPowerFlowerOutput().multiply(BigInteger.valueOf(stack.getCount()))).setStyle(ColorStyle.GREEN)));
+			tooltip.accept(Lang.Blocks.POWER_FLOWER_STACK_EMC.translateColored(ChatFormatting.GRAY, EMCFormat.getComponent(getMatter().getPowerFlowerOutput().multiply(BigInteger.valueOf(stack.getCount()))).setStyle(ColorStyle.GREEN)));
 		}
-		list.add(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
+		tooltip.accept(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
 	}
 
 	@Override
@@ -137,7 +133,7 @@ public class BlockPowerFlower extends Block implements IHasMatter, EntityBlock, 
 
 	@Override
 	public PushReaction getPistonPushReaction(BlockState state) {
-		return PushReaction.BLOCK;
+		return PushReaction.POPPED;
 	}
 
 	@Override
@@ -145,8 +141,4 @@ public class BlockPowerFlower extends Block implements IHasMatter, EntityBlock, 
 		return matter.mapColor == null ? super.getMapColor(state, level, pos, defaultColor) : matter.mapColor.get();
 	}
 
-	@Override
-	protected MapCodec<? extends Block> codec() {
-		return ExpansionBlockTypes.POWER_FLOWER.get();
-	}
 }

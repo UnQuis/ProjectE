@@ -1,5 +1,6 @@
 package moze_intel.projecte.expansion.commands;
 
+import java.net.URI;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import moze_intel.projecte.expansion.util.Util;
@@ -21,7 +22,7 @@ public class CommandWiki {
 
 	@SuppressWarnings("SameReturnValue")
 	private static int handle(CommandContext<CommandSourceStack> ctx) {
-		ctx.getSource().sendSystemMessage(Component.literal(Util.WIKI).withStyle(Style.EMPTY.withColor(ChatFormatting.AQUA).withClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, Util.WIKI))));
+		ctx.getSource().sendSystemMessage(Component.literal(Util.WIKI).withStyle(Style.EMPTY.withColor(ChatFormatting.AQUA).withClickEvent(new ClickEvent.OpenUrl(URI.create(Util.WIKI)))));
 		return 1;
 	}
 }

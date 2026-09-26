@@ -16,7 +16,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.network.chat.Component;
 import net.neoforged.api.distmarker.Dist;
-import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
@@ -26,8 +25,9 @@ import net.neoforged.neoforge.client.gui.GuiLayer;
 import net.neoforged.neoforge.common.TranslatableEnum;
 import net.neoforged.neoforge.event.level.LevelEvent;
 
-@OnlyIn(Dist.CLIENT)
-@EventBusSubscriber(modid = PECore.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+//26.3: EventBusSubscriber no longer takes a bus, FML routes the client side (value = Dist.CLIENT) listeners
+//onto the game bus on its own
+@EventBusSubscriber(modid = PECore.MODID, value = Dist.CLIENT)
 public class EMCDisplay {
 	public static final Overlay INSTANCE = new Overlay();
 	public static final int PADDING_X = 2;
@@ -85,7 +85,7 @@ public class EMCDisplay {
 		reset();
 	}
 
-	@EventBusSubscriber(modid = PECore.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+	@EventBusSubscriber(modid = PECore.MODID, value = Dist.CLIENT)
 	public static class Overlay implements GuiLayer {
 		@SubscribeEvent
 		public static void onRegisterLayers(RegisterGuiLayersEvent event) {

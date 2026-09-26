@@ -86,7 +86,7 @@ public class CommandEMC {
 	}
 
 	private static Component formatEMC(BigInteger value) {
-		return Component.translatable(EMCFormat.wrap(value).force().ignoreShift().format()).setStyle(Style.EMPTY.withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(EMCFormat.formatForceLong(value))))).setStyle(ColorStyle.GRAY);
+		return Component.translatable(EMCFormat.wrap(value).force().ignoreShift().format()).setStyle(Style.EMPTY.withHoverEvent(new HoverEvent.ShowText(Component.literal(EMCFormat.formatForceLong(value))))).setStyle(ColorStyle.GRAY);
 	}
 
 	private static boolean compareUUID(CommandSourceStack source, ServerPlayer player) {

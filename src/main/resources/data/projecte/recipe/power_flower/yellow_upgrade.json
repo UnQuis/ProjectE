@@ -7,18 +7,10 @@
     "RRR"
   ],
   "key": {
-    "L": {
-      "item": "projecte:yellow_emc_link"
-    },
-    "C": {
-      "item": "projecte:yellow_compressed_collector"
-    },
-    "R": {
-      "item": "projecte:yellow_relay"
-    },
-    "P": {
-      "item": "projecte:lime_power_flower"
-    }
+    "L": "projecte:yellow_emc_link",
+    "C": "projecte:yellow_compressed_collector",
+    "R": "projecte:yellow_relay",
+    "P": "projecte:lime_power_flower"
   },
   "result": {
     "id": "projecte:yellow_power_flower"

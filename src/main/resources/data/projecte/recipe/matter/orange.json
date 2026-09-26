@@ -7,12 +7,8 @@
     "FMF"
   ],
   "key": {
-    "F": {
-      "item": "projecte:yellow_fuel"
-    },
-    "M": {
-      "item": "projecte:yellow_matter"
-    }
+    "F": "projecte:yellow_fuel",
+    "M": "projecte:yellow_matter"
   },
   "result": {
     "id": "projecte:orange_matter"

@@ -15,7 +15,7 @@ public record TransmutationContainerProvider(@Nullable InteractionHand hand) imp
 		if (hand == null) {
 			return new TransmutationContainer(windowId, playerInventory);
 		} else {
-			return new TransmutationContainer(windowId, playerInventory, hand, playerInventory.selected);
+			return new TransmutationContainer(windowId, playerInventory, hand, playerInventory.getSelectedSlot());
 		}
 	}
 

@@ -1,6 +1,7 @@
 package moze_intel.projecte.gameObjs.items;
 
 import java.util.List;
+import moze_intel.projecte.expansion.ExpansionSettings;
 import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;

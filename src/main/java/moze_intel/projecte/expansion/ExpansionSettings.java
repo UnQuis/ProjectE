@@ -21,7 +21,7 @@ public final class ExpansionSettings {
 	public static boolean abbreviateEmc() {
 		//Note: The abbreviated format relies on client only classes to know if shift is being held,
 		// so it can never be used on a dedicated server
-		return FMLEnvironment.dist.isClient() && Config.client.formatEMC.getOrDefault();
+		return FMLEnvironment.getDist().isClient() && Config.client.formatEMC.getOrDefault();
 	}
 
 	/**
@@ -53,7 +53,7 @@ public final class ExpansionSettings {
 	 * Only enabled outside of production, as those messages are pure spam while developing.
 	 */
 	public static boolean suppressTransmutationSyncLogs() {
-		return !FMLEnvironment.production;
+		return !FMLEnvironment.isProduction();
 	}
 
 	/**

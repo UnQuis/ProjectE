@@ -2,33 +2,15 @@
   "type": "minecraft:crafting_shapeless",
   "group": "projecte:fuel/magenta",
   "ingredients": [
-    {
-      "item": "projecte:magenta_fuel"
-    },
-    {
-      "item": "projecte:magenta_fuel"
-    },
-    {
-      "item": "projecte:magenta_fuel"
-    },
-    {
-      "item": "projecte:magenta_fuel"
-    },
-    {
-      "item": "projecte:magenta_fuel"
-    },
-    {
-      "item": "projecte:magenta_fuel"
-    },
-    {
-      "item": "projecte:magenta_fuel"
-    },
-    {
-      "item": "projecte:magenta_fuel"
-    },
-    {
-      "item": "projecte:magenta_fuel"
-    }
+    "projecte:magenta_fuel",
+    "projecte:magenta_fuel",
+    "projecte:magenta_fuel",
+    "projecte:magenta_fuel",
+    "projecte:magenta_fuel",
+    "projecte:magenta_fuel",
+    "projecte:magenta_fuel",
+    "projecte:magenta_fuel",
+    "projecte:magenta_fuel"
   ],
   "result": {
     "id": "projecte:magenta_fuel_block"

@@ -7,15 +7,9 @@
     "RRR"
   ],
   "key": {
-    "L": {
-      "item": "projecte:magenta_emc_link"
-    },
-    "C": {
-      "item": "projecte:magenta_compressed_collector"
-    },
-    "R": {
-      "item": "projecte:magenta_relay"
-    }
+    "L": "projecte:magenta_emc_link",
+    "C": "projecte:magenta_compressed_collector",
+    "R": "projecte:magenta_relay"
   },
   "result": {
     "id": "projecte:magenta_power_flower"

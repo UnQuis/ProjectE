@@ -2,21 +2,11 @@
   "type": "minecraft:crafting_shapeless",
   "group": "projecte:fuel/magenta",
   "ingredients": [
-    {
-      "item": "projecte:philosophers_stone"
-    },
-    {
-      "item": "projecte:aeternalis_fuel"
-    },
-    {
-      "item": "projecte:aeternalis_fuel"
-    },
-    {
-      "item": "projecte:aeternalis_fuel"
-    },
-    {
-      "item": "projecte:aeternalis_fuel"
-    }
+    "projecte:philosophers_stone",
+    "projecte:aeternalis_fuel",
+    "projecte:aeternalis_fuel",
+    "projecte:aeternalis_fuel",
+    "projecte:aeternalis_fuel"
   ],
   "result": {
     "id": "projecte:magenta_fuel"

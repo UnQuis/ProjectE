@@ -128,7 +128,7 @@ public class CommandBook {
 					Player player = book.getPlayer(target.itemStackOrException());
 					Component playerDisplay = player == null ? Component.literal(Objects.requireNonNull(target.itemStackOrException().get(ExpansionDataComponentTypes.OWNER)).name()).withStyle(ChatFormatting.DARK_AQUA) : player.getDisplayName().copy().withStyle(ChatFormatting.DARK_AQUA);
 					String commandString = String.format("/%s book player %s %s", CommandRegistry.COMMAND_BASE, playerDisplay.getString(), commandSource);
-					Component command = Component.literal(commandString).withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, commandString)).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.literal(commandString))).withColor(ChatFormatting.RED).withUnderlined(true));
+					Component command = Component.literal(commandString).withStyle(style -> style.withClickEvent(new ClickEvent.SuggestCommand(commandString)).withHoverEvent(new HoverEvent.ShowText(Component.literal(commandString))).withColor(ChatFormatting.RED).withUnderlined(true));
 					ctx.getSource().sendSystemMessage(Lang.Commands.BOOK_BOUND_TO_PLAYER.extendColored(commandSource, ChatFormatting.RED, playerDisplay, command));
 				}
 			}
@@ -283,7 +283,7 @@ public class CommandBook {
 		builder.deleteCharAt(builder.length() - 1);
 		builder.append("]");
 		String content = builder.toString();
-		sendSuccess(ctx.getSource(), Component.literal(content).withStyle((style) -> style.withClickEvent(new ClickEvent(ClickEvent.Action.COPY_TO_CLIPBOARD, content)).withHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, Lang.Commands.BOOK_CLICK_TO_COPY.translateColored(ChatFormatting.AQUA)))).withStyle(ChatFormatting.GRAY), false);
+		sendSuccess(ctx.getSource(), Component.literal(content).withStyle((style) -> style.withClickEvent(new ClickEvent.CopyToClipboard(content)).withHoverEvent(new HoverEvent.ShowText(Lang.Commands.BOOK_CLICK_TO_COPY.translateColored(ChatFormatting.AQUA)))).withStyle(ChatFormatting.GRAY), false);
 		return 1;
 	}
 

@@ -2,12 +2,8 @@
   "type": "minecraft:crafting_shapeless",
   "group": "projecte:matter/violet",
   "ingredients": [
-    {
-      "item": "projecte:purple_collector"
-    },
-    {
-      "item": "projecte:violet_matter"
-    }
+    "projecte:purple_collector",
+    "projecte:violet_matter"
   ],
   "result": {
     "id": "projecte:violet_collector"

@@ -10,7 +10,7 @@ import moze_intel.projecte.gameObjs.items.ItemPE;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
 import moze_intel.projecte.integration.IntegrationHelper;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
@@ -33,8 +33,8 @@ public class ItemStar extends ItemPE implements IItemEmcHolder, IBarHelper, IHas
 	public final Star tier;
 	public final Star.StarType type;
 
-	public ItemStar(Star.StarType type, Star tier) {
-		super(new Properties().stacksTo(1).rarity(
+	public ItemStar(Properties properties,Star.StarType type, Star tier) {
+		super(properties.stacksTo(1).rarity(
 				tier == Star.OMEGA ? Rarity.EPIC :
 						type == Star.StarType.COLOSSAL ? Rarity.UNCOMMON :
 								type == Star.StarType.GARGANTUAN ? Rarity.RARE : Rarity.COMMON
@@ -71,14 +71,15 @@ public class ItemStar extends ItemPE implements IItemEmcHolder, IBarHelper, IHas
 		return getColorForBar(stack);
 	}
 
+	//26.3 Item#use returns an InteractionResult instead of an InteractionResultHolder<ItemStack>
 	@Override
-	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+	public InteractionResult use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
-		if (!level.isClientSide() && !FMLEnvironment.production && player.isCreative()) {
+		if (!level.isClientSide() && !FMLEnvironment.isProduction() && player.isCreative()) {
 			stack.set(PEDataComponentTypes.STORED_EMC, getMaximumEmc(stack));
-			return InteractionResultHolder.success(stack);
+			return InteractionResult.SUCCESS;
 		}
-		return InteractionResultHolder.pass(stack);
+		return InteractionResult.PASS;
 	}
 
 	@Override
