@@ -226,7 +226,7 @@ public class BlockEntityEMCLink extends BlockEntityNBTFilterable implements IHas
 					return InteractionResult.FAIL;
 				}
 				provider.setEmc(playerEmc.subtract(BigInteger.valueOf(cost)));
-				remainingFluid -= 1000;
+				//Note: the fluid itself is only drained when the transaction commits, the handler does that
 				markDirty();
 				transaction.commit();
 			}

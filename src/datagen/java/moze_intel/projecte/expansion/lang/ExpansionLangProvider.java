@@ -1,5 +1,6 @@
 package moze_intel.projecte.expansion.lang;
 
+import moze_intel.projecte.expansion.registries.ExpansionSoundEvents;
 import moze_intel.projecte.client.lang.PELangProvider;
 import moze_intel.projecte.gameObjs.items.ExpansionItemDescriptions;
 import net.minecraft.data.PackOutput;
@@ -29,6 +30,29 @@ public class ExpansionLangProvider extends PELangProvider {
 		super.addTranslations();
 		addExpansion();
 		addItemDescriptions();
+		addSoundEvents();
+		addJadeConfig();
+	}
+
+	/**
+	 * Subtitles of the sound events the addon registers. They can not be taken from its own en_us.json because the
+	 * translation key of a sound event is built by the game, and its shape changed with 26.3
+	 * ({@code sound_event.<id>} became {@code subtitles.sound.<id>}).
+	 */
+	private void addSoundEvents() {
+		add(ExpansionSoundEvents.KNOWLEDGE_SHARING_BOOK_STORE, "Knowledge Stored");
+		add(ExpansionSoundEvents.KNOWLEDGE_SHARING_BOOK_USE, "Knowledge Gained");
+		add(ExpansionSoundEvents.KNOWLEDGE_SHARING_BOOK_USE_NONE, "No Knowledge Gained");
+		add(ExpansionSoundEvents.ALCHEMICAL_COLLECTION_COLLECT, "Collected with Alchemical Collection");
+	}
+
+	/**
+	 * Jade builds the config key of a data provider from its uid, and asserts that the key has a translation when the
+	 * game runs from a development environment. The addon used to live in its own namespace, so the key of its provider
+	 * has to be added under the ProjectE namespace now.
+	 */
+	private void addJadeConfig() {
+		add("config.jade.plugin_projecte.expansion_provider", "Project Expansion Provider");
 	}
 
 	private void addItemDescriptions() {
@@ -775,8 +799,6 @@ public class ExpansionLangProvider extends PELangProvider {
 				"Invalid block.");
 		add("command.projecte.set_owner.success",
 				"Successfully set the owner of the block to %s.");
-		add("config.jade.plugin_projectexpansion.provider",
-				"Project Expansion Provider");
 		add("configuration.projecte.edit_others_alchemical_books.disabled",
 				"Disabled");
 		add("configuration.projecte.edit_others_alchemical_books.enabled",

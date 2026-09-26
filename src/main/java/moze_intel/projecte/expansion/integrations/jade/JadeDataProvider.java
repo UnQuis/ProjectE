@@ -27,7 +27,7 @@ public class JadeDataProvider implements IBlockComponentProvider {
 
 	@Override
 	public Identifier getUid() {
-		return PECore.rl("provider");
+		return PECore.rl("expansion_provider");
 	}
 
 	public record DataProvider(BlockAccessor accessor) implements IDataProvider {
