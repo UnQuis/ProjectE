@@ -25,6 +25,7 @@ import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import moze_intel.projecte.gameObjs.registries.PEContainerTypes;
 import moze_intel.projecte.gameObjs.registries.PECreativeTabs;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
+import moze_intel.projecte.integration.adaptionwheel.AdaptationMappings;
 import moze_intel.projecte.gameObjs.registries.PEEntityTypes;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import moze_intel.projecte.gameObjs.registries.PENormalizedSimpleStacks;
@@ -324,6 +325,7 @@ public class PECore {
 		HolderLookup.Provider registryLookup = resources.getRegistryLookup();
 		event.addListener(rl("emc_data"), (ResourceManagerReloadListener) manager -> emcUpdateResourceManager = new EmcUpdateData(resources, registryLookup, manager));
 		event.addListener(rl("world_transmutation"), WorldTransmutationManager.INSTANCE);
+		event.addListener(rl("adaptation_mappings"), AdaptationMappings.INSTANCE);
 	}
 
 

@@ -26,6 +26,13 @@ license="MIT"
   side="BOTH"
 
 [[dependencies.projecte]]
+#Optional integration: the Adaption Wheel mod unlocks the alchemical adaptation mechanics when both are present
+modId="adaptionwheel"
+type="optional"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.projecte]]
 modId="mekanism"
 type="incompatible"
 reason="Requires an update to support changes to recipe mappers"

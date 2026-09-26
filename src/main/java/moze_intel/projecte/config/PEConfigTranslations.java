@@ -29,6 +29,21 @@ public enum PEConfigTranslations implements IConfigTranslation {
 	COMMON_CRAFTING_FULL_KLEIN("common.crafting.full_klein", "Require Full Klein Stars",
 			"Require full omega klein stars in the tome of knowledge and gem armor recipes. This is the same behavior that EE2 had."),
 
+	COMMON_ADAPTION("common.adaption", "Adaption Wheel Integration",
+			"Settings for the optional integration with the Adaption Wheel mod. Everything here only has an effect when that mod is installed.", true),
+	COMMON_ADAPTION_ENABLED("common.adaption.enabled", "Enable Integration",
+			"Enable the Adaption Wheel integration: EMC accelerates running analyses, learning items teaches adaptations, and adaptations grant EMC and an EMC gain bonus."),
+	COMMON_ADAPTION_EMC_STEP("common.adaption.emc_per_step", "EMC per Acceleration",
+			"EMC spent per acceleration of a running analysis. Set to 0 to disable spending EMC."),
+	COMMON_ADAPTION_MAX_STEPS("common.adaption.max_steps", "Max Accelerations per Second",
+			"How many analysis accelerations a player may buy per second, so the cost stays predictable."),
+	COMMON_ADAPTION_REWARD("common.adaption.reward", "EMC per Adaptation",
+			"EMC granted to the player once for every completed adaptation."),
+	COMMON_ADAPTION_INSIGHT("common.adaption.insight", "Insight per Adaptation",
+			"Percent that every adaptation permanently adds to all EMC the player gains."),
+	COMMON_ADAPTION_MAX_INSIGHT("common.adaption.max_insight", "Max Insight",
+			"Upper limit in percent for the EMC gain bonus coming from adaptations."),
+
 	//Server Config
 	SERVER_COOLDOWN("server.cooldown", "Cooldown Settings",
 			"Settings for configuring the Cooldown (in ticks) for various features in ProjectE. "

@@ -15,9 +15,11 @@ import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage.EmcAction;
 import moze_intel.projecte.api.capabilities.item.IItemEmcHolder;
 import moze_intel.projecte.api.event.PlayerAttemptLearnEvent;
+import moze_intel.projecte.api.event.PlayerLearnedItemEvent;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.gameObjs.PETags;
 import moze_intel.projecte.gameObjs.registries.PEItems;
+import moze_intel.projecte.utils.EmcGainBonus;
 import moze_intel.projecte.utils.ItemHelper;
 import moze_intel.projecte.utils.MathUtils;
 import moze_intel.projecte.utils.PlayerHelper;
@@ -95,6 +97,7 @@ public class TransmutationInventory extends CombinedResourceHandler<ItemResource
 			if (provider.addKnowledge(cleanedInfo)) {
 				//Only sync the knowledge changed if the provider successfully added it
 				provider.syncKnowledgeChange((ServerPlayer) player, cleanedInfo, true);
+				NeoForge.EVENT_BUS.post(new PlayerLearnedItemEvent(player, cleanedInfo));
 			}
 		}
 	}
@@ -439,6 +442,8 @@ public class TransmutationInventory extends CombinedResourceHandler<ItemResource
 			removeEmc(value.negate());
 			return;
 		}
+		//Apply the global gain bonus (set by optional integrations) to the gained EMC
+		value = EmcGainBonus.apply(value);
 		IntList inputLocksChanged = new IntArrayList();
 		//Start by trying to add it to the EMC items on the left
 		for (int slotIndex = 0, slots = inputLocks.size(); slotIndex < slots; slotIndex++) {
