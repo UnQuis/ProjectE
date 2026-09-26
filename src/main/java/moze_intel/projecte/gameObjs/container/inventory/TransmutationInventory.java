@@ -443,7 +443,7 @@ public class TransmutationInventory extends CombinedResourceHandler<ItemResource
 			return;
 		}
 		//Apply the global gain bonus (set by optional integrations) to the gained EMC
-		value = EmcGainBonus.apply(value);
+		value = EmcGainBonus.apply(value, player.getUUID());
 		IntList inputLocksChanged = new IntArrayList();
 		//Start by trying to add it to the EMC items on the left
 		for (int slotIndex = 0, slots = inputLocks.size(); slotIndex < slots; slotIndex++) {

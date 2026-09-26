@@ -37,6 +37,7 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 public class AdaptionWheelIntegration {
 
 	private static final Map<UUID, Integer> LAST_ADAPT_COUNT = new ConcurrentHashMap<>();
+	private static final java.util.Set<String> REGISTERED_CONCEPTS = ConcurrentHashMap.newKeySet();
 	private static final int SYNC_INTERVAL = 20;
 
 	/**
@@ -88,7 +89,7 @@ public class AdaptionWheelIntegration {
 	@SubscribeEvent
 	public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
 		LAST_ADAPT_COUNT.remove(event.getEntity().getUUID());
-		EmcGainBonus.setPercent(BigInteger.ZERO);
+		EmcGainBonus.setPercent(event.getEntity().getUUID(), BigInteger.ZERO);
 	}
 
 	/**
@@ -138,12 +139,12 @@ public class AdaptionWheelIntegration {
 		int rewardPer = ProjectEConfig.common.adaptionEmcReward.get();
 		int percentPer = ProjectEConfig.common.adaptionInsightPercent.get();
 		int maxPercent = ProjectEConfig.common.adaptionMaxInsightPercent.get();
-		EmcGainBonus.setPercent(BigInteger.valueOf(Math.min(maxPercent, current * Math.max(0, percentPer))));
+		EmcGainBonus.setPercent(player.getUUID(), BigInteger.valueOf(Math.min(maxPercent, current * Math.max(0, percentPer))));
 		if (previous != null && current > previous && rewardPer > 0) {
 			int gained = (current - previous) * rewardPer;
 			IKnowledgeProvider knowledge = player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
 			if (knowledge != null) {
-				BigInteger value = EmcGainBonus.apply(BigInteger.valueOf(gained));
+				BigInteger value = EmcGainBonus.apply(BigInteger.valueOf(gained), player.getUUID());
 				knowledge.setEmc(knowledge.getEmc().add(value));
 				knowledge.syncEmc(player);
 				player.sendSystemMessage(PELang.ADAPTION_REWARD.translateColored(ChatFormatting.AQUA, moze_intel.projecte.utils.EMCHelper.formatEmc(value)));
@@ -156,8 +157,10 @@ public class AdaptionWheelIntegration {
 	 * ignored, that mod falls back to prefix based domains for unknown concepts anyway.
 	 */
 	private static void registerMetadata(String concept) {
-		Domain domain = Domain.of(concept);
-		AdaptionWheelCompat.registerDefinition(concept, domain.name(), domain.leveled, 8);
+		if (REGISTERED_CONCEPTS.add(concept)) {
+			Domain domain = Domain.of(concept);
+			AdaptionWheelCompat.registerDefinition(concept, domain.name(), domain.leveled, 8);
+		}
 	}
 
 	private enum Domain {
