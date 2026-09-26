@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/purple",
+  "pattern": [
+    "CCC",
+    "CCC",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "projecte:purple_collector"
+    }
+  },
+  "result": {
+    "id": "projecte:purple_compressed_collector"
+  }
+}

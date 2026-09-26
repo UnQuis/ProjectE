@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/magenta",
+  "pattern": [
+    "CCC",
+    "CCC",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "projecte:magenta_collector"
+    }
+  },
+  "result": {
+    "id": "projecte:magenta_compressed_collector"
+  }
+}

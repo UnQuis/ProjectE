@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/green",
+  "pattern": [
+    "CCC",
+    "CCC",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "projecte:green_collector"
+    }
+  },
+  "result": {
+    "id": "projecte:green_compressed_collector"
+  }
+}

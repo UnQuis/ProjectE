@@ -91,6 +91,9 @@ public class PEClient {
 		modEventBus.addListener(this::addLayers);
 		modEventBus.addListener(this::registerClientExtensions);
 		modEventBus.addListener(this::registerClientReloadListeners);
+		//Client side of the former ProjectExpansion addon: screens, chest renderer, keybinds and the probe IMC
+		moze_intel.projecte.expansion.client.ExpansionClient.register(modEventBus);
+		moze_intel.projecte.expansion.client.ExpansionClientHooks.install();
 
 		NeoForge.EVENT_BUS.addListener(this::onEntityJoinWorld);
 		NeoForge.EVENT_BUS.addListener(this::registerClientCommands);

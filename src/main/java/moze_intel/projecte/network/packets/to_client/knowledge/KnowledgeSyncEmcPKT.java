@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
+import moze_intel.projecte.expansion.ExpansionTransmutationSync;
 import moze_intel.projecte.gameObjs.container.TransmutationContainer;
 import moze_intel.projecte.network.PEStreamCodecs;
 import moze_intel.projecte.network.packets.IPEPacket;
@@ -35,6 +36,9 @@ public record KnowledgeSyncEmcPKT(BigInteger emc) implements IPEPacket {
 			knowledge.setEmc(emc);
 			if (player.containerMenu instanceof TransmutationContainer container) {
 				container.transmutationInventory.updateClientTargets(true);
+			} else {
+				//Let any transmutation gui that is not one of ours know that its targets may have changed
+				ExpansionTransmutationSync.onKnowledgeEmcSynced(player);
 			}
 		}
 	}

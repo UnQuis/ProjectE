@@ -28,6 +28,7 @@ import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.capabilities.Capabilities.ItemHandler;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
 /**
@@ -36,7 +37,11 @@ import org.jetbrains.annotations.Range;
 public final class EMCHelper {
 
 	//Only ever use a single decimal point for our formatter, because the majority of the time we are a whole number except for when we are abbreviating
-	private static final NumberFormat EMC_FORMATTER = Util.make(NumberFormat.getInstance(), formatter -> formatter.setMaximumFractionDigits(1));
+	private static final NumberFormat DEFAULT_EMC_FORMATTER = Util.make(NumberFormat.getInstance(), formatter -> formatter.setMaximumFractionDigits(1));
+
+	//Note: This can be swapped out by an addon that wants to display EMC values differently,
+	// but the default should be used otherwise, as it is what our number formatting expects
+	private static NumberFormat emcFormatter = DEFAULT_EMC_FORMATTER;
 
 	public static <K> Object2IntMap<K> intMapOf(final K key, int value) {
 		return Object2IntMaps.singleton(key, value);
@@ -139,15 +144,26 @@ public final class EMCHelper {
 	}
 
 	public static String formatEmc(Number emc) {
-		return EMC_FORMATTER.format(emc);
+		return emcFormatter.format(emc);
 	}
 
 	public static String formatEmc(double emc) {
-		return EMC_FORMATTER.format(emc);
+		return emcFormatter.format(emc);
 	}
 
 	public static String formatEmc(long emc) {
-		return EMC_FORMATTER.format(emc);
+		return emcFormatter.format(emc);
+	}
+
+	/**
+	 * Replaces the formatter used to display EMC values.
+	 *
+	 * @param formatter The formatter to use, or null to restore our default formatter
+	 * @apiNote The given formatter is expected to format numbers the same way our default one does,
+	 * unless the addon using it intends to change how EMC values are displayed.
+	 */
+	public static void setEmcFormatter(@Nullable NumberFormat formatter) {
+		emcFormatter = formatter == null ? DEFAULT_EMC_FORMATTER : formatter;
 	}
 
 	@Range(from = 0, to = Long.MAX_VALUE)

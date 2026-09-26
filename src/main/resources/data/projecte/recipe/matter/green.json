@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/green",
+  "pattern": [
+    "FMF",
+    "FMF",
+    "FMF"
+  ],
+  "key": {
+    "F": {
+      "item": "projecte:cyan_fuel"
+    },
+    "M": {
+      "item": "projecte:cyan_matter"
+    }
+  },
+  "result": {
+    "id": "projecte:green_matter"
+  }
+}

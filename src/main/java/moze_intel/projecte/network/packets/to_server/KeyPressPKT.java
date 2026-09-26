@@ -9,6 +9,7 @@ import moze_intel.projecte.api.capabilities.item.IModeChanger;
 import moze_intel.projecte.api.capabilities.item.IProjectileShooter;
 import moze_intel.projecte.api.item.ITransmutationTablet;
 import moze_intel.projecte.config.ProjectEConfig;
+import moze_intel.projecte.expansion.ExpansionAlchemicalCollection;
 import moze_intel.projecte.gameObjs.container.TransmutationContainer;
 import moze_intel.projecte.gameObjs.items.armor.GemArmorBase;
 import moze_intel.projecte.gameObjs.items.armor.GemChest;
@@ -127,6 +128,8 @@ public record KeyPressPKT(PEKeybind key) implements IPEPacket {
 				}
 			}
 		}
+		//Let addons that use our extra function keybind do something with it, for example toggling an enchantment based mode
+		ExpansionAlchemicalCollection.handleExtraFunctionKey(player, key);
 	}
 
 	private static <CAPABILITY> boolean tryPerformCapability(Player player, ItemStack stack, InteractionHand hand, ItemCapability<CAPABILITY, Void> capability,

@@ -25,6 +25,7 @@ import moze_intel.projecte.common.tag.PEEntityTypeTagsProvider;
 import moze_intel.projecte.common.tag.PEItemTagsProvider;
 import moze_intel.projecte.common.tag.PEPotionsTagsProvider;
 import moze_intel.projecte.emc.EMCMappingHandler;
+import moze_intel.projecte.expansion.lang.ExpansionLangProvider;
 import moze_intel.projecte.integration.IntegrationHelper;
 import moze_intel.projecte.integration.recipe_viewer.alias.ProjectEAliasMapping;
 import moze_intel.projecte.utils.text.PELang;
@@ -58,7 +59,10 @@ public class ProjectEDataGenerator {
 
 		gen.addProvider(true, new PEPackMetadataGenerator(output, PELang.PACK_DESCRIPTION));
 		//Client side data generators
-		gen.addProvider(event.includeClient(), new PELangProvider(output));
+		//ExpansionLangProvider extends PELangProvider, so it emits the core ProjectE keys and the
+		//merged ProjectExpansion keys into the same en_us.json. Only one LanguageProvider may write
+		//a given locale file, hence the substitution instead of an additional addProvider call.
+		gen.addProvider(event.includeClient(), new ExpansionLangProvider(output));
 		gen.addProvider(event.includeClient(), new PESoundProvider(output, existingFileHelper));
 		gen.addProvider(event.includeClient(), new PEBlockStateProvider(output, existingFileHelper));
 		gen.addProvider(event.includeClient(), new PEItemModelProvider(output, existingFileHelper));

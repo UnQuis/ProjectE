@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:matter/cyan",
+  "ingredients": [
+    {
+      "item": "projecte:blue_collector"
+    },
+    {
+      "item": "projecte:cyan_matter"
+    }
+  ],
+  "result": {
+    "id": "projecte:cyan_collector"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:fuel/white",
+  "ingredients": [
+    {
+      "item": "projecte:white_fuel"
+    },
+    {
+      "item": "projecte:white_fuel"
+    },
+    {
+      "item": "projecte:white_fuel"
+    },
+    {
+      "item": "projecte:white_fuel"
+    },
+    {
+      "item": "projecte:white_fuel"
+    },
+    {
+      "item": "projecte:white_fuel"
+    },
+    {
+      "item": "projecte:white_fuel"
+    },
+    {
+      "item": "projecte:white_fuel"
+    },
+    {
+      "item": "projecte:white_fuel"
+    }
+  ],
+  "result": {
+    "id": "projecte:white_fuel_block"
+  }
+}

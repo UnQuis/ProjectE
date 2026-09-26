@@ -1,0 +1,20 @@
+{
+  "values": [
+    "projecte:basic_compressed_collector",
+    "projecte:dark_compressed_collector",
+    "projecte:red_compressed_collector",
+    "projecte:magenta_compressed_collector",
+    "projecte:pink_compressed_collector",
+    "projecte:purple_compressed_collector",
+    "projecte:violet_compressed_collector",
+    "projecte:blue_compressed_collector",
+    "projecte:cyan_compressed_collector",
+    "projecte:green_compressed_collector",
+    "projecte:lime_compressed_collector",
+    "projecte:yellow_compressed_collector",
+    "projecte:orange_compressed_collector",
+    "projecte:white_compressed_collector",
+    "projecte:fading_compressed_collector",
+    "projecte:final_compressed_collector"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/cyan",
+  "pattern": [
+    "CCC",
+    "CCC",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "projecte:cyan_collector"
+    }
+  },
+  "result": {
+    "id": "projecte:cyan_compressed_collector"
+  }
+}

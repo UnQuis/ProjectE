@@ -1,0 +1,32 @@
+{
+  "parent": "projecte:lime_fuel",
+  "criteria": {
+    "yellow_fuel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projecte:yellow_fuel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projecte.yellow_fuel.description"
+    },
+    "icon": {
+      "id": "projecte:yellow_fuel"
+    },
+    "title": {
+      "translate": "advancements.projecte.yellow_fuel"
+    }
+  },
+  "requirements": [
+    [
+      "yellow_fuel"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/green",
+  "pattern": [
+    "LMH",
+    "TCT",
+    "HML"
+  ],
+  "key": {
+    "L": {
+      "item": "projecte:low_covalence_dust"
+    },
+    "M": {
+      "item": "projecte:medium_covalence_dust"
+    },
+    "H": {
+      "item": "projecte:high_covalence_dust"
+    },
+    "T": {
+      "item": "projecte:green_matter"
+    },
+    "C": {
+      "item": "projecte:cyan_emc_link"
+    }
+  },
+  "result": {
+    "id": "projecte:green_emc_link"
+  }
+}

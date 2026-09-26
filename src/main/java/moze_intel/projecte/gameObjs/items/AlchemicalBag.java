@@ -3,6 +3,7 @@ package moze_intel.projecte.gameObjs.items;
 import java.util.Objects;
 import moze_intel.projecte.api.capabilities.IAlchBagProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
+import moze_intel.projecte.expansion.ExpansionItemUse;
 import moze_intel.projecte.gameObjs.container.AlchBagContainer;
 import moze_intel.projecte.gameObjs.registries.PEDataComponentTypes;
 import moze_intel.projecte.gameObjs.registries.PEItems;
@@ -34,6 +35,10 @@ public class AlchemicalBag extends ItemPE {
 	@Override
 	public InteractionResultHolder<ItemStack> use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
 		if (!level.isClientSide) {
+			//Allow addons that add colored variants of our chests to be recolored by using a bag on them
+			if (ExpansionItemUse.trySetAdvancedChestColor(level, player, hand)) {
+				return InteractionResultHolder.success(player.getItemInHand(hand));
+			}
 			player.openMenu(new ContainerProvider(player.getItemInHand(hand), hand), buf -> {
 				buf.writeEnum(hand);
 				buf.writeByte(player.getInventory().selected);

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/violet",
+  "pattern": [
+    "CCC",
+    "CCC",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "projecte:violet_collector"
+    }
+  },
+  "result": {
+    "id": "projecte:violet_compressed_collector"
+  }
+}

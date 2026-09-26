@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/$TIER",
+  "pattern": [
+    "FFF",
+    "MMM",
+    "FFF"
+  ],
+  "key": {
+    "F": {
+      "item": "projecte:pink_fuel"
+    },
+    "M": {
+      "item": "projecte:pink_matter"
+    }
+  },
+  "result": {
+    "id": "projecte:purple_matter"
+  }
+}

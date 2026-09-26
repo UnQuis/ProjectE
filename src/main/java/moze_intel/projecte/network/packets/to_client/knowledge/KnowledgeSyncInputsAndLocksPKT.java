@@ -6,6 +6,8 @@ import moze_intel.projecte.PECore;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider.TargetUpdateType;
 import moze_intel.projecte.api.capabilities.PECapabilities;
+import moze_intel.projecte.expansion.ExpansionSettings;
+import moze_intel.projecte.expansion.ExpansionTransmutationSync;
 import moze_intel.projecte.gameObjs.container.TransmutationContainer;
 import moze_intel.projecte.gameObjs.container.inventory.TransmutationInventory;
 import moze_intel.projecte.network.packets.IPEPacket;
@@ -39,18 +41,25 @@ public record KnowledgeSyncInputsAndLocksPKT(Int2ObjectMap<ItemStack> stacksToSy
 		IKnowledgeProvider knowledge = player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
 		if (knowledge != null) {
 			knowledge.receiveInputsAndLocks(stacksToSync);
-			if (updateTargets != TargetUpdateType.NONE && player.containerMenu instanceof TransmutationContainer container) {
+			if (updateTargets != TargetUpdateType.NONE) {
 				//Update targets in case total available EMC is now different
-				TransmutationInventory transmutationInventory = container.transmutationInventory;
-				if (updateTargets == TargetUpdateType.ALL) {
-					//TODO: Re-evaluate when the update type is all, and see if we can optimize this to not have to process?
-					// Also figure out the need for the difference between this and the check for updates
-					transmutationInventory.updateClientTargets(false);
-				} else {//If needed
-					transmutationInventory.checkForUpdates();
+				if (player.containerMenu instanceof TransmutationContainer container) {
+					TransmutationInventory transmutationInventory = container.transmutationInventory;
+					if (updateTargets == TargetUpdateType.ALL) {
+						//TODO: Re-evaluate when the update type is all, and see if we can optimize this to not have to process?
+						// Also figure out the need for the difference between this and the check for updates
+						transmutationInventory.updateClientTargets(false);
+					} else {//If needed
+						transmutationInventory.checkForUpdates();
+					}
+				} else {
+					//Let any transmutation gui that is not one of ours know that its targets may have changed
+					ExpansionTransmutationSync.onInputsAndLocksSynced(player, updateTargets);
 				}
 			}
 		}
-		PECore.debugLog("** RECEIVED TRANSMUTATION INPUT AND LOCK DATA CLIENTSIDE **");
+		if (!ExpansionSettings.suppressTransmutationSyncLogs()) {
+			PECore.debugLog("** RECEIVED TRANSMUTATION INPUT AND LOCK DATA CLIENTSIDE **");
+		}
 	}
 }

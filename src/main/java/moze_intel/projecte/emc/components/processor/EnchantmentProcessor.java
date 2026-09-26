@@ -5,6 +5,7 @@ import java.util.function.LongSupplier;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.components.DataComponentProcessor;
 import moze_intel.projecte.config.PEConfigTranslations;
+import moze_intel.projecte.expansion.ExpansionSettings;
 import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponentType;
 import net.minecraft.core.component.DataComponents;
@@ -79,6 +80,11 @@ public class EnchantmentProcessor extends PersistentComponentProcessor<ItemEncha
 
 	@Override
 	protected boolean shouldPersist(@NotNull ItemInfo info, @NotNull ItemEnchantments component) {
+		if (ExpansionSettings.persistEnchantedBooksOnly() && !info.getItem().is(ENCHANTED_BOOK)) {
+			//Note: Only enchanted books are able to keep their enchantments when this is enabled,
+			// as the enchantments of any other item would be lost the moment the item is remade
+			return false;
+		}
 		return !component.isEmpty();
 	}
 }

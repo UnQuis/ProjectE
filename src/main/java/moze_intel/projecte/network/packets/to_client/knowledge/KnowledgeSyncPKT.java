@@ -1,6 +1,8 @@
 package moze_intel.projecte.network.packets.to_client.knowledge;
 
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.expansion.ExpansionSettings;
+import moze_intel.projecte.expansion.ExpansionTransmutationSync;
 import moze_intel.projecte.gameObjs.container.TransmutationContainer;
 import moze_intel.projecte.gameObjs.registries.PEAttachmentTypes;
 import moze_intel.projecte.impl.capability.KnowledgeImpl.KnowledgeAttachment;
@@ -36,8 +38,15 @@ public record KnowledgeSyncPKT(KnowledgeAttachment data) implements IPEPacket {
 			player.setData(PEAttachmentTypes.KNOWLEDGE, data);
 			if (player.containerMenu instanceof TransmutationContainer container) {
 				container.transmutationInventory.updateClientTargets(false);
+			} else {
+				//Let any transmutation gui that is not one of ours know that its targets may have changed
+				//Note: pass the context's player, not the LocalPlayer above: handing a LocalPlayer to a method that takes a
+				//Player makes the verifier resolve the client only class, which a dedicated server cannot load
+				ExpansionTransmutationSync.onKnowledgeSynced(context.player());
 			}
 		}
-		PECore.debugLog("** RECEIVED TRANSMUTATION DATA CLIENTSIDE **");
+		if (!ExpansionSettings.suppressTransmutationSyncLogs()) {
+			PECore.debugLog("** RECEIVED TRANSMUTATION DATA CLIENTSIDE **");
+		}
 	}
 }

@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/orange",
+  "pattern": [
+    "FMF",
+    "FMF",
+    "FMF"
+  ],
+  "key": {
+    "F": {
+      "item": "projecte:yellow_fuel"
+    },
+    "M": {
+      "item": "projecte:yellow_matter"
+    }
+  },
+  "result": {
+    "id": "projecte:orange_matter"
+  }
+}
