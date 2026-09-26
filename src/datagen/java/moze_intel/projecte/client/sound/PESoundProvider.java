@@ -28,6 +28,11 @@ public class PESoundProvider extends SoundDefinitionsProvider {
 		addSoundEventWithSubtitle(PESoundEvents.CHARGE, PECore.rl("item/pecharge"));
 		addSoundEventWithSubtitle(PESoundEvents.UNCHARGE, PECore.rl("item/peuncharge"));
 		addSoundEventWithSubtitle(PESoundEvents.TRANSMUTE, PECore.rl("item/petransmute"));
+		//Sounds of the former ProjectExpansion addon, which reuse vanilla sounds
+		addSoundEventWithSubtitle(moze_intel.projecte.expansion.registries.ExpansionSoundEvents.KNOWLEDGE_SHARING_BOOK_STORE, ResourceLocation.withDefaultNamespace("random/orb"), "minecraft");
+		addSoundEventWithSubtitle(moze_intel.projecte.expansion.registries.ExpansionSoundEvents.KNOWLEDGE_SHARING_BOOK_USE, ResourceLocation.withDefaultNamespace("random/break"), "minecraft");
+		addSoundEventWithSubtitle(moze_intel.projecte.expansion.registries.ExpansionSoundEvents.KNOWLEDGE_SHARING_BOOK_USE_NONE, ResourceLocation.withDefaultNamespace("random/fizz"), "minecraft");
+		addSoundEventWithSubtitle(moze_intel.projecte.expansion.registries.ExpansionSoundEvents.ALCHEMICAL_COLLECTION_COLLECT, ResourceLocation.withDefaultNamespace("mob/ghast/fireball4"), "minecraft");
 		//TODO: Evaluate the remaining sounds that we don't actually use anywhere
 	}
 }

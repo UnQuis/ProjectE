@@ -87,6 +87,14 @@ public class PhilosophersStone extends ItemMode<PhilosophersStoneMode> implement
 		BlockPos pos = ctx.getClickedPos();
 		Direction sideHit = ctx.getClickedFace();
 		boolean isSneaking = ctx.isSecondaryUseActive();
+		if (!level.isClientSide && player != null) {
+			//Allow addons that add blocks with extra interactions to handle being used with the stone first
+			//Note: We use the same block we would transmute, so that sneaking on a sign or a fluid still targets the right block
+			BlockHitResult interactionHit = getHitBlock(level, player, isSneaking);
+			if (ExpansionItemUse.tryToggleNbtFilter(level, player, interactionHit.getBlockPos().equals(pos) ? pos : interactionHit.getBlockPos())) {
+				return InteractionResult.SUCCESS;
+			}
+		}
 		if (isSneaking && player != null) {
 			//If the secondary use is active, see if we would hit a fluid before we get to the target
 			//Note: If player is null, secondary use should be false. But in case an implementation overrides it, we need to check the player isn't null

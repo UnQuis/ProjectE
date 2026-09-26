@@ -35,6 +35,10 @@ public class AlchemicalBag extends ItemPE {
 	@Override
 	public InteractionResult use(@NotNull Level level, @NotNull Player player, @NotNull InteractionHand hand) {
 		if (!level.isClientSide()) {
+			//Allow addons that add colored variants of our chests to be recolored by using a bag on them
+			if (ExpansionItemUse.trySetAdvancedChestColor(level, player, hand)) {
+				return InteractionResult.SUCCESS;
+			}
 			player.openMenu(new ContainerProvider(player.getItemInHand(hand), hand), buf -> {
 				buf.writeEnum(hand);
 				buf.writeByte(player.getInventory().getSelectedSlot());

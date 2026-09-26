@@ -49,7 +49,7 @@ public class SetEmcCMD {
 	private static int setEmc(CommandContext<CommandSourceStack> ctx, NSSItem toSet, long emc) {
 		CustomEMCParser.addToFile(toSet, emc);
 		ctx.getSource().sendSuccess(() -> PELang.COMMAND_SET_SUCCESS.translate(toSet, emc), true);
-		ctx.getSource().sendSuccess(PELang.RELOAD_NOTICE::translate, true);
+		ctx.getSource().sendSuccess(ExpansionReloadNotice.get(), true);
 		return Command.SINGLE_SUCCESS;
 	}
 }

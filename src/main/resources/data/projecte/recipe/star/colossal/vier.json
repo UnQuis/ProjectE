@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:star",
+  "ingredients": [
+    {
+      "item": "projecte:colossal_star_drei"
+    },
+    {
+      "item": "projecte:colossal_star_drei"
+    },
+    {
+      "item": "projecte:colossal_star_drei"
+    },
+    {
+      "item": "projecte:colossal_star_drei"
+    }
+  ],
+  "result": {
+    "id": "projecte:colossal_star_vier"
+  }
+}

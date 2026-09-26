@@ -1,0 +1,146 @@
+package moze_intel.projecte.expansion.block.entity;
+
+import moze_intel.projecte.expansion.util.Util;
+import moze_intel.projecte.utils.ItemHelper;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.HolderLookup;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.neoforged.neoforge.transfer.ResourceHandlerUtil;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.item.ItemStacksResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+
+public class BlockEntityBase extends BlockEntity {
+	private boolean updateComparators;
+	public BlockEntityBase(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
+		super(type, pos, blockState);
+	}
+
+	/***************
+	 * Comparators *
+	 ***************/
+
+	protected void updateComparators(Level level, BlockPos pos) {
+		//Only update the comparator state if we need to update comparators
+		//Note: We call this at the end of child implementations to try and update any changes immediately instead
+		// of them having to be delayed a tick
+		if (updateComparators) {
+			BlockState state = getBlockState();
+			if (!state.isAir()) {
+				level.updateNeighbourForOutputSignal(pos, state.getBlock());
+			}
+			updateComparators = false;
+		}
+	}
+
+	@Override
+	public final void setChanged() {
+		if (level != null) {
+			markDirty(level, worldPosition, true);
+		}
+	}
+
+	/*********
+	 * Dirty *
+	 *********/
+
+	public void markDirty() {
+		if (level != null) {
+			markDirty(level, worldPosition);
+		}
+	}
+
+	public void markDirty(Level level, BlockPos pos) {
+		markDirty(level, pos, false);
+	}
+
+	public void markDirty(Level level, BlockPos pos, boolean recheckComparators) {
+		Util.markDirty(level, pos);
+		if (recheckComparators && !level.isClientSide()) {
+			updateComparators = true;
+		}
+	}
+
+	/********
+	 * Data *
+	 ********/
+
+	@Override
+	public final CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+		return saveWithoutMetadata(registries);
+	}
+
+	@Override
+	public final ClientboundBlockEntityDataPacket getUpdatePacket() {
+		return ClientboundBlockEntityDataPacket.create(this);
+	}
+
+	//26.3 replaced IItemHandlerModifiable/ItemStackHandler with ResourceHandler<ItemResource>
+	protected class StackHandler extends ItemStacksResourceHandler {
+
+		protected StackHandler(int size) {
+			super(size);
+		}
+
+		public ItemStack getStackInSlot(int slot) {
+			return ItemUtil.getStack(this, slot);
+		}
+
+		public void setStackInSlot(int slot, ItemStack stack) {
+			set(slot, ItemResource.of(stack), stack.getCount());
+		}
+
+		@Override
+		protected void onContentsChanged(int slot, ItemStack previousContents) {
+			setChanged();
+		}
+	}
+
+	@SuppressWarnings("unused")
+	protected class CompactableStackHandler extends StackHandler {
+
+		//Start as needing to check for compacting when loaded
+		private boolean needsCompacting = true;
+		private boolean empty;
+
+		protected CompactableStackHandler(int size) {
+			super(size);
+		}
+
+		@Override
+		protected void onContentsChanged(int slot, ItemStack previousContents) {
+			super.onContentsChanged(slot, previousContents);
+			needsCompacting = true;
+		}
+
+		public void compact() {
+			if (needsCompacting) {
+				if (level != null && !level.isClientSide()) {
+					empty = ItemHelper.compactInventory(this);
+				}
+				needsCompacting = false;
+			}
+		}
+
+		@Override
+		public void deserialize(ValueInput input) {
+			super.deserialize(input);
+			empty = ResourceHandlerUtil.isEmpty(this);
+			needsCompacting = true;
+		}
+
+		/**
+		 * @apiNote Only use this on the server
+		 */
+		public boolean isEmpty() {
+			return empty;
+		}
+	}
+}

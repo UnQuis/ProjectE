@@ -1,0 +1,32 @@
+{
+  "parent": "projecte:magnum_star_omega",
+  "criteria": {
+    "colossal_star_omega": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projecte:colossal_star_omega"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projecte.colossal_star_omega.description"
+    },
+    "icon": {
+      "id": "projecte:colossal_star_omega"
+    },
+    "title": {
+      "translate": "advancements.projecte.colossal_star_omega"
+    }
+  },
+  "requirements": [
+    [
+      "colossal_star_omega"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

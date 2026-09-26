@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:fuel/green",
+  "ingredients": [
+    {
+      "item": "projecte:philosophers_stone"
+    },
+    {
+      "item": "projecte:cyan_fuel"
+    },
+    {
+      "item": "projecte:cyan_fuel"
+    },
+    {
+      "item": "projecte:cyan_fuel"
+    },
+    {
+      "item": "projecte:cyan_fuel"
+    }
+  ],
+  "result": {
+    "id": "projecte:green_fuel"
+  }
+}

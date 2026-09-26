@@ -44,7 +44,7 @@ public class ResetEmcCMD {
 	private static int resetEmc(CommandContext<CommandSourceStack> ctx, NSSItem toReset) throws CommandSyntaxException {
 		if (CustomEMCParser.removeFromFile(toReset)) {
 			ctx.getSource().sendSuccess(() -> PELang.COMMAND_RESET_SUCCESS.translate(toReset), true);
-			ctx.getSource().sendSuccess(PELang.RELOAD_NOTICE::translate, true);
+			ctx.getSource().sendSuccess(ExpansionReloadNotice.get(), true);
 			return Command.SINGLE_SUCCESS;
 		}
 		throw INVALID_ITEM.create(toReset);

@@ -2,6 +2,7 @@ package moze_intel.projecte.network.packets.to_server;
 
 import io.netty.buffer.ByteBuf;
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.expansion.ExpansionAlchemicalCollection;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.capabilities.item.IExtraFunction;
 import moze_intel.projecte.api.capabilities.item.IItemCharge;
@@ -129,6 +130,8 @@ public record KeyPressPKT(PEKeybind key) implements IPEPacket {
 				}
 			}
 		}
+		//Let addons that use our extra function keybind do something with it, for example toggling an enchantment based mode
+		ExpansionAlchemicalCollection.handleExtraFunctionKey(player, key);
 	}
 
 	private static <CAPABILITY> boolean tryPerformCapability(Player player, ItemStack stack, InteractionHand hand, ItemCapability<CAPABILITY, Void> capability,

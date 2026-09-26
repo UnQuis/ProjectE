@@ -1,0 +1,33 @@
+{
+  "parent": "projecte:final_star_shard",
+  "criteria": {
+    "final_star": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projecte:final_star"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projecte.final_star.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "projecte:final_star"
+    },
+    "title": {
+      "translate": "advancements.projecte.final_star"
+    }
+  },
+  "requirements": [
+    [
+      "final_star"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

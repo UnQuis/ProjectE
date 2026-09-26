@@ -98,6 +98,10 @@ public class PEClient {
 		modEventBus.addListener(this::registerSpecialModelRenderers);
 		modEventBus.addListener(this::registerRangeSelectItemModelProperties);
 
+		//Client side of the former ProjectExpansion addon: screens, chest renderer, and the client hooks
+		moze_intel.projecte.expansion.client.ExpansionClient.register(modEventBus);
+		moze_intel.projecte.expansion.client.ExpansionClientHooks.install();
+
 		NeoForge.EVENT_BUS.addListener(this::onEntityJoinWorld);
 		NeoForge.EVENT_BUS.addListener(this::registerClientCommands);
 		NeoForge.EVENT_BUS.addListener(this::onDisconnect);

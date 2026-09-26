@@ -92,7 +92,7 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 		for (KleinTier tier : KleinTier.values()) {
 			kleinStars.add(projecteItem(PEItems.getStar(tier)));
 		}
-		tag(PETags.Items.CURIOS_KLEIN_STAR).addTag(PETags.Items.KLEIN_STARS);
+		tag(PETags.Items.CURIOS_KLEIN_STAR).addTags(PETags.Items.KLEIN_STARS, PETags.Items.CURIOS_EXPANSION_KLEIN_STAR);
 		tag(PETags.Items.CURIOS_TRANSMUTATION_TABLET).addTag(PETags.Items.TRANSMUTATION_TABLET);
 		tag(PETags.Items.CURIOS_NECKLACE).add(
 				projecteItem(PEItems.BODY_STONE),

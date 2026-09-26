@@ -32,6 +32,10 @@ public class PETags {
 		 * Items in this tag will be used for the various collector fuel upgrade recipes.
 		 */
 		public static final TagKey<Item> COLLECTOR_FUEL = tag("collector_fuel");
+		public static final TagKey<Item> EXPANSION_COLLECTOR_FUEL = tag("expansion_collector_fuel");
+		public static final TagKey<Item> EXPANSION_TRANSMUTATION_TABLETS = tag("expansion_transmutation_tablets");
+		public static final TagKey<Item> EXPANSION_CHESTS = ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", "expansion_chests"));
+		public static final TagKey<Item> CURIOS_EXPANSION_KLEIN_STAR = curiosTag("expansion_klein_star");
 		/**
 		 * Items in this tag can have their Data Components duped by condensers and transmutation tables
 		 */
@@ -128,6 +132,16 @@ public class PETags {
 		public static final TagKey<Block> MINEABLE_WITH_KATAR = commonTag("mineable/katar");
 		public static final TagKey<Block> MINEABLE_WITH_MORNING_STAR = commonTag("mineable/morning_star");
 
+
+		public static final TagKey<Block> EXPANSION_NEEDS_DARK_MATTER_TOOL = tag("expansion_needs_dark_matter_tool");
+		public static final TagKey<Block> EXPANSION_NEEDS_RED_MATTER_TOOL = tag("expansion_needs_red_matter_tool");
+		public static final TagKey<Block> EXPANSION_CHESTS = BlockTags.create(ResourceLocation.fromNamespaceAndPath("c", "expansion_chests"));
+		public static final TagKey<Block> EXPANSION_BEACON_BASE_BLOCKS = BlockTags.create(ResourceLocation.fromNamespaceAndPath("minecraft", "expansion_beacon_base_blocks"));
+		public static final TagKey<Block> EXPANSION_DRAGON_IMMUNE = BlockTags.create(ResourceLocation.fromNamespaceAndPath("minecraft", "expansion_dragon_immune"));
+		public static final TagKey<Block> EXPANSION_GUARDED_BY_PIGLINS = BlockTags.create(ResourceLocation.fromNamespaceAndPath("minecraft", "expansion_guarded_by_piglins"));
+		public static final TagKey<Block> EXPANSION_INFINIBURN_OVERWORLD = BlockTags.create(ResourceLocation.fromNamespaceAndPath("minecraft", "expansion_infiniburn_overworld"));
+		public static final TagKey<Block> EXPANSION_WITHER_IMMUNE = BlockTags.create(ResourceLocation.fromNamespaceAndPath("minecraft", "expansion_wither_immune"));
+		public static final TagKey<Block> EXPANSION_MINEABLE_WITH_PICKAXE = BlockTags.create(ResourceLocation.fromNamespaceAndPath("minecraft", "mineable/expansion_pickaxe"));
 
 		private static TagKey<Block> tag(String name) {
 			return BlockTags.create(PECore.rl(name));

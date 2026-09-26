@@ -1,0 +1,168 @@
+{
+  "groups": {
+    "expansion_emc_links": {
+      "conversions": [
+        {
+          "output": "projecte:basic_emc_link",
+          "ingredients": {
+            "projecte:condenser_mk1": 1,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2,
+            "projecte:transmutation_tablet": 2
+          }
+        },
+        {
+          "output": "projecte:blue_emc_link",
+          "ingredients": {
+            "projecte:blue_matter": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2,
+            "projecte:violet_emc_link": 1
+          }
+        },
+        {
+          "output": "projecte:cyan_emc_link",
+          "ingredients": {
+            "projecte:blue_emc_link": 1,
+            "projecte:cyan_matter": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2
+          }
+        },
+        {
+          "output": "projecte:dark_emc_link",
+          "ingredients": {
+            "projecte:basic_emc_link": 1,
+            "projecte:dark_matter": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2
+          }
+        },
+        {
+          "output": "projecte:fading_emc_link",
+          "ingredients": {
+            "projecte:fading_matter": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2,
+            "projecte:white_emc_link": 1
+          }
+        },
+        {
+          "output": "projecte:final_emc_link",
+          "ingredients": {
+            "projecte:fading_emc_link": 1,
+            "projecte:final_star_shard": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2
+          }
+        },
+        {
+          "output": "projecte:green_emc_link",
+          "ingredients": {
+            "projecte:cyan_emc_link": 1,
+            "projecte:green_matter": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2
+          }
+        },
+        {
+          "output": "projecte:lime_emc_link",
+          "ingredients": {
+            "projecte:green_emc_link": 1,
+            "projecte:high_covalence_dust": 2,
+            "projecte:lime_matter": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2
+          }
+        },
+        {
+          "output": "projecte:magenta_emc_link",
+          "ingredients": {
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:magenta_matter": 2,
+            "projecte:medium_covalence_dust": 2,
+            "projecte:red_emc_link": 1
+          }
+        },
+        {
+          "output": "projecte:orange_emc_link",
+          "ingredients": {
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2,
+            "projecte:orange_matter": 2,
+            "projecte:yellow_emc_link": 1
+          }
+        },
+        {
+          "output": "projecte:pink_emc_link",
+          "ingredients": {
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:magenta_emc_link": 1,
+            "projecte:medium_covalence_dust": 2,
+            "projecte:pink_matter": 2
+          }
+        },
+        {
+          "output": "projecte:purple_emc_link",
+          "ingredients": {
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2,
+            "projecte:pink_emc_link": 1,
+            "projecte:purple_matter": 2
+          }
+        },
+        {
+          "output": "projecte:red_emc_link",
+          "ingredients": {
+            "projecte:dark_emc_link": 1,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2,
+            "projecte:red_matter": 2
+          }
+        },
+        {
+          "output": "projecte:violet_emc_link",
+          "ingredients": {
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2,
+            "projecte:purple_emc_link": 1,
+            "projecte:violet_matter": 2
+          }
+        },
+        {
+          "output": "projecte:white_emc_link",
+          "ingredients": {
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2,
+            "projecte:orange_emc_link": 1,
+            "projecte:white_matter": 2
+          }
+        },
+        {
+          "output": "projecte:yellow_emc_link",
+          "ingredients": {
+            "projecte:high_covalence_dust": 2,
+            "projecte:lime_emc_link": 1,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2,
+            "projecte:yellow_matter": 2
+          }
+        }
+      ]
+    }
+  }
+}

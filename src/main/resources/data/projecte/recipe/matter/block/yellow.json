@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:fuel/yellow",
+  "ingredients": [
+    {
+      "item": "projecte:yellow_matter"
+    },
+    {
+      "item": "projecte:yellow_matter"
+    },
+    {
+      "item": "projecte:yellow_matter"
+    },
+    {
+      "item": "projecte:yellow_matter"
+    }
+  ],
+  "result": {
+    "id": "projecte:yellow_matter_block"
+  }
+}

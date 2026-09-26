@@ -1,0 +1,32 @@
+{
+  "parent": "projecte:orange_fuel",
+  "criteria": {
+    "white_fuel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projecte:white_fuel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projecte.white_fuel.description"
+    },
+    "icon": {
+      "id": "projecte:white_fuel"
+    },
+    "title": {
+      "translate": "advancements.projecte.white_fuel"
+    }
+  },
+  "requirements": [
+    [
+      "white_fuel"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

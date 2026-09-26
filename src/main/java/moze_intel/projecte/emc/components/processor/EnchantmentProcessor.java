@@ -79,6 +79,11 @@ public class EnchantmentProcessor extends PersistentComponentProcessor<ItemEncha
 
 	@Override
 	protected boolean shouldPersist(@NotNull ItemInfo info, @NotNull ItemEnchantments component) {
+		if (ExpansionSettings.persistEnchantedBooksOnly() && !info.getItem().is(ENCHANTED_BOOK)) {
+			//Note: Only enchanted books keep their enchantments when this is enabled, the enchantments of any
+			// other item would be lost the moment the item is remade
+			return false;
+		}
 		return !component.isEmpty();
 	}
 }

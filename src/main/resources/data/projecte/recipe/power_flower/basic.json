@@ -1,0 +1,23 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/basic",
+  "pattern": [
+    "CLC",
+    "RRR",
+    "RRR"
+  ],
+  "key": {
+    "L": {
+      "item": "projecte:basic_emc_link"
+    },
+    "C": {
+      "item": "projecte:basic_compressed_collector"
+    },
+    "R": {
+      "item": "projecte:basic_relay"
+    }
+  },
+  "result": {
+    "id": "projecte:basic_power_flower"
+  }
+}

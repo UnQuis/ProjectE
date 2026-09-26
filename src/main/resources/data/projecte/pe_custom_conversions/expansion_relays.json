@@ -1,0 +1,139 @@
+{
+  "groups": {
+    "expansion_relays": {
+      "conversions": [
+        {
+          "output": "projecte:basic_relay",
+          "ingredients": {
+            "#c:glass_blocks": 1,
+            "#c:obsidians": 7,
+            "projecte:aeternalis_fuel_block": 1
+          }
+        },
+        {
+          "output": "projecte:basic_relay",
+          "ingredients": {
+            "projecte:relay_mk1": 1
+          }
+        },
+        {
+          "output": "projecte:blue_relay",
+          "ingredients": {
+            "projecte:blue_matter": 1,
+            "projecte:violet_relay": 1
+          }
+        },
+        {
+          "output": "projecte:cyan_relay",
+          "ingredients": {
+            "projecte:blue_relay": 1,
+            "projecte:cyan_matter": 1
+          }
+        },
+        {
+          "output": "projecte:dark_relay",
+          "ingredients": {
+            "projecte:basic_relay": 1,
+            "projecte:dark_matter": 1
+          }
+        },
+        {
+          "output": "projecte:dark_relay",
+          "ingredients": {
+            "projecte:relay_mk2": 1
+          }
+        },
+        {
+          "output": "projecte:fading_relay",
+          "ingredients": {
+            "projecte:fading_matter": 1,
+            "projecte:white_relay": 1
+          }
+        },
+        {
+          "output": "projecte:final_relay",
+          "ingredients": {
+            "projecte:fading_relay": 1,
+            "projecte:final_star_shard": 1
+          }
+        },
+        {
+          "output": "projecte:green_relay",
+          "ingredients": {
+            "projecte:cyan_relay": 1,
+            "projecte:green_matter": 1
+          }
+        },
+        {
+          "output": "projecte:lime_relay",
+          "ingredients": {
+            "projecte:green_relay": 1,
+            "projecte:lime_matter": 1
+          }
+        },
+        {
+          "output": "projecte:magenta_relay",
+          "ingredients": {
+            "projecte:magenta_matter": 1,
+            "projecte:red_relay": 1
+          }
+        },
+        {
+          "output": "projecte:orange_relay",
+          "ingredients": {
+            "projecte:orange_matter": 1,
+            "projecte:yellow_relay": 1
+          }
+        },
+        {
+          "output": "projecte:pink_relay",
+          "ingredients": {
+            "projecte:magenta_relay": 1,
+            "projecte:pink_matter": 1
+          }
+        },
+        {
+          "output": "projecte:purple_relay",
+          "ingredients": {
+            "projecte:pink_relay": 1,
+            "projecte:purple_matter": 1
+          }
+        },
+        {
+          "output": "projecte:red_relay",
+          "ingredients": {
+            "projecte:relay_mk3": 1
+          }
+        },
+        {
+          "output": "projecte:red_relay",
+          "ingredients": {
+            "projecte:dark_relay": 1,
+            "projecte:red_matter": 1
+          }
+        },
+        {
+          "output": "projecte:violet_relay",
+          "ingredients": {
+            "projecte:purple_relay": 1,
+            "projecte:violet_matter": 1
+          }
+        },
+        {
+          "output": "projecte:white_relay",
+          "ingredients": {
+            "projecte:orange_relay": 1,
+            "projecte:white_matter": 1
+          }
+        },
+        {
+          "output": "projecte:yellow_relay",
+          "ingredients": {
+            "projecte:lime_relay": 1,
+            "projecte:yellow_matter": 1
+          }
+        }
+      ]
+    }
+  }
+}

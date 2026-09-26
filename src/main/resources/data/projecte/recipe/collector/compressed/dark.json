@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/dark",
+  "pattern": [
+    "CCC",
+    "CCC",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "projecte:dark_collector"
+    }
+  },
+  "result": {
+    "id": "projecte:dark_compressed_collector"
+  }
+}

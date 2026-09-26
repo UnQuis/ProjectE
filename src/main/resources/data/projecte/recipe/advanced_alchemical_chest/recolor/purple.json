@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:advanced_alchemical_chest/purple",
+  "ingredients": [
+    {
+      "tag": "projecte:advanced_alchemical_chest"
+    },
+    {
+      "item": "minecraft:purple_dye"
+    }
+  ],
+  "result": {
+    "id": "projecte:purple_advanced_alchemical_chest"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:fuel/green",
+  "ingredients": [
+    {
+      "item": "projecte:green_matter"
+    },
+    {
+      "item": "projecte:green_matter"
+    },
+    {
+      "item": "projecte:green_matter"
+    },
+    {
+      "item": "projecte:green_matter"
+    }
+  ],
+  "result": {
+    "id": "projecte:green_matter_block"
+  }
+}

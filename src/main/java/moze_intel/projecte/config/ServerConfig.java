@@ -20,10 +20,12 @@ public final class ServerConfig extends BasePEConfig {
 	public final Effects effects;
 	public final Misc misc;
 	public final Cooldown cooldown;
+	public final Expansion expansion;
 
 	ServerConfig() {
 		ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 		cooldown = new Cooldown(this, builder);
+		expansion = new Expansion(this, builder);
 		difficulty = new Difficulty(this, builder);
 		effects = new Effects(this, builder);
 		items = new Items(this, builder);
@@ -207,6 +209,64 @@ public final class ServerConfig extends BasePEConfig {
 					.define("lookingAtDisplay", true));
 			showMissingGameStages = CachedBooleanValue.wrap(config, PEConfigTranslations.SERVER_MISC_SHOW_MISSING_STAGES.applyToBuilder(builder)
 					.define("showMissingGameStages", true));
+			builder.pop();
+		}
+	}
+	/**
+	 * Settings of the features that came from the ProjectExpansion addon.
+	 */
+	public static class Expansion {
+
+		public final CachedIntValue tickDelay;
+		public final CachedBooleanValue notifyCommandChanges;
+		public final CachedBooleanValue notifyKnowledgeBookGains;
+		public final CachedBooleanValue limitEmcLinkVendor;
+		public final CachedBooleanValue enableFluidEfficiency;
+		public final CachedIntValue transmutationInterfaceItemCount;
+		public final CachedDoubleValue collectorMultiplier;
+		public final CachedDoubleValue emcLinkItemLimitMultiplier;
+		public final CachedDoubleValue emcLinkFluidLimitMultiplier;
+		public final CachedDoubleValue emcLinkEMCLimitMultiplier;
+		public final CachedDoubleValue powerflowerMultiplier;
+		public final CachedDoubleValue relayBonusMultiplier;
+		public final CachedDoubleValue relayTransferMultiplier;
+		public final CachedIntValue infiniteFuelCost;
+		public final CachedIntValue infiniteFuelBurnTime;
+		public final CachedIntValue infiniteSteakCost;
+		public final CachedBooleanValue persistEnchantedBooksOnly;
+		public final ModConfigSpec.EnumValue<moze_intel.projecte.expansion.config.Config.AlchemicalBookEditLevel> editOthersAlchemicalBooks;
+		public final CachedBooleanValue zeroEmcFluidsAreFree;
+		public final CachedBooleanValue enableCollectorOptimizations;
+		public final CachedIntValue compactSunBonus;
+		public final CachedBooleanValue sunMultiplierPriceCompensation;
+		public final CachedBooleanValue enableReloadEMCCommand;
+
+		private Expansion(IPEConfig config, ModConfigSpec.Builder builder) {
+			PEConfigTranslations.SERVER_EXPANSION.applyToBuilder(builder).push("expansion");
+			tickDelay = CachedIntValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_TICK_DELAY.applyToBuilder(builder).defineInRange("tickDelay", 20, 1, 200));
+			notifyCommandChanges = CachedBooleanValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_NOTIFY_COMMAND_CHANGES.applyToBuilder(builder).define("notifyCommandChanges", true));
+			notifyKnowledgeBookGains = CachedBooleanValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_NOTIFY_KNOWLEDGE_BOOK.applyToBuilder(builder).define("notifyKnowledgeBookGains", true));
+			limitEmcLinkVendor = CachedBooleanValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_LIMIT_EMC_LINK_VENDOR.applyToBuilder(builder).define("limitEmcLinkVendor", true));
+			enableFluidEfficiency = CachedBooleanValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_FLUID_EFFICIENCY.applyToBuilder(builder).define("enableFluidEfficiency", true));
+			transmutationInterfaceItemCount = CachedIntValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_INTERFACE_ITEM_COUNT.applyToBuilder(builder).defineInRange("transmutationInterfaceItemCount", Integer.MAX_VALUE, 1, Integer.MAX_VALUE));
+			collectorMultiplier = CachedDoubleValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_COLLECTOR_MULTIPLIER.applyToBuilder(builder).defineInRange("collectorMultiplier", 1.0D, 0.1D, 50D));
+			emcLinkItemLimitMultiplier = CachedDoubleValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_EMC_LINK_ITEM_MULTIPLIER.applyToBuilder(builder).defineInRange("emcLinkItemLimitMultiplier", 1.0D, 0.1D, 50D));
+			emcLinkFluidLimitMultiplier = CachedDoubleValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_EMC_LINK_FLUID_MULTIPLIER.applyToBuilder(builder).defineInRange("emcLinkFluidLimitMultiplier", 1.0D, 0.1D, 50D));
+			emcLinkEMCLimitMultiplier = CachedDoubleValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_EMC_LINK_EMC_MULTIPLIER.applyToBuilder(builder).defineInRange("emcLinkEMCLimitMultiplier", 1.0D, 0.1D, 50D));
+			powerflowerMultiplier = CachedDoubleValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_POWER_FLOWER_MULTIPLIER.applyToBuilder(builder).defineInRange("powerflowerMultiplier", 1.0D, 0.1D, 50D));
+			relayBonusMultiplier = CachedDoubleValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_RELAY_BONUS_MULTIPLIER.applyToBuilder(builder).defineInRange("relayBonusMultiplier", 1.0D, 0.1D, 50D));
+			relayTransferMultiplier = CachedDoubleValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_RELAY_TRANSFER_MULTIPLIER.applyToBuilder(builder).defineInRange("relayTransferMultiplier", 1.0D, 0.1D, 50D));
+			infiniteFuelCost = CachedIntValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_INFINITE_FUEL_COST.applyToBuilder(builder).defineInRange("infiniteFuelCost", 128, 1, Integer.MAX_VALUE));
+			infiniteFuelBurnTime = CachedIntValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_INFINITE_FUEL_BURN_TIME.applyToBuilder(builder).defineInRange("infiniteFuelBurnTime", 1600, 1, Integer.MAX_VALUE));
+			infiniteSteakCost = CachedIntValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_INFINITE_STEAK_COST.applyToBuilder(builder).defineInRange("infiniteSteakCost", 64, 1, Integer.MAX_VALUE));
+			persistEnchantedBooksOnly = CachedBooleanValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_PERSIST_ENCHANTED_BOOKS.applyToBuilder(builder).define("persistEnchantedBooksOnly", false));
+			editOthersAlchemicalBooks = PEConfigTranslations.SERVER_EXPANSION_EDIT_OTHERS_BOOKS.applyToBuilder(builder)
+					.defineEnum("editOthersAlchemicalBooks", moze_intel.projecte.expansion.config.Config.AlchemicalBookEditLevel.DISABLED);
+			zeroEmcFluidsAreFree = CachedBooleanValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_ZERO_EMC_FLUIDS.applyToBuilder(builder).define("zeroEmcFluidsAreFree", true));
+			enableCollectorOptimizations = CachedBooleanValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_COLLECTOR_OPTIMIZATIONS.applyToBuilder(builder).define("enableCollectorOptimizations", false));
+			compactSunBonus = CachedIntValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_COMPACT_SUN_BONUS.applyToBuilder(builder).defineInRange("compactSunBonus", 10, 0, Integer.MAX_VALUE));
+			sunMultiplierPriceCompensation = CachedBooleanValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_SUN_PRICE_COMPENSATION.applyToBuilder(builder).define("sunMultiplierPriceCompensation", true));
+			enableReloadEMCCommand = CachedBooleanValue.wrap(config, PEConfigTranslations.SERVER_EXPANSION_RELOAD_EMC_COMMAND.applyToBuilder(builder).define("enableReloadEMCCommand", true));
 			builder.pop();
 		}
 	}

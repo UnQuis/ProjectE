@@ -66,25 +66,25 @@ public class PEBlockTagsProvider extends BlockTagsProvider {
 		tag(Tags.Blocks.CHESTS).add(projecteBlock(PEBlocks.ALCHEMICAL_CHEST));
 		tag(Tags.Blocks.PLAYER_WORKSTATIONS_FURNACES).add(
 				projecteBlock(PEBlocks.DARK_MATTER_FURNACE), projecteBlock(PEBlocks.RED_MATTER_FURNACE));
-		tag(BlockTags.BEACON_BASE_BLOCKS).add(projecteBlock(PEBlocks.DARK_MATTER), projecteBlock(PEBlocks.RED_MATTER));
-		tag(BlockTags.GUARDED_BY_PIGLINS).add(
+		tag(BlockTags.BEACON_BASE_BLOCKS).addTag(PETags.Blocks.EXPANSION_BEACON_BASE_BLOCKS).add(projecteBlock(PEBlocks.DARK_MATTER), projecteBlock(PEBlocks.RED_MATTER));
+		tag(BlockTags.GUARDED_BY_PIGLINS).addTag(PETags.Blocks.EXPANSION_GUARDED_BY_PIGLINS).add(
 				projecteBlock(PEBlocks.ALCHEMICAL_CHEST), projecteBlock(PEBlocks.ALCHEMICAL_BARREL),
 				projecteBlock(PEBlocks.CONDENSER), projecteBlock(PEBlocks.CONDENSER_MK2));
 		tag(BlockTags.PIGLIN_REPELLENTS).add(projecteBlock(PEBlocks.INTERDICTION_LANTERN));
-		tag(BlockTags.INFINIBURN_OVERWORLD).add(
+		tag(BlockTags.INFINIBURN_OVERWORLD).addTag(PETags.Blocks.EXPANSION_INFINIBURN_OVERWORLD).add(
 				projecteBlock(PEBlocks.ALCHEMICAL_COAL), projecteBlock(PEBlocks.MOBIUS_FUEL),
 				projecteBlock(PEBlocks.AETERNALIS_FUEL));
-		addImmuneBlocks(BlockTags.DRAGON_IMMUNE);
-		addImmuneBlocks(BlockTags.WITHER_IMMUNE);
+		addImmuneBlocks(BlockTags.DRAGON_IMMUNE, PETags.Blocks.EXPANSION_DRAGON_IMMUNE);
+		addImmuneBlocks(BlockTags.WITHER_IMMUNE, PETags.Blocks.EXPANSION_WITHER_IMMUNE);
 
 		tag(PETags.Blocks.MINEABLE_WITH_HAMMER);
 		tag(PETags.Blocks.MINEABLE_WITH_KATAR);
 		tag(PETags.Blocks.MINEABLE_WITH_MORNING_STAR);
 
-		tag(PETags.Blocks.NEEDS_DARK_MATTER_TOOL).add(
+		tag(PETags.Blocks.NEEDS_DARK_MATTER_TOOL).addTag(PETags.Blocks.EXPANSION_NEEDS_DARK_MATTER_TOOL).add(
 				projecteBlock(PEBlocks.DARK_MATTER), projecteBlock(PEBlocks.DARK_MATTER_FURNACE),
 				projecteBlock(PEBlocks.DARK_MATTER_PEDESTAL));
-		tag(PETags.Blocks.NEEDS_RED_MATTER_TOOL).add(
+		tag(PETags.Blocks.NEEDS_RED_MATTER_TOOL).addTag(PETags.Blocks.EXPANSION_NEEDS_RED_MATTER_TOOL).add(
 				projecteBlock(PEBlocks.RED_MATTER), projecteBlock(PEBlocks.RED_MATTER_FURNACE));
 		tag(PETags.Blocks.INCORRECT_FOR_RED_MATTER_TOOL);
 		addTags(tag(PETags.Blocks.INCORRECT_FOR_DARK_MATTER_TOOL), PETags.Blocks.NEEDS_RED_MATTER_TOOL);
@@ -101,7 +101,7 @@ public class PEBlockTagsProvider extends BlockTagsProvider {
 		addTags(tag(BlockTags.INCORRECT_FOR_WOODEN_TOOL), PETags.Blocks.NEEDS_DARK_MATTER_TOOL,
 				PETags.Blocks.NEEDS_RED_MATTER_TOOL);
 
-		tag(BlockTags.MINEABLE_WITH_PICKAXE).add(
+		tag(BlockTags.MINEABLE_WITH_PICKAXE).addTag(PETags.Blocks.EXPANSION_MINEABLE_WITH_PICKAXE).add(
 				projecteBlock(PEBlocks.ALCHEMICAL_CHEST), projecteBlock(PEBlocks.ALCHEMICAL_COAL),
 				projecteBlock(PEBlocks.ALCHEMICAL_BARREL), projecteBlock(PEBlocks.MOBIUS_FUEL),
 				projecteBlock(PEBlocks.AETERNALIS_FUEL), projecteBlock(PEBlocks.COLLECTOR),
@@ -127,8 +127,8 @@ public class PEBlockTagsProvider extends BlockTagsProvider {
 		tag(BlockTags.WALL_POST_OVERRIDE).add(projecteBlock(PEBlocks.INTERDICTION_TORCH));
 	}
 
-	private void addImmuneBlocks(TagKey<Block> tag) {
-		tag(tag).add(
+	private void addImmuneBlocks(TagKey<Block> tag, TagKey<Block>... additional) {
+		tag(tag).addTags(additional).add(
 				projecteBlock(PEBlocks.DARK_MATTER), projecteBlock(PEBlocks.DARK_MATTER_FURNACE),
 				projecteBlock(PEBlocks.DARK_MATTER_PEDESTAL), projecteBlock(PEBlocks.RED_MATTER),
 				projecteBlock(PEBlocks.RED_MATTER_FURNACE), projecteBlock(PEBlocks.CONDENSER_MK2));

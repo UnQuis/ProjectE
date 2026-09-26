@@ -1,0 +1,32 @@
+{
+  "parent": "projecte:yellow_fuel",
+  "criteria": {
+    "orange_fuel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projecte:orange_fuel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projecte.orange_fuel.description"
+    },
+    "icon": {
+      "id": "projecte:orange_fuel"
+    },
+    "title": {
+      "translate": "advancements.projecte.orange_fuel"
+    }
+  },
+  "requirements": [
+    [
+      "orange_fuel"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

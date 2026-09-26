@@ -1,0 +1,32 @@
+{
+  "parent": "projecte:cyan_fuel",
+  "criteria": {
+    "green_fuel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projecte:green_fuel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projecte.green_fuel.description"
+    },
+    "icon": {
+      "id": "projecte:green_fuel"
+    },
+    "title": {
+      "translate": "advancements.projecte.green_fuel"
+    }
+  },
+  "requirements": [
+    [
+      "green_fuel"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,32 @@
+{
+  "parent": "projecte:collector",
+  "criteria": {
+    "collector": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#projecte:collector"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projecte.expansion_collector.description"
+    },
+    "icon": {
+      "id": "projecte:basic_collector"
+    },
+    "title": {
+      "translate": "advancements.projecte.expansion_collector"
+    }
+  },
+  "requirements": [
+    [
+      "collector"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

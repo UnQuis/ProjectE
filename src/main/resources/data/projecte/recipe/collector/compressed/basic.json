@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/basic",
+  "pattern": [
+    "CCC",
+    "CCC",
+    "CCC"
+  ],
+  "key": {
+    "C": {
+      "item": "projecte:basic_collector"
+    }
+  },
+  "result": {
+    "id": "projecte:basic_compressed_collector"
+  }
+}

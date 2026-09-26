@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:fuel/yellow",
+  "ingredients": [
+    {
+      "item": "projecte:yellow_fuel_block"
+    }
+  ],
+  "result": {
+    "id": "projecte:yellow_fuel",
+    "count": 9
+  }
+}

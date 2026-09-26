@@ -1,0 +1,418 @@
+package moze_intel.projecte.expansion.block.entity;
+
+import moze_intel.projecte.api.block_entity.IRelay;
+import moze_intel.projecte.api.capabilities.PECapabilities;
+import moze_intel.projecte.api.capabilities.item.IItemEmcHolder;
+import moze_intel.projecte.api.proxy.IEMCProxy;
+import moze_intel.projecte.emc.FuelMapper;
+import moze_intel.projecte.expansion.block.BlockCollector;
+import moze_intel.projecte.expansion.block.BlockCompactSun;
+import moze_intel.projecte.expansion.config.Config;
+import moze_intel.projecte.expansion.gui.container.ContainerCollector;
+import moze_intel.projecte.expansion.registries.ExpansionBlockEntityTypes;
+import moze_intel.projecte.expansion.util.*;
+import moze_intel.projecte.gameObjs.block_entities.WrappedItemHandler;
+import moze_intel.projecte.gameObjs.container.slots.SlotPredicates;
+import moze_intel.projecte.utils.ItemHelper;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.attribute.EnvironmentAttributes;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.capabilities.ICapabilityProvider;
+import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.transfer.CombinedResourceHandler;
+import net.neoforged.neoforge.transfer.RangedResourceHandler;
+import net.neoforged.neoforge.transfer.ResourceHandler;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
+import org.jetbrains.annotations.Nullable;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
+import java.util.Objects;
+
+@SuppressWarnings("unused")
+public class BlockEntityCollector extends BlockEntityEMC implements IHasMatter, IHasSunBonus, IGeneratesEMC, MenuProvider {
+	public static final ICapabilityProvider<BlockEntityCollector, @Nullable Direction, ResourceHandler<ItemResource>> ITEM_HANDLER_CAPABILITY = (collector, side) -> {
+		if (side == null) {
+			return collector.joined;
+		} else if (side.getAxis().isVertical()) {
+			return collector.automationAuxSlots;
+		}
+		return collector.automationInput;
+	};
+	private final StackHandler input = new StackHandler(getInvSize()) {
+		@Override
+		protected void onContentsChanged(int slot, ItemStack previousContents) {
+			super.onContentsChanged(slot, previousContents);
+			needsCompacting = true;
+		}
+	};
+	private final StackHandler auxSlots = new StackHandler(3) {
+		@Override
+		protected void onContentsChanged(int slot, ItemStack previousContents) {
+			super.onContentsChanged(slot, previousContents);
+			if (slot == UPGRADING_SLOT) {
+				needsCompacting = true;
+			}
+		}
+	};
+	private final CombinedResourceHandler<ItemResource> toSort = new CombinedResourceHandler<>(RangedResourceHandler.of(auxSlots, UPGRADING_SLOT, UPGRADING_SLOT + 1), input);
+	public static final int UPGRADING_SLOT = 0;
+	public static final int UPGRADE_SLOT = 1;
+	public static final int LOCK_SLOT = 2;
+
+	private final ResourceHandler<ItemResource> automationAuxSlots;
+	private final ResourceHandler<ItemResource> automationInput;
+	private final ResourceHandler<ItemResource> joined;
+
+
+	public boolean hasChargeableItem;
+	public boolean hasFuel;
+	private BigDecimal unprocessedEMC = BigDecimal.ZERO;
+	//Start as needing to check for compacting when loaded
+	private boolean needsCompacting = true;
+	private Matter matter;
+	public BlockEntityCollector(BlockPos pos, BlockState state) {
+		super(ExpansionBlockEntityTypes.COLLECTOR.get(), pos, state);
+		this.automationInput = new WrappedItemHandler(input, WrappedItemHandler.WriteMode.IN) {
+			@Override
+			public boolean isValid(int index, ItemResource resource) {
+				return super.isValid(index, resource) && SlotPredicates.COLLECTOR_INV.test(resource.toStack(1));
+			}
+		};
+		this.automationAuxSlots = new WrappedItemHandler(auxSlots, WrappedItemHandler.WriteMode.OUT) {
+			@Override
+			public int extract(int index, ItemResource resource, int amount, TransactionContext transaction) {
+				return index == UPGRADE_SLOT ? super.extract(index, resource, amount, transaction) : 0;
+			}
+		};
+		this.joined = new CombinedResourceHandler<>(automationInput, automationAuxSlots);
+	}
+
+	public static void registerCapabilities(RegisterCapabilitiesEvent event) {
+		event.registerBlockEntity(Capabilities.Item.BLOCK, ExpansionBlockEntityTypes.COLLECTOR.get(), ITEM_HANDLER_CAPABILITY);
+		BlockEntityEMC.registerCapabilities(event, ExpansionBlockEntityTypes.COLLECTOR.get());
+	}
+
+	@Override
+	protected boolean canAcceptEmc() {
+		//Collector accepts EMC from providers if it has fuel/chargeable. Otherwise, it sends it to providers
+		return hasFuel || hasChargeableItem;
+	}
+
+	public ResourceHandler<ItemResource> getInput() {
+		return input;
+	}
+
+	public ResourceHandler<ItemResource> getAux() {
+		return auxSlots;
+	}
+
+	protected int getInvSize() {
+		return Math.min(16, (getMatter().ordinal() + 1) * 4) + 4;
+	}
+
+	private ItemStack getUpgraded() {
+		return auxSlots.getStackInSlot(UPGRADE_SLOT);
+	}
+
+	private ItemStack getLock() {
+		return auxSlots.getStackInSlot(LOCK_SLOT);
+	}
+
+	private ItemStack getUpgrading() {
+		return auxSlots.getStackInSlot(UPGRADING_SLOT);
+	}
+
+	public void clearLocked() {
+		auxSlots.setStackInSlot(LOCK_SLOT, ItemStack.EMPTY);
+	}
+
+	/**
+	 * 26.3 replaced {@code Block#onRemove} with {@link net.minecraft.world.level.block.entity.BlockEntity#preRemoveSideEffects}
+	 */
+	@Override
+	public void preRemoveSideEffects(BlockPos pos, BlockState state) {
+		//Clear the ghost slot so the removal does not drop the item in it
+		clearLocked();
+		super.preRemoveSideEffects(pos, state);
+	}
+
+	@Override
+	protected boolean emcAffectsComparators() {
+		return true;
+	}
+
+	public static void tickServer(Level level, BlockPos pos, BlockState state, BlockEntity blockEntity) {
+		if (blockEntity instanceof BlockEntityCollector be) be.tickServer(level, pos, state, be);
+	}
+
+	public void tickServer(Level level, BlockPos pos, BlockState state, BlockEntityCollector blockEntity) {
+		if (Config.server.enableCollectorOptimizations.get() && (level.getGameTime() % 20L) != Util.mod(hashCode(), 20)) return;
+
+		if (needsCompacting) {
+			ItemHelper.compactInventory(toSort);
+			needsCompacting = false;
+		}
+		checkFuelOrKlein();
+		updateEmc(level, pos);
+		rotateUpgraded();
+		updateComparators(level, pos);
+	}
+
+	private void updateEmc(Level level, BlockPos pos) {
+		BigDecimal gen = getMatter().getCollectorOutputForTicks(Config.server.enableCollectorOptimizations.get() ? 20 : 1);
+		if(hasSunBonus() && getSunBonus() != null) {
+			gen = gen.multiply(BigDecimal.valueOf(getSunBonus()));
+		}
+		final BigDecimal generated = gen; // Thanks Java
+		if (!this.hasMaxedEmc()) {
+			unprocessedEMC = unprocessedEMC.add(generated.multiply(BigDecimal.valueOf(getSunLevel() / 16.0f)));
+			if (unprocessedEMC.compareTo(BigDecimal.ONE) >= 0) {
+				//Force add the EMC regardless of if we can receive EMC from external sources
+				unprocessedEMC = unprocessedEMC.subtract(new BigDecimal(forceInsertEmcBigInteger(unprocessedEMC.toBigInteger(), EmcAction.EXECUTE)));
+			}
+			//Note: We don't need to recheck comparators because it doesn't take the unprocessed emc into account
+			markDirty(level, pos, false);
+		}
+
+		if (getStoredEmcBigInteger().compareTo(BigInteger.ZERO) > 0) {
+			ItemStack upgrading = getUpgrading();
+			if (hasChargeableItem) {
+				IItemEmcHolder emcHolder = upgrading.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+				if (emcHolder != null) {
+					BigInteger toAdd = getStoredEmcBigInteger();
+					if (toAdd.compareTo(BigInteger.ZERO) < 1) return;
+					BigInteger remaining = Util.stepBigInteger(toAdd, (val) -> val - emcHolder.insertEmc(upgrading, val, EmcAction.EXECUTE));
+					BigInteger v = toAdd.subtract(remaining);
+					forceExtractEmcBigInteger(v, EmcAction.EXECUTE);
+				}
+			} else if (hasFuel) {
+				ItemStack fuelUpgrade = FuelMapper.getFuelUpgrade(upgrading);
+				if (!fuelUpgrade.isEmpty()) {
+					ItemStack lock = getLock();
+					ItemStack result = lock.isEmpty() ? fuelUpgrade : lock.copy();
+
+					BigInteger upgradeCost = BigInteger.valueOf(IEMCProxy.INSTANCE.getValue(result)).subtract(BigInteger.valueOf(IEMCProxy.INSTANCE.getValue(upgrading)));
+
+					if (upgradeCost.compareTo(BigInteger.ZERO) >= 0 && this.getStoredEmcBigInteger().compareTo(upgradeCost) >= 0) {
+						ItemStack upgrade = getUpgraded();
+
+						if (getUpgraded().isEmpty()) {
+							forceExtractEmcBigInteger(upgradeCost, EmcAction.EXECUTE);
+							auxSlots.setStackInSlot(UPGRADE_SLOT, result);
+							upgrading.shrink(1);
+						} else if (result.getItem() == upgrade.getItem() && upgrade.getCount() < upgrade.getMaxStackSize()) {
+							forceExtractEmcBigInteger(upgradeCost, EmcAction.EXECUTE);
+							getUpgraded().grow(1);
+							upgrading.shrink(1);
+							auxSlots.onContentsChanged(UPGRADE_SLOT, ItemStack.EMPTY);
+						}
+					}
+				}
+			} else {
+				BigInteger before = getStoredEmcBigInteger();
+				// Only send EMC when we are not upgrading fuel or charging an item
+				sendToAllAcceptors(level, pos, getStoredEmcBigInteger());
+				BigInteger after = getStoredEmcBigInteger();
+				sendRelayBonus(level, pos);
+				if (!before.equals(after)) markDirty(level, pos, true);
+			}
+		}
+	}
+
+	@Override
+	public BigInteger getMaximumEmcBigInteger() {
+		boolean sunBonus = hasSunBonus();
+		BigInteger max = BigInteger.valueOf(Fuel.getCollectorEMCLimit(Objects.requireNonNull(getMatter())));
+		if (sunBonus) {
+			max = max.multiply(BigInteger.valueOf(Objects.requireNonNull(getSunBonus())));
+		}
+		return max;
+	}
+
+	public long getEmcToNextGoal() {
+		ItemStack lock = getLock();
+		ItemStack upgrading = getUpgrading();
+		long targetEmc;
+		if (lock.isEmpty()) {
+			targetEmc = IEMCProxy.INSTANCE.getValue(FuelMapper.getFuelUpgrade(upgrading));
+		} else {
+			targetEmc = IEMCProxy.INSTANCE.getValue(lock);
+		}
+		return Math.max(targetEmc - IEMCProxy.INSTANCE.getValue(upgrading), 0);
+	}
+
+	public long getItemCharge() {
+		ItemStack upgrading = getUpgrading();
+		if (!upgrading.isEmpty()) {
+			IItemEmcHolder emcHolder = upgrading.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+			if (emcHolder == null) {
+				return -1;
+			} else {
+				return emcHolder.getStoredEmc(upgrading);
+			}
+		}
+		return -1;
+	}
+
+	public double getItemChargeProportion() {
+		ItemStack upgrading = getUpgrading();
+		long charge = getItemCharge();
+		if (upgrading.isEmpty() || charge <= 0) {
+			return -1;
+		}
+		IItemEmcHolder emcHolder = upgrading.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+		if (emcHolder != null) {
+			long max = emcHolder.getMaximumEmc(upgrading);
+			if (charge >= max) {
+				return 1;
+			}
+			return (double) charge / max;
+		}
+		return -1;
+	}
+
+	public int getSunLevel() {
+		//26.3 replaced DimensionType#ultraWarm with the environment attribute system, the same check ProjectE's own
+		// collector uses
+		Level currentLevel = Objects.requireNonNull(this.level);
+		if (currentLevel.environmentAttributes().getValue(EnvironmentAttributes.WATER_EVAPORATES, worldPosition)) {
+			return 16;
+		}
+		return currentLevel.getMaxLocalRawBrightness(worldPosition.above()) + 1;
+	}
+
+	public double getFuelProgress() {
+		if (getUpgrading().isEmpty() || !FuelMapper.isStackFuel(getUpgrading())) {
+			return 0;
+		}
+		BigDecimal reqEmc;
+		if (!getLock().isEmpty()) {
+			reqEmc = BigDecimal.valueOf(IEMCProxy.INSTANCE.getValue(getLock())).subtract(BigDecimal.valueOf(IEMCProxy.INSTANCE.getValue(getUpgrading())));
+			if (reqEmc.compareTo(BigDecimal.ZERO) <= 0) {
+				return 0;
+			}
+		} else {
+			if (FuelMapper.getFuelUpgrade(getUpgrading()).isEmpty()) {
+				return 0;
+			}
+			reqEmc = BigDecimal.valueOf(IEMCProxy.INSTANCE.getValue(FuelMapper.getFuelUpgrade(getUpgrading()))).subtract(BigDecimal.valueOf(IEMCProxy.INSTANCE.getValue(getUpgrading())));
+		}
+		if (new BigDecimal(getStoredEmcBigInteger()).compareTo(reqEmc) >= 0) {
+			return 1;
+		}
+		return new BigDecimal(getStoredEmcBigInteger()).divide(reqEmc, 3, RoundingMode.HALF_UP).doubleValue();
+	}
+
+	@Override
+	public void loadAdditional(ValueInput input) {
+		super.loadAdditional(input);
+		input.readChild(TagNames.INPUT, this.input);
+		input.readChild(TagNames.AUX_SLOTS, auxSlots);
+		unprocessedEMC = new BigDecimal(input.getStringOr(TagNames.UNPROCESSED_EMC, "0"));
+	}
+
+	@Override
+	protected void saveAdditional(ValueOutput output) {
+		super.saveAdditional(output);
+		output.putChild(TagNames.INPUT, input);
+		output.putChild(TagNames.AUX_SLOTS, auxSlots);
+		output.putString(TagNames.UNPROCESSED_EMC, unprocessedEMC.toString());
+	}
+
+	private void sendRelayBonus(Level level, BlockPos pos) {
+		for (Direction dir : DIRECTIONS) {
+			BlockEntity blockEntity = level.getBlockEntity(worldPosition.relative(dir));
+			if (blockEntity instanceof IRelay be) {
+				// our blocks may only tick once per 20 ticks, so blocks other than ours must be ticked 20 times each time we tick to simulate regular ticking
+				boolean tick20 = Config.server.enableCollectorOptimizations.get() && !(be instanceof BlockEntityRelay);
+				if (tick20) {
+					for (int i = 0; i < 20; i++) be.addBonus(level, pos);
+				} else {
+					be.addBonus(level, pos);
+				}
+			}
+		}
+	}
+
+	private void rotateUpgraded() {
+		ItemStack upgraded = getUpgraded();
+		if (!upgraded.isEmpty()) {
+			if (getLock().isEmpty() || upgraded.getItem() != getLock().getItem() || upgraded.getCount() >= upgraded.getMaxStackSize()) {
+				auxSlots.setStackInSlot(UPGRADE_SLOT, ItemHelper.insertItemStacked(input, upgraded.copy()));
+			}
+		}
+	}
+
+	private void checkFuelOrKlein() {
+		ItemStack upgrading = getUpgrading();
+		if (!upgrading.isEmpty()) {
+			IItemEmcHolder emcHolder = upgrading.getCapability(PECapabilities.EMC_HOLDER_ITEM_CAPABILITY);
+			if (emcHolder != null) {
+				if (emcHolder.getNeededEmc(upgrading) > 0) {
+					hasChargeableItem = true;
+					hasFuel = false;
+				} else {
+					hasChargeableItem = false;
+				}
+			} else {
+				hasFuel = FuelMapper.isStackFuel(upgrading);
+				hasChargeableItem = false;
+			}
+		} else {
+			hasFuel = false;
+			hasChargeableItem = false;
+		}
+	}
+
+	@Override
+	public Matter getMatter() {
+		BlockCollector block = (BlockCollector) getBlockState().getBlock();
+		if (block.getMatter() != matter) {
+			this.matter = block.getMatter();
+		}
+		return matter;
+	}
+
+	@Override
+	public boolean hasSunBonus() {
+		return BlockCompactSun.adjacent(level, worldPosition, Direction.UP);
+	}
+
+	@Override
+	public BigInteger getGeneratedEMC() {
+		return new BigDecimal(getMatter().getCollectorOutput())
+				.multiply(BigDecimal.valueOf(getSunBonus() == null ? 1 : getSunBonus()))
+				.multiply(BigDecimal.valueOf(getSunLevel() / 16.0f))
+				.toBigInteger();
+	}
+
+	@Override
+	public Component getDisplayName() {
+		return Lang.Blocks.COLLECTOR.translate();
+	}
+
+	@Nullable
+	@Override
+	public AbstractContainerMenu createMenu(int windowId, Inventory playerInventory, Player player) {
+		return switch (getMatter()) {
+			case BASIC -> new ContainerCollector.Tier1(windowId, playerInventory, this);
+			case DARK -> new ContainerCollector.Tier2(windowId, playerInventory, this);
+			default -> new ContainerCollector.Tier3(windowId, playerInventory, this);
+		};
+	}
+}
