@@ -184,7 +184,7 @@
   "configuration.projecte.common.adaption.enabled": "Enable Integration",
   "configuration.projecte.common.adaption.enabled.tooltip": "Enable the Adaption Wheel integration: EMC accelerates running analyses, learning items teaches adaptations, and adaptations grant EMC and an EMC gain bonus.",
   "configuration.projecte.common.adaption.insight": "Insight per Adaptation",
-  "configuration.projecte.common.adaption.insight.tooltip": "Percent that every adaptation permanently adds to all EMC the player gains. There is no upper limit.",
+  "configuration.projecte.common.adaption.insight.tooltip": "Percent that every adaptation permanently adds to all EMC the player gains, 0 to 1000000. There is no cap on the total.",
   "configuration.projecte.common.adaption.max_steps": "Max Accelerations per Second",
   "configuration.projecte.common.adaption.max_steps.tooltip": "How many analysis accelerations a player may buy per second, so the cost stays predictable.",
   "configuration.projecte.common.adaption.reward": "EMC per Adaptation",

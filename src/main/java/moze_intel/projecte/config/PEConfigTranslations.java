@@ -40,7 +40,7 @@ public enum PEConfigTranslations implements IConfigTranslation {
 	COMMON_ADAPTION_REWARD("common.adaption.reward", "EMC per Adaptation",
 			"EMC granted to the player once for every completed adaptation."),
 	COMMON_ADAPTION_INSIGHT("common.adaption.insight", "Insight per Adaptation",
-			"Percent that every adaptation permanently adds to all EMC the player gains. There is no upper limit."),
+			"Percent that every adaptation permanently adds to all EMC the player gains, 0 to 1000000. There is no cap on the total."),
 
 	//Server Config
 	SERVER_COOLDOWN("server.cooldown", "Cooldown Settings",

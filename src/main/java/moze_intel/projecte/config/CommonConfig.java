@@ -35,7 +35,7 @@ public class CommonConfig extends BasePEConfig {
 		adaptionEmcPerAccelerationStep = CachedIntValue.wrap(this, PEConfigTranslations.COMMON_ADAPTION_EMC_STEP.applyToBuilder(builder).defineInRange("emcPerAccelerationStep", 256, 0, Integer.MAX_VALUE));
 		adaptionMaxAccelerationSteps = CachedIntValue.wrap(this, PEConfigTranslations.COMMON_ADAPTION_MAX_STEPS.applyToBuilder(builder).defineInRange("maxAccelerationSteps", 4, 0, 64));
 		adaptionEmcReward = CachedIntValue.wrap(this, PEConfigTranslations.COMMON_ADAPTION_REWARD.applyToBuilder(builder).defineInRange("emcReward", 500, 0, Integer.MAX_VALUE));
-		adaptionInsightPercent = CachedIntValue.wrap(this, PEConfigTranslations.COMMON_ADAPTION_INSIGHT.applyToBuilder(builder).defineInRange("insightPercentPerAdaptation", 5, 0, 100));
+		adaptionInsightPercent = CachedIntValue.wrap(this, PEConfigTranslations.COMMON_ADAPTION_INSIGHT.applyToBuilder(builder).defineInRange("insightPercentPerAdaptation", 5, 0, 1_000_000));
 		builder.pop();
 		configSpec = builder.build();
 	}

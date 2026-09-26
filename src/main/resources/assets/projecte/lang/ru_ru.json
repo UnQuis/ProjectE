@@ -68,7 +68,7 @@
   "configuration.projecte.common.adaption.enabled": "Включить интеграцию",
   "configuration.projecte.common.adaption.enabled.tooltip": "Включает интеграцию: EMC ускоряет анализ, изучение предметов учит адаптациям, а адаптации дают EMC и постоянный бонус к получаемой EMC (5% за адаптацию, без предела).",
   "configuration.projecte.common.adaption.insight": "Проницательность за адаптацию",
-  "configuration.projecte.common.adaption.insight.tooltip": "Процент, который каждая адаптация навсегда добавляет ко всей получаемой EMC. Без верхнего предела.",
+  "configuration.projecte.common.adaption.insight.tooltip": "Процент, который каждая адаптация навсегда добавляет ко всей получаемой EMC, от 0 до 1000000. Общий бонус ничем не ограничен.",
   "configuration.projecte.common.adaption.max_steps": "Максимум ускорений в секунду",
   "configuration.projecte.common.adaption.max_steps.tooltip": "Сколько ускорений анализа игрок может купить в секунду, чтобы цена оставалась предсказуемой.",
   "configuration.projecte.common.adaption.reward": "EMC за адаптацию",

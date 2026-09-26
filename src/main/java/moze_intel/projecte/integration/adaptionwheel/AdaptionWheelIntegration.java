@@ -209,10 +209,9 @@ public class AdaptionWheelIntegration {
 		Integer previous = LAST_ADAPT_COUNT.put(player.getUUID(), current);
 		int rewardPer = ProjectEConfig.common.adaptionEmcReward.get();
 		int percentPer = Math.max(0, ProjectEConfig.common.adaptionInsightPercent.get());
-		//Note: the insight bonus is deliberately uncapped, so the multiplication is done in long and only clamped to
-		//what the percentage field can still hold
-		long percent = Math.min((long) current * percentPer, Integer.MAX_VALUE);
-		EmcGainBonus.setPercent(player.getUUID(), BigInteger.valueOf(percent));
+		//Note: the insight bonus is deliberately uncapped, and the percent per adaptation may be up to a million, so
+		//this is a BigInteger multiplication: no intermediate integer can overflow
+		EmcGainBonus.setPercent(player.getUUID(), BigInteger.valueOf(current).multiply(BigInteger.valueOf(percentPer)));
 		if (previous != null && current > previous && rewardPer > 0) {
 			int gained = (current - previous) * rewardPer;
 			IKnowledgeProvider knowledge = player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
@@ -222,7 +221,8 @@ public class AdaptionWheelIntegration {
 				knowledge.syncEmc(player);
 				//The message also shows the permanent bonus, so the player can see the insight growing
 				player.sendSystemMessage(PELang.ADAPTION_REWARD.translateColored(ChatFormatting.AQUA,
-						moze_intel.projecte.utils.EMCHelper.formatEmc(value), percent + "%"));
+						moze_intel.projecte.utils.EMCHelper.formatEmc(value),
+						EmcGainBonus.getPercent(player.getUUID()) + "%"));
 			}
 		}
 	}
