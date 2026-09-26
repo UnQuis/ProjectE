@@ -72,7 +72,8 @@ public class PELangProvider extends BaseLanguageProvider {
 		add(PELang.DIVINING_RANGE_16, "16x3x3");
 		add(PELang.DIVINING_RANGE_64, "64x3x3");
 		//Keybinds
-		add("key.category.projecte", PECore.MODNAME);
+		//Note: since 26.3 the keybind category label is key.category.<namespace>.<path>
+		add("key.category.projecte.projecte", PECore.MODNAME);
 		add(PEKeybind.HELMET_TOGGLE, "Helmet Effects");
 		add(PEKeybind.BOOTS_TOGGLE, "Boots Effects");
 		add(PEKeybind.CHARGE, "Charge");

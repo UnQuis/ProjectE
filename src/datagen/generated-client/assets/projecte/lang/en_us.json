@@ -623,7 +623,7 @@
   "jei.projecte.collector": "Collector Fuel Upgrades",
   "jei.projecte.world_transmute": "World Transmutation",
   "jei.projecte.world_transmute.description": "Use item (%1$s) in world, hold %2$s while interacting for alternate output",
-  "key.category.projecte": "ProjectE",
+  "key.category.projecte.projecte": "ProjectE",
   "key.projecte.boots_toggle": "Boots Effects",
   "key.projecte.charge": "Charge",
   "key.projecte.extra_function": "Extra Function",
