@@ -39,6 +39,7 @@ public class AdaptionWheelIntegration {
 	private static final Map<UUID, Integer> LAST_ADAPT_COUNT = new ConcurrentHashMap<>();
 	private static final java.util.Set<String> REGISTERED_CONCEPTS = ConcurrentHashMap.newKeySet();
 	private static final Map<UUID, Boolean> WEARING_STATE = new ConcurrentHashMap<>();
+	private static final java.util.Set<String> GUARD_WARNED = ConcurrentHashMap.newKeySet();
 	private static final int SYNC_INTERVAL = 20;
 
 	/**
@@ -49,14 +50,22 @@ public class AdaptionWheelIntegration {
 		if (!(event.getPlayer() instanceof ServerPlayer player) || !ProjectEConfig.common.adaptionIntegrationEnabled.get()) {
 			return;
 		}
-		AdaptationMappings.AdaptationMapping mapping = AdaptationMappings.INSTANCE.get(event.getLearnedInfo().createStack());
+		try {
+			learnAdaptation(player, event.getLearnedInfo());
+		} catch (Throwable t) {
+			guard("onLearnedItem", t);
+		}
+	}
+
+	private static void learnAdaptation(ServerPlayer player, moze_intel.projecte.api.ItemInfo learned) {
+		AdaptationMappings.AdaptationMapping mapping = AdaptationMappings.INSTANCE.get(learned.createStack());
 		if (mapping == null || mapping.concept().isBlank()) {
-			PECore.debugLog("Learned {} but it teaches no adaptation", event.getLearnedInfo());
+			PECore.debugLog("Learned {} but it teaches no adaptation", learned);
 			return;
 		}
 		if (!AdaptionWheelCompat.isWearingWheel(player)) {
 			PECore.LOGGER.info("Learned {} would teach '{}', but {} is not wearing the Adaption Wheel",
-					event.getLearnedInfo(), mapping.concept(), player.getName().getString());
+					learned, mapping.concept(), player.getName().getString());
 			return;
 		}
 		String concept = mapping.concept();
@@ -64,7 +73,7 @@ public class AdaptionWheelIntegration {
 		boolean started = mapping.instant() ? AdaptionWheelCompat.grant(player, concept, mapping.levels()) :
 				AdaptionWheelCompat.startTask(player, concept, mapping.effectiveTicks());
 		PECore.LOGGER.info("Learned {} -> {} adaptation '{}' for {}",
-				event.getLearnedInfo(), started ? (mapping.instant() ? "granted" : "started") : "FAILED to start",
+				learned, started ? (mapping.instant() ? "granted" : "started") : "FAILED to start",
 				concept, player.getName().getString());
 	}
 
@@ -79,6 +88,14 @@ public class AdaptionWheelIntegration {
 		if (!ProjectEConfig.common.adaptionIntegrationEnabled.get() || player.tickCount % SYNC_INTERVAL != 0) {
 			return;
 		}
+		try {
+			tickWearingWheel(player);
+		} catch (Throwable t) {
+			guard("onPlayerTick", t);
+		}
+	}
+
+	private static void tickWearingWheel(ServerPlayer player) {
 		if (!AdaptionWheelCompat.isWearingWheel(player)) {
 			LAST_ADAPT_COUNT.remove(player.getUUID());
 			reportWearingState(player, false);
@@ -91,7 +108,10 @@ public class AdaptionWheelIntegration {
 
 	@SubscribeEvent
 	public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
-		if (event.getEntity() instanceof ServerPlayer player) {
+		if (!(event.getEntity() instanceof ServerPlayer player)) {
+			return;
+		}
+		try {
 			LAST_ADAPT_COUNT.remove(player.getUUID());
 			if (AdaptionWheelCompat.isAvailable()) {
 				boolean wearing = AdaptionWheelCompat.isWearingWheel(player);
@@ -102,6 +122,18 @@ public class AdaptionWheelIntegration {
 			} else {
 				PECore.LOGGER.info("Adaption Wheel is loaded, but its API is not usable, the integration is off");
 			}
+		} catch (Throwable t) {
+			//Never let an optional integration keep a player from joining the world
+			guard("onPlayerLogin", t);
+		}
+	}
+
+	/**
+	 * A broken optional integration must never take the game down with it, so failures are logged once and swallowed.
+	 */
+	private static void guard(String where, Throwable t) {
+		if (GUARD_WARNED.add(where)) {
+			PECore.LOGGER.error("The Adaption Wheel integration failed in {}, it is disabled from now on", where, t);
 		}
 	}
 
@@ -117,7 +149,13 @@ public class AdaptionWheelIntegration {
 	 * other mod when its Curios integration cannot find the wheel.
 	 */
 	private static void reportWearingState(ServerPlayer player, boolean wearing) {
-		if (WEARING_STATE.put(player.getUUID(), wearing) == wearing) {
+		//Note: Map#put returns the PREVIOUS value, so a first observation is a null and must be handled explicitly
+		Boolean previous = WEARING_STATE.put(player.getUUID(), wearing);
+		if (previous != null && previous == wearing) {
+			return;
+		}
+		if (previous == null && !wearing) {
+			//Nothing was ever equipped, that is not worth a log line
 			return;
 		}
 		PECore.LOGGER.info("{} {} the Adaption Wheel ({} adaptations, {} running analyses)", player.getName().getString(),
