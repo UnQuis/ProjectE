@@ -1,0 +1,271 @@
+{
+  "groups": {
+    "expansion_power_flowers": {
+      "conversions": [
+        {
+          "output": "projecte:basic_power_flower",
+          "ingredients": {
+            "projecte:basic_compressed_collector": 2,
+            "projecte:basic_emc_link": 1,
+            "projecte:basic_relay": 6
+          }
+        },
+        {
+          "output": "projecte:blue_power_flower",
+          "ingredients": {
+            "projecte:blue_compressed_collector": 2,
+            "projecte:blue_emc_link": 1,
+            "projecte:blue_relay": 6
+          }
+        },
+        {
+          "output": "projecte:blue_power_flower",
+          "ingredients": {
+            "projecte:blue_compressed_collector": 2,
+            "projecte:blue_emc_link": 1,
+            "projecte:blue_relay": 5,
+            "projecte:violet_power_flower": 1
+          }
+        },
+        {
+          "output": "projecte:cyan_power_flower",
+          "ingredients": {
+            "projecte:cyan_compressed_collector": 2,
+            "projecte:cyan_emc_link": 1,
+            "projecte:cyan_relay": 6
+          }
+        },
+        {
+          "output": "projecte:cyan_power_flower",
+          "ingredients": {
+            "projecte:blue_power_flower": 1,
+            "projecte:cyan_compressed_collector": 2,
+            "projecte:cyan_emc_link": 1,
+            "projecte:cyan_relay": 5
+          }
+        },
+        {
+          "output": "projecte:dark_power_flower",
+          "ingredients": {
+            "projecte:dark_compressed_collector": 2,
+            "projecte:dark_emc_link": 1,
+            "projecte:dark_relay": 6
+          }
+        },
+        {
+          "output": "projecte:dark_power_flower",
+          "ingredients": {
+            "projecte:basic_power_flower": 1,
+            "projecte:dark_compressed_collector": 2,
+            "projecte:dark_emc_link": 1,
+            "projecte:dark_relay": 5
+          }
+        },
+        {
+          "output": "projecte:fading_power_flower",
+          "ingredients": {
+            "projecte:fading_compressed_collector": 2,
+            "projecte:fading_emc_link": 1,
+            "projecte:fading_relay": 6
+          }
+        },
+        {
+          "output": "projecte:fading_power_flower",
+          "ingredients": {
+            "projecte:fading_compressed_collector": 2,
+            "projecte:fading_emc_link": 1,
+            "projecte:fading_relay": 5,
+            "projecte:white_power_flower": 1
+          }
+        },
+        {
+          "output": "projecte:final_power_flower",
+          "ingredients": {
+            "projecte:final_compressed_collector": 2,
+            "projecte:final_emc_link": 1,
+            "projecte:final_relay": 6
+          }
+        },
+        {
+          "output": "projecte:final_power_flower",
+          "ingredients": {
+            "projecte:fading_power_flower": 1,
+            "projecte:final_compressed_collector": 2,
+            "projecte:final_emc_link": 1,
+            "projecte:final_relay": 5
+          }
+        },
+        {
+          "output": "projecte:green_power_flower",
+          "ingredients": {
+            "projecte:green_compressed_collector": 2,
+            "projecte:green_emc_link": 1,
+            "projecte:green_relay": 6
+          }
+        },
+        {
+          "output": "projecte:green_power_flower",
+          "ingredients": {
+            "projecte:cyan_power_flower": 1,
+            "projecte:green_compressed_collector": 2,
+            "projecte:green_emc_link": 1,
+            "projecte:green_relay": 5
+          }
+        },
+        {
+          "output": "projecte:lime_power_flower",
+          "ingredients": {
+            "projecte:lime_compressed_collector": 2,
+            "projecte:lime_emc_link": 1,
+            "projecte:lime_relay": 6
+          }
+        },
+        {
+          "output": "projecte:lime_power_flower",
+          "ingredients": {
+            "projecte:green_power_flower": 1,
+            "projecte:lime_compressed_collector": 2,
+            "projecte:lime_emc_link": 1,
+            "projecte:lime_relay": 5
+          }
+        },
+        {
+          "output": "projecte:magenta_power_flower",
+          "ingredients": {
+            "projecte:magenta_compressed_collector": 2,
+            "projecte:magenta_emc_link": 1,
+            "projecte:magenta_relay": 6
+          }
+        },
+        {
+          "output": "projecte:magenta_power_flower",
+          "ingredients": {
+            "projecte:magenta_compressed_collector": 2,
+            "projecte:magenta_emc_link": 1,
+            "projecte:magenta_relay": 5,
+            "projecte:red_power_flower": 1
+          }
+        },
+        {
+          "output": "projecte:orange_power_flower",
+          "ingredients": {
+            "projecte:orange_compressed_collector": 2,
+            "projecte:orange_emc_link": 1,
+            "projecte:orange_relay": 6
+          }
+        },
+        {
+          "output": "projecte:orange_power_flower",
+          "ingredients": {
+            "projecte:orange_compressed_collector": 2,
+            "projecte:orange_emc_link": 1,
+            "projecte:orange_relay": 5,
+            "projecte:yellow_power_flower": 1
+          }
+        },
+        {
+          "output": "projecte:pink_power_flower",
+          "ingredients": {
+            "projecte:pink_compressed_collector": 2,
+            "projecte:pink_emc_link": 1,
+            "projecte:pink_relay": 6
+          }
+        },
+        {
+          "output": "projecte:pink_power_flower",
+          "ingredients": {
+            "projecte:magenta_power_flower": 1,
+            "projecte:pink_compressed_collector": 2,
+            "projecte:pink_emc_link": 1,
+            "projecte:pink_relay": 5
+          }
+        },
+        {
+          "output": "projecte:purple_power_flower",
+          "ingredients": {
+            "projecte:purple_compressed_collector": 2,
+            "projecte:purple_emc_link": 1,
+            "projecte:purple_relay": 6
+          }
+        },
+        {
+          "output": "projecte:purple_power_flower",
+          "ingredients": {
+            "projecte:pink_power_flower": 1,
+            "projecte:purple_compressed_collector": 2,
+            "projecte:purple_emc_link": 1,
+            "projecte:purple_relay": 5
+          }
+        },
+        {
+          "output": "projecte:red_power_flower",
+          "ingredients": {
+            "projecte:red_compressed_collector": 2,
+            "projecte:red_emc_link": 1,
+            "projecte:red_relay": 6
+          }
+        },
+        {
+          "output": "projecte:red_power_flower",
+          "ingredients": {
+            "projecte:dark_power_flower": 1,
+            "projecte:red_compressed_collector": 2,
+            "projecte:red_emc_link": 1,
+            "projecte:red_relay": 5
+          }
+        },
+        {
+          "output": "projecte:violet_power_flower",
+          "ingredients": {
+            "projecte:violet_compressed_collector": 2,
+            "projecte:violet_emc_link": 1,
+            "projecte:violet_relay": 6
+          }
+        },
+        {
+          "output": "projecte:violet_power_flower",
+          "ingredients": {
+            "projecte:purple_power_flower": 1,
+            "projecte:violet_compressed_collector": 2,
+            "projecte:violet_emc_link": 1,
+            "projecte:violet_relay": 5
+          }
+        },
+        {
+          "output": "projecte:white_power_flower",
+          "ingredients": {
+            "projecte:white_compressed_collector": 2,
+            "projecte:white_emc_link": 1,
+            "projecte:white_relay": 6
+          }
+        },
+        {
+          "output": "projecte:white_power_flower",
+          "ingredients": {
+            "projecte:orange_power_flower": 1,
+            "projecte:white_compressed_collector": 2,
+            "projecte:white_emc_link": 1,
+            "projecte:white_relay": 5
+          }
+        },
+        {
+          "output": "projecte:yellow_power_flower",
+          "ingredients": {
+            "projecte:yellow_compressed_collector": 2,
+            "projecte:yellow_emc_link": 1,
+            "projecte:yellow_relay": 6
+          }
+        },
+        {
+          "output": "projecte:yellow_power_flower",
+          "ingredients": {
+            "projecte:lime_power_flower": 1,
+            "projecte:yellow_compressed_collector": 2,
+            "projecte:yellow_emc_link": 1,
+            "projecte:yellow_relay": 5
+          }
+        }
+      ]
+    }
+  }
+}
