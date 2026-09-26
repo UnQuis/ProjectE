@@ -1,5 +1,6 @@
 {
   "concept": "Env_Ice",
   "levels": 1,
-  "instant": false
+  "instant": false,
+  "id": "minecraft:packed_ice"
 }

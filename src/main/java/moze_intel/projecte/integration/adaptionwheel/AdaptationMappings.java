@@ -48,7 +48,20 @@ public class AdaptationMappings extends SimpleJsonResourceReloadListener<Adaptat
 		 * @return The item this mapping applies to
 		 */
 		public Identifier itemId(Identifier fileId) {
-			return id.map(Identifier::tryParse).orElse(fileId);
+			if (id.isPresent()) {
+				Identifier parsed = Identifier.tryParse(id.get());
+				if (parsed != null) {
+					return parsed;
+				}
+			}
+			//Fallback: interpret the file's path as "<namespace>/<item path>", which matches the layout
+			//data/<namespace>/adaptation_mappings/<item namespace>/<item path>.json
+			String path = fileId.getPath();
+			int separator = path.indexOf('/');
+			if (separator > 0 && separator < path.length() - 1) {
+				return Identifier.fromNamespaceAndPath(path.substring(0, separator), path.substring(separator + 1));
+			}
+			return fileId;
 		}
 
 		public int effectiveTicks() {
@@ -81,6 +94,7 @@ public class AdaptationMappings extends SimpleJsonResourceReloadListener<Adaptat
 			}
 		});
 		mappings = Map.copyOf(loaded);
-		PECore.debugLog("Loaded {} adaptation mappings", loaded.size());
+		PECore.LOGGER.info("Loaded {} item to adaptation mappings", loaded.size());
+		PECore.debugLog("Adaptation mappings: {}", loaded.keySet().stream().limit(25).toList());
 	}
 }

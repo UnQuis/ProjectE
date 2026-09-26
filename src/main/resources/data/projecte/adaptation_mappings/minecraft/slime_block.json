@@ -1,5 +1,6 @@
 {
   "concept": "Env_Slime",
   "levels": 1,
-  "instant": false
+  "instant": false,
+  "id": "minecraft:slime_block"
 }

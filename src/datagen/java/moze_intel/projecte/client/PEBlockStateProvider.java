@@ -204,8 +204,10 @@ public class PEBlockStateProvider extends ModelProvider {
 								.put(TextureSlot.TOP, top)
 								.put(TextureSlot.SIDE, material("block/transmutation_stone/side"))
 								.put(TextureSlot.PARTICLE, top), models.modelOutput);
+		//Note: Since 26.3 the vanilla facing rotation expects models that are authored lying on their north side,
+		//but this table's model is a flat slab (authored lying on the floor), so the pre-26.3 rotation set is used here
 		models.blockStateOutput.accept(MultiVariantGenerator.dispatch(PEBlocks.TRANSMUTATION_TABLE.getBlock(),
-				BlockModelGenerators.plainVariant(model)).with(BlockModelGenerators.ROTATION_FACING));
+				BlockModelGenerators.plainVariant(model)).with(BlockModelGenerators.ROTATIONS_COLUMN_WITH_FACING));
 	}
 
 	private void registerExplosives(BlockModelGenerators models) {
@@ -233,7 +235,8 @@ public class PEBlockStateProvider extends ModelProvider {
 		Identifier wallTorch = ModelTemplates.WALL_TORCH.create(Identifier.fromNamespaceAndPath(PECore.MODID, "block/interdiction_torch_wall"),
 				TextureMapping.torch(material("block/interdiction_torch").withForceTranslucent(true)), models.modelOutput);
 		models.blockStateOutput.accept(MultiVariantGenerator.dispatch(wall, BlockModelGenerators.plainVariant(wallTorch))
-				.with(BlockModelGenerators.ROTATION_HORIZONTAL_FACING));
+				//The wall torch template points east by default, so the torch rotation set is the correct one here
+				.with(BlockModelGenerators.ROTATION_TORCH));
 	}
 
 	private void registerFurnace(BlockModelGenerators models,

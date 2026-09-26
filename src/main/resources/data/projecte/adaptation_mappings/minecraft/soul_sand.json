@@ -1,5 +1,6 @@
 {
   "concept": "Move_SoulSand",
   "levels": 1,
-  "instant": false
+  "instant": false,
+  "id": "minecraft:soul_sand"
 }

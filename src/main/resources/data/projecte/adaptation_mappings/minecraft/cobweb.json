@@ -1,5 +1,6 @@
 {
   "concept": "Env_Cobweb",
   "levels": 1,
-  "instant": false
+  "instant": false,
+  "id": "minecraft:cobweb"
 }

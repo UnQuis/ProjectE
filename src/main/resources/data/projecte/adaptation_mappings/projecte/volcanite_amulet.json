@@ -1,5 +1,6 @@
 {
   "concept": "Env_Lava",
   "levels": 1,
-  "instant": false
+  "instant": false,
+  "id": "projecte:volcanite_amulet"
 }

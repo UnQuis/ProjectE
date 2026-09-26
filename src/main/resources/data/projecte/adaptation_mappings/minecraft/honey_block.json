@@ -1,5 +1,6 @@
 {
   "concept": "Move_Honey",
   "levels": 1,
-  "instant": false
+  "instant": false,
+  "id": "minecraft:honey_block"
 }

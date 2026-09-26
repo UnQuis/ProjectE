@@ -1,5 +1,6 @@
 {
   "concept": "Percep_SteadyGaze",
   "levels": 1,
-  "instant": false
+  "instant": false,
+  "id": "projecte:divining_rod_1"
 }

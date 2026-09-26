@@ -1,5 +1,6 @@
 {
   "concept": "Env_Liquid",
   "levels": 1,
-  "instant": false
+  "instant": false,
+  "id": "projecte:evertide_amulet"
 }
