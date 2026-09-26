@@ -35,6 +35,7 @@ import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
+import moze_intel.projecte.PECore;
 
 @EventBusSubscriber(modid = PECore.MODID)
 public class PlayerEvents {
