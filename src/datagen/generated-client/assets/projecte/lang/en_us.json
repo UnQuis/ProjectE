@@ -529,7 +529,7 @@
   "command.projecte.showbag.named": "%1$s (%2$s)",
   "command.projecte.showbag.offline.notfound": "UUID %1$s not found in playerdata/",
   "config.jade.plugin_projecte.emc_provider": "EMC Provider",
-  "config.jade.plugin_projectexpansion.provider": "Project Expansion Provider",
+  "config.jade.plugin_projecte.expansion_provider": "Project Expansion Provider",
   "configuration.projecte.client.expansion": "Expansion Settings",
   "configuration.projecte.client.expansion.button": "Edit Expansion Settings",
   "configuration.projecte.client.expansion.collection_sound": "Alchemical Collection Sound",
