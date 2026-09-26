@@ -1,8 +1,12 @@
 package moze_intel.projecte.handlers;
 
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.ResourceHandler;
 import com.google.common.base.Predicates;
 import java.util.function.Predicate;
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.utils.ItemHelper;
 import moze_intel.projecte.gameObjs.items.ItemPE;
 import moze_intel.projecte.gameObjs.registries.PEItems;
 import moze_intel.projecte.integration.IntegrationHelper;
@@ -61,10 +65,10 @@ public class InternalAbilities {
 			}
 		}
 		//Single curios capability query for the whole tick (cached instead of re-querying per check)
-		IItemHandler curios = player.getCapability(IntegrationHelper.CURIO_ITEM_HANDLER);
+		ResourceHandler<ItemResource> curios = player.getCapability(IntegrationHelper.CURIO_ITEM_HANDLER);
 		if (curios != null) {
-			for (int i = 0, slots = curios.getSlots(); i < slots; i++) {
-				ItemStack stack = curios.getStackInSlot(i);
+			for (int i = 0, slots = curios.size(); i < slots; i++) {
+				ItemStack stack = ItemUtil.getStack(curios, i);
 				if (stack.isEmpty()) {
 					continue;
 				}

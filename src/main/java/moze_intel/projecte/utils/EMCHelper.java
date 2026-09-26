@@ -1,5 +1,8 @@
 package moze_intel.projecte.utils;
 
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.ResourceHandler;
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import it.unimi.dsi.fastutil.ints.Int2IntMaps;
 import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
@@ -8,6 +11,7 @@ import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntMaps;
 import java.math.BigInteger;
 import java.text.NumberFormat;
+import org.jetbrains.annotations.Nullable;
 import java.util.Iterator;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage.EmcAction;
@@ -36,7 +40,11 @@ import org.jetbrains.annotations.Range;
 public final class EMCHelper {
 
 	//Only ever use a single decimal point for our formatter, because the majority of the time we are a whole number except for when we are abbreviating
-	private static final NumberFormat EMC_FORMATTER = Util.make(NumberFormat.getInstance(), formatter -> formatter.setMaximumFractionDigits(1));
+	private static final NumberFormat DEFAULT_EMC_FORMATTER = Util.make(NumberFormat.getInstance(), formatter -> formatter.setMaximumFractionDigits(1));
+
+	//Note: This can be swapped out by an addon that wants to display EMC values differently,
+	// but the default should be used otherwise, as it is what our number formatting expects
+	private static NumberFormat emcFormatter = DEFAULT_EMC_FORMATTER;
 
 	public static <K> Object2IntMap<K> intMapOf(final K key, int value) {
 		return Object2IntMaps.singleton(key, value);
@@ -75,11 +83,13 @@ public final class EMCHelper {
 		if (player.isCreative() || minFuel == 0) {
 			return minFuel;
 		}
-		IItemHandler curios = player.getCapability(IntegrationHelper.CURIO_ITEM_HANDLER);
+		ResourceHandler<ItemResource> curios = player.getCapability(IntegrationHelper.CURIO_ITEM_HANDLER);
 		if (curios != null) {
-			for (int i = 0, slots = curios.getSlots(); i < slots; i++) {
-				long actualExtracted = tryExtract(curios.getStackInSlot(i), minFuel);
+			for (int i = 0, slots = curios.size(); i < slots; i++) {
+				ItemStack stack = ItemUtil.getStack(curios, i);
+				long actualExtracted = tryExtract(stack, minFuel);
 				if (actualExtracted > 0) {
+					ItemHelper.setStack(curios, i, stack);
 					player.containerMenu.broadcastChanges();
 					return actualExtracted;
 				}
@@ -139,15 +149,15 @@ public final class EMCHelper {
 	}
 
 	public static String formatEmc(Number emc) {
-		return EMC_FORMATTER.format(emc);
+		return emcFormatter.format(emc);
 	}
 
 	public static String formatEmc(double emc) {
-		return EMC_FORMATTER.format(emc);
+		return emcFormatter.format(emc);
 	}
 
 	public static String formatEmc(long emc) {
-		return EMC_FORMATTER.format(emc);
+		return emcFormatter.format(emc);
 	}
 
 	@Range(from = 0, to = Long.MAX_VALUE)
@@ -226,5 +236,22 @@ public final class EMCHelper {
 		unprocessedEMC -= toRemove;
 		stack.set(PEDataComponentTypes.UNPROCESSED_EMC, unprocessedEMC);
 		return toRemove;
+	}
+
+	/**
+	 * Sets the formatter used to display EMC values.
+	 * <p>
+	 * The default is a plain number formatter with at most one decimal. Content that is part of ProjectE may swap this
+	 * (the former ProjectExpansion addon abbreviates big values), but passing null restores the default.
+	 */
+	public static void setEmcFormatter(@Nullable NumberFormat formatter) {
+		emcFormatter = formatter == null ? DEFAULT_EMC_FORMATTER : formatter;
+	}
+
+	/**
+	 * @return the formatter currently used to display EMC values
+	 */
+	public static NumberFormat getEmcFormatter() {
+		return emcFormatter;
 	}
 }

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:advanced_alchemical_chest/white",
+  "pattern": [
+    "DLD",
+    "MBM",
+    "HLH"
+  ],
+  "key": {
+    "D": "projecte:dark_matter",
+    "L": "projecte:low_covalence_dust",
+    "M": "projecte:medium_covalence_dust",
+    "H": "projecte:high_covalence_dust",
+    "B": "projecte:white_alchemical_bag"
+  },
+  "result": {
+    "id": "projecte:white_advanced_alchemical_chest"
+  }
+}

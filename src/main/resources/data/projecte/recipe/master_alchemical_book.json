@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "EOE",
+    "OBO",
+    "EOE"
+  ],
+  "key": {
+    "B": "projecte:advanced_alchemical_book",
+    "O": "projecte:colossal_star_omega",
+    "E": "projecte:colossal_star_ein"
+  },
+  "result": {
+    "id": "projecte:master_alchemical_book"
+  }
+}

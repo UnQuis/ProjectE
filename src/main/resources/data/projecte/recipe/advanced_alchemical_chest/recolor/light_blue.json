@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:advanced_alchemical_chest/light_blue",
+  "ingredients": [
+    "#projecte:advanced_alchemical_chest",
+    "minecraft:light_blue_dye"
+  ],
+  "result": {
+    "id": "projecte:light_blue_advanced_alchemical_chest"
+  }
+}

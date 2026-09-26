@@ -20,6 +20,8 @@ public class ClientConfig extends BasePEConfig {
 
 	public final CachedBooleanValue pulsatingOverlay;
 
+	public final Expansion expansion;
+
 	ClientConfig() {
 		ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 
@@ -37,7 +39,36 @@ public class ClientConfig extends BasePEConfig {
 		tagToolTips = CachedBooleanValue.wrap(this, PEConfigTranslations.CLIENT_TOOLTIPS_TAGS.applyToBuilder(builder).define("tag", false));
 		builder.pop();
 
+		expansion = new Expansion(this, builder);
+
 		configSpec = builder.build();
+	}
+	/**
+	 * Settings of the features that came from the ProjectExpansion addon.
+	 */
+	public static class Expansion {
+
+		public final CachedBooleanValue formatEMC;
+		public final CachedBooleanValue fullNumberNames;
+		public final CachedBooleanValue emcDisplay;
+		public final ModConfigSpec.EnumValue<moze_intel.projecte.expansion.gui.EMCDisplay.EmcDisplayPosition> emcDisplayPosition;
+		public final CachedBooleanValue enableLearnedTooltip;
+		public final CachedBooleanValue alchemicalCollectionSound;
+		public final ModConfigSpec.EnumValue<moze_intel.projecte.expansion.util.SearchType> searchType;
+
+		private Expansion(IPEConfig config, ModConfigSpec.Builder builder) {
+			PEConfigTranslations.CLIENT_EXPANSION.applyToBuilder(builder).push("expansion");
+			formatEMC = CachedBooleanValue.wrap(config, PEConfigTranslations.CLIENT_EXPANSION_FORMAT_EMC.applyToBuilder(builder).define("formatEMC", true));
+			fullNumberNames = CachedBooleanValue.wrap(config, PEConfigTranslations.CLIENT_EXPANSION_FULL_NUMBER_NAMES.applyToBuilder(builder).define("fullNumberNames", true));
+			emcDisplay = CachedBooleanValue.wrap(config, PEConfigTranslations.CLIENT_EXPANSION_EMC_DISPLAY.applyToBuilder(builder).define("emcDisplay", true));
+			emcDisplayPosition = PEConfigTranslations.CLIENT_EXPANSION_EMC_DISPLAY_POSITION.applyToBuilder(builder)
+					.defineEnum("emcDisplayPosition", moze_intel.projecte.expansion.gui.EMCDisplay.EmcDisplayPosition.TOP_LEFT);
+			enableLearnedTooltip = CachedBooleanValue.wrap(config, PEConfigTranslations.CLIENT_EXPANSION_LEARNED_TOOLTIP.applyToBuilder(builder).define("enableLearnedTooltip", true));
+			alchemicalCollectionSound = CachedBooleanValue.wrap(config, PEConfigTranslations.CLIENT_EXPANSION_COLLECTION_SOUND.applyToBuilder(builder).define("alchemicalCollectionSound", true));
+			searchType = PEConfigTranslations.CLIENT_EXPANSION_SEARCH_TYPE.applyToBuilder(builder)
+					.defineEnum("searchType", moze_intel.projecte.expansion.util.SearchType.NORMAL);
+			builder.pop();
+		}
 	}
 
 	@Override
@@ -59,4 +90,5 @@ public class ClientConfig extends BasePEConfig {
 	public ModConfig.Type getConfigType() {
 		return ModConfig.Type.CLIENT;
 	}
+
 }

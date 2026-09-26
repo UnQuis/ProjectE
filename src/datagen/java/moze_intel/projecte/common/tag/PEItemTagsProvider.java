@@ -12,6 +12,7 @@ import moze_intel.projecte.gameObjs.registries.PEItems;
 import moze_intel.projecte.utils.Constants;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.TagAppender;
 import net.minecraft.resources.ResourceKey;
@@ -41,6 +42,7 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 		addBags();
 		addGear();
 		addIgnoreMissing();
+		addExpansionTags();
 		for (BlacklistType blacklistType : BlacklistType.values()) {
 			tag(blacklistType.getBlacklist());
 		}
@@ -92,7 +94,7 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 		for (KleinTier tier : KleinTier.values()) {
 			kleinStars.add(projecteItem(PEItems.getStar(tier)));
 		}
-		tag(PETags.Items.CURIOS_KLEIN_STAR).addTag(PETags.Items.KLEIN_STARS);
+		tag(PETags.Items.CURIOS_KLEIN_STAR).addTags(PETags.Items.KLEIN_STARS, PETags.Items.CURIOS_EXPANSION_KLEIN_STAR);
 		tag(PETags.Items.CURIOS_TRANSMUTATION_TABLET).addTag(PETags.Items.TRANSMUTATION_TABLET);
 		tag(PETags.Items.CURIOS_NECKLACE).add(
 				projecteItem(PEItems.BODY_STONE),
@@ -260,4 +262,24 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 		}
 		return appender;
 	}
+
+	private void addExpansionTags() {
+	//Tags of the content that used to live in the ProjectExpansion addon
+		//Tags of the content that used to live in the ProjectExpansion addon
+		tag(PETags.Items.EXPANSION_COLLECTOR_FUEL).add(
+				projecteItem("magenta_fuel"), projecteItem("pink_fuel"), projecteItem("purple_fuel"), projecteItem("violet_fuel"),
+				projecteItem("blue_fuel"), projecteItem("cyan_fuel"), projecteItem("green_fuel"), projecteItem("lime_fuel"),
+				projecteItem("yellow_fuel"), projecteItem("orange_fuel"), projecteItem("white_fuel"), projecteItem("magenta_fuel_block"),
+				projecteItem("pink_fuel_block"), projecteItem("purple_fuel_block"), projecteItem("violet_fuel_block"), projecteItem("blue_fuel_block"),
+				projecteItem("cyan_fuel_block"), projecteItem("green_fuel_block"), projecteItem("lime_fuel_block"), projecteItem("yellow_fuel_block"),
+				projecteItem("orange_fuel_block"), projecteItem("white_fuel_block"));
+		//Tags of the content that used to live in the ProjectExpansion addon
+		tag(PETags.Items.EXPANSION_TRANSMUTATION_TABLETS).add(
+				projecteItem("arcane_transmutation_tablet"));
+	}
+
+	private static ResourceKey<Item> projecteItem(String name) {
+		return ResourceKey.create(Registries.ITEM, PECore.rl(name));
+	}
+
 }

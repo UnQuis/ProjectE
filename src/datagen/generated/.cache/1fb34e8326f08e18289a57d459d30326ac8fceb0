@@ -1,4 +1,4 @@
-// 1.21.1	2025-01-28T16:28:48.6053386	Damage Type Tags
+// 26.2	2026-09-26T19:45:41.553781509	Damage Type Tags
 3b5e763749168a7b66c78109df6636c285a16f64 data/minecraft/tags/damage_type/bypasses_armor.json
 3b5e763749168a7b66c78109df6636c285a16f64 data/minecraft/tags/damage_type/can_break_armor_stand.json
 3b5e763749168a7b66c78109df6636c285a16f64 data/minecraft/tags/damage_type/is_player_attack.json

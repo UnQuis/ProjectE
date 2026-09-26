@@ -1,6 +1,0 @@
-{
-  "parent": "projecte:block/alchemical_barrel",
-  "textures": {
-    "top": "projecte:block/alchemical_barrel_top_open"
-  }
-}

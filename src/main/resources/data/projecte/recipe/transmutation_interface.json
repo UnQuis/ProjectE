@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "LCL",
+    "CSC",
+    "LCL"
+  ],
+  "key": {
+    "L": "projecte:final_emc_link",
+    "C": "projecte:condenser_mk2",
+    "S": "projecte:final_star_shard"
+  },
+  "result": {
+    "id": "projecte:transmutation_interface"
+  }
+}

@@ -1,5 +1,6 @@
 package moze_intel.projecte.common.loot;
 
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import java.util.Set;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import net.minecraft.advancements.predicates.StatePropertiesPredicate;
@@ -83,4 +84,23 @@ public class PEBlockLootTable extends BlockLootSubProvider {
 				.add(LootItem.lootTableItem(tnt).when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(tnt)
 						.setProperties(StatePropertiesPredicate.Builder.properties().hasProperty(TntBlock.UNSTABLE, false)))))));
 	}
+	/**
+	 * The vanilla blocks carry their loot table reference directly, so without this override the provider would demand
+	 * a builder for every vanilla block, and the data generation environment has no vanilla loot tables to copy.
+	 */
+	private final Set<Block> knownBlocks = new ReferenceOpenHashSet<>();
+
+	@Override
+	protected void add(@NotNull Block block, LootTable.Builder table) {
+		//Overwrite the core register method to add to our list of known blocks
+		super.add(block, table);
+		knownBlocks.add(block);
+	}
+
+	@NotNull
+	@Override
+	protected Iterable<Block> getKnownBlocks() {
+		return knownBlocks;
+	}
+
 }

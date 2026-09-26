@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/lime",
+  "pattern": [
+    "CLC",
+    "RPR",
+    "RRR"
+  ],
+  "key": {
+    "L": "projecte:lime_emc_link",
+    "C": "projecte:lime_compressed_collector",
+    "R": "projecte:lime_relay",
+    "P": "projecte:green_power_flower"
+  },
+  "result": {
+    "id": "projecte:lime_power_flower"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/purple",
+  "pattern": [
+    "LMH",
+    "TCT",
+    "HML"
+  ],
+  "key": {
+    "L": "projecte:low_covalence_dust",
+    "M": "projecte:medium_covalence_dust",
+    "H": "projecte:high_covalence_dust",
+    "T": "projecte:purple_matter",
+    "C": "projecte:pink_emc_link"
+  },
+  "result": {
+    "id": "projecte:purple_emc_link"
+  }
+}

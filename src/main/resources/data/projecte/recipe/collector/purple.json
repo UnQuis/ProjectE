@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:matter/purple",
+  "ingredients": [
+    "projecte:pink_collector",
+    "projecte:purple_matter"
+  ],
+  "result": {
+    "id": "projecte:purple_collector"
+  }
+}

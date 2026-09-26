@@ -1,0 +1,32 @@
+{
+  "parent": "projecte:infinite_steak",
+  "criteria": {
+    "infinite_fuel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projecte:infinite_fuel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projecte.infinite_fuel.description"
+    },
+    "icon": {
+      "id": "projecte:infinite_fuel"
+    },
+    "title": {
+      "translate": "advancements.projecte.infinite_fuel"
+    }
+  },
+  "requirements": [
+    [
+      "infinite_fuel"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

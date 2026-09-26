@@ -1,0 +1,10 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:matter/red",
+  "ingredients": [
+    "projecte:relay_mk3"
+  ],
+  "result": {
+    "id": "projecte:red_relay"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:advanced_alchemical_chest/magenta",
+  "ingredients": [
+    "#projecte:advanced_alchemical_chest",
+    "minecraft:magenta_dye"
+  ],
+  "result": {
+    "id": "projecte:magenta_advanced_alchemical_chest"
+  }
+}

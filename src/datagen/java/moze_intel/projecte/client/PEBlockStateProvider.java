@@ -91,7 +91,9 @@ public class PEBlockStateProvider extends ModelProvider {
 		models.blockStateOutput.accept(MultiVariantGenerator.dispatch(PEBlocks.ALCHEMICAL_BARREL.getBlock(),
 				BlockModelGenerators.plainVariant(open))
 				.with(modelDispatch(BlockStateProperties.OPEN, false, closed, true, open))
-				.with(BlockModelGenerators.ROTATION_HORIZONTAL_FACING));
+				//The barrel is a DirectionalBlock, so its FACING has all six directions and the horizontal rotation
+				//variant, which only knows four, does not apply to it
+				.with(BlockModelGenerators.ROTATION_FACING));
 	}
 
 	private void registerInterdictionLantern(BlockModelGenerators models) {
@@ -177,7 +179,8 @@ public class PEBlockStateProvider extends ModelProvider {
 						.face(Direction.WEST, face -> face.uvs(0, 0, 6, 1).texture(PEDESTAL))
 						.face(Direction.UP, face -> face.uvs(6, 6, 6, 6).texture(PEDESTAL))
 						.face(Direction.DOWN, face -> face.uvs(6, 6, 6, 6).texture(PEDESTAL)))
-				.build().create(Identifier.fromNamespaceAndPath(PECore.MODID, "block/dark_matter_pedestal"),
+				//The model has to be named after the block, the item definition of a block item points at block/<id>
+				.build().create(Identifier.fromNamespaceAndPath(PECore.MODID, "block/dm_pedestal"),
 						new TextureMapping().put(PEDESTAL, darkMatter).put(TextureSlot.PARTICLE, darkMatter), models.modelOutput);
 		simpleBlock(models, PEBlocks.DARK_MATTER_PEDESTAL.getBlock(), model);
 	}

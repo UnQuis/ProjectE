@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/cyan",
+  "pattern": [
+    "LMH",
+    "TCT",
+    "HML"
+  ],
+  "key": {
+    "L": "projecte:low_covalence_dust",
+    "M": "projecte:medium_covalence_dust",
+    "H": "projecte:high_covalence_dust",
+    "T": "projecte:cyan_matter",
+    "C": "projecte:blue_emc_link"
+  },
+  "result": {
+    "id": "projecte:cyan_emc_link"
+  }
+}

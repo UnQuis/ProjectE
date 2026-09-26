@@ -40,7 +40,10 @@ sourceSets {
     main {
         resources {
             //Add the generated main module resources
+            //Data generation is split into a server and a client run, and each run clears its own output dir, so the
+            //client output goes into its own folder to keep the server output intact
             srcDirs += 'src/datagen/generated'
+            srcDirs += 'src/datagen/generated-client'
             //But exclude the cache of the generated data from what gets built
             exclude '.cache'
         }
@@ -195,8 +198,18 @@ neoForge.runs {
         programArgument('--nogui')
     }
     data {
-        data()
+        //Since 26.2 the old single 'data' run type was split into serverData/clientData, so both runs are needed:
+        //the server run produces recipes/tags/loot/advancements, the client run produces models/lang/sounds
+        serverData()
         programArguments.addAll('--all', '--output', project.file('src/datagen/generated/').getAbsolutePath(),
+                '--mod', 'projecte', '--existing', project.file('src/main/resources/').getAbsolutePath())
+
+        sourceSet = sourceSets.runData
+        loadedMods = [neoForge.mods.projecte_datagen]
+    }
+    dataClient {
+        clientData()
+        programArguments.addAll('--all', '--output', project.file('src/datagen/generated-client/').getAbsolutePath(),
                 '--mod', 'projecte', '--existing', project.file('src/main/resources/').getAbsolutePath())
 
         sourceSet = sourceSets.runData
@@ -225,6 +238,8 @@ repositories { RepositoryHandler handler ->
     exclusiveRepo(handler, 'https://maven.blamejared.com', filter -> {
         filter.includeGroupAndSubgroups('com.blamejared')
         filter.includeGroupAndSubgroups('net.darkhax')
+        //MezzConfig is a runtime dependency of JEI and is published on the same maven
+        filter.includeGroupAndSubgroups('net.mezzdev.config')
         filter.includeGroup('mezz.jei')
         filter.includeGroup('org.openzen.zencode')
     })

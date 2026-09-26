@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:matter/purple",
+  "ingredients": [
+    "projecte:pink_relay",
+    "projecte:purple_matter"
+  ],
+  "result": {
+    "id": "projecte:purple_relay"
+  }
+}

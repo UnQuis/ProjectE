@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "TWT",
+    "MSM",
+    "TCT"
+  ],
+  "key": {
+    "T": "projecte:transmutation_tablet",
+    "M": "projecte:magenta_matter",
+    "W": "#c:player_workstations/crafting_tables",
+    "C": "#c:chests",
+    "S": "projecte:magnum_star_ein"
+  },
+  "result": {
+    "id": "projecte:arcane_transmutation_tablet"
+  }
+}

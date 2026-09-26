@@ -31,8 +31,11 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
+import moze_intel.projecte.expansion.registries.ExpansionItems;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.equipment.ArmorType;
 import net.minecraft.world.item.equipment.trim.TrimMaterial;
@@ -78,13 +81,32 @@ public class PEItemModelProvider extends ModelProvider {
 		generateKleinStars(itemModels);
 		generateGear(itemModels);
 		generateShields(itemModels);
+		generateExpansionItems(itemModels);
 		generateTridents(itemModels);
 		activeDispatch(itemModels, PEItems.GEM_OF_ETERNAL_DENSITY, material("item/dense_gem_off"),
-				() -> ItemModelUtils.plainModel(generatedModel(itemModels, PEItems.GEM_OF_ETERNAL_DENSITY, material("item/dense_gem_on"), ModelTemplates.FLAT_ITEM)));
+				() -> ItemModelUtils.plainModel(generatedModel(itemModels, "gem_of_eternal_density_on", material("item/dense_gem_on"), ModelTemplates.FLAT_ITEM)));
 		//Note: We don't actually have a manual, but I moved this model over to data gen anyways
 		Identifier manual = ModelTemplates.FLAT_ITEM.create(Identifier.fromNamespaceAndPath(PECore.MODID, "item/manual"),
 				TextureMapping.layer0(material("item/book")), itemModels.modelOutput);
 		itemModels.itemModelOutput.register(manual, new ClientItem(ItemModelUtils.plainModel(manual), ClientItem.Properties.DEFAULT));
+	}
+
+	/**
+	 * Creates the item definitions of the content that used to live in the ProjectExpansion addon.
+	 * <p>
+	 * Since 26.3 every item needs a definition in {@code assets/<ns>/items/}, and data generation insists on
+	 * generating that definition, so shipping only the model as a file is not enough. The models the definitions point
+	 * at are the plain generated item models that were written by hand when the addon was merged, which is all this
+	 * method has to reference.
+	 */
+	private void generateExpansionItems(ItemModelGenerators itemModels) {
+		for (DeferredHolder<Item, ? extends Item> holder : ExpansionItems.ITEMS.getEntries()) {
+			Item item = holder.get();
+			if (!(item instanceof BlockItem)) {
+				//Block items are handled by the model provider itself, which points their definition at the block model
+				itemModels.itemModelOutput.accept(item, ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(item)));
+			}
+		}
 	}
 
 	@Override
@@ -268,8 +290,10 @@ public class PEItemModelProvider extends ModelProvider {
 		for (ItemModelGenerators.TrimMaterialData trim : ItemModelGenerators.TRIM_MATERIAL_MODELS) {
 			String suffix = trim.assets().base().suffix();
 			Identifier trimModel = ModelLocationUtils.getModelLocation(item.asItem()).withSuffix("_" + suffix + "_trim");
-			Material trimTexture = new Material(Identifier.withDefaultNamespace("trims/items/" + armorType.getName() + "_" + suffix));
-			ModelTemplates.THREE_LAYERED_ITEM.create(trimModel, TextureMapping.layered(armorTexture, trimTexture), models.modelOutput);
+			Material trimTexture = new Material(ItemModelGenerators.prefixForSlotTrim(armorType.getName()).withSuffix("_" + suffix));
+			//Trimmable armor without a dye layer is a two layered item (armor + trim), the three layered template would
+			//ask for a third texture that does not exist
+			models.generateLayeredItem(trimModel, armorTexture, trimTexture);
 			cases.add(ItemModelUtils.when(trim.materialKey(), ItemModelUtils.plainModel(trimModel)));
 		}
 		models.itemModelOutput.accept(item.asItem(), ItemModelUtils.select(new TrimMaterialProperty(),

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:fuel/lime",
+  "ingredients": [
+    "projecte:lime_matter_block"
+  ],
+  "result": {
+    "id": "projecte:lime_matter",
+    "count": 4
+  }
+}

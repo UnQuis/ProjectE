@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "SHS",
+    "HYH",
+    "SHS"
+  ],
+  "key": {
+    "Y": "projecte:yellow_matter",
+    "S": "projecte:final_star",
+    "H": "projecte:final_star_shard"
+  },
+  "result": {
+    "id": "projecte:compact_sun"
+  }
+}

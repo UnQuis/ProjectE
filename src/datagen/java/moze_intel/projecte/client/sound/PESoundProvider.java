@@ -14,6 +14,15 @@ public class PESoundProvider extends SoundDefinitionsProvider {
 		super(output, PECore.MODID);
 	}
 
+	/**
+	 * Adds a sound event that plays a sound file of another namespace (vanilla), which is what the content of the
+	 * former ProjectExpansion addon does instead of shipping its own sound files.
+	 */
+	protected void addSoundEventWithSubtitle(SoundEventRegistryObject<?> soundEventRO, Identifier location, String namespace) {
+		add(soundEventRO.get(), SoundDefinition.definition().subtitle(soundEventRO.getTranslationKey())
+				.with(sound(namespace + ":" + location.getPath())));
+	}
+
 	protected void addSoundEventWithSubtitle(SoundEventRegistryObject<?> soundEventRO, Identifier location) {
 		add(soundEventRO.get(), SoundDefinition.definition().subtitle(soundEventRO.getTranslationKey()).with(sound(location)));
 	}
@@ -28,6 +37,11 @@ public class PESoundProvider extends SoundDefinitionsProvider {
 		addSoundEventWithSubtitle(PESoundEvents.CHARGE, PECore.rl("item/pecharge"));
 		addSoundEventWithSubtitle(PESoundEvents.UNCHARGE, PECore.rl("item/peuncharge"));
 		addSoundEventWithSubtitle(PESoundEvents.TRANSMUTE, PECore.rl("item/petransmute"));
+		//Sounds of the former ProjectExpansion addon, which reuse vanilla sounds
+		addSoundEventWithSubtitle(moze_intel.projecte.expansion.registries.ExpansionSoundEvents.KNOWLEDGE_SHARING_BOOK_STORE, Identifier.withDefaultNamespace("random/orb"), "minecraft");
+		addSoundEventWithSubtitle(moze_intel.projecte.expansion.registries.ExpansionSoundEvents.KNOWLEDGE_SHARING_BOOK_USE, Identifier.withDefaultNamespace("random/break"), "minecraft");
+		addSoundEventWithSubtitle(moze_intel.projecte.expansion.registries.ExpansionSoundEvents.KNOWLEDGE_SHARING_BOOK_USE_NONE, Identifier.withDefaultNamespace("random/fizz"), "minecraft");
+		addSoundEventWithSubtitle(moze_intel.projecte.expansion.registries.ExpansionSoundEvents.ALCHEMICAL_COLLECTION_COLLECT, Identifier.withDefaultNamespace("mob/ghast/fireball4"), "minecraft");
 		//TODO: Evaluate the remaining sounds that we don't actually use anywhere
 	}
 }

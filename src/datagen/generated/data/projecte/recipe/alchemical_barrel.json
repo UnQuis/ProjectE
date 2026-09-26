@@ -1,28 +1,13 @@
 {
   "type": "minecraft:crafting_shaped",
-  "category": "misc",
   "key": {
-    "B": {
-      "tag": "c:barrels/wooden"
-    },
-    "D": {
-      "tag": "c:gems/diamond"
-    },
-    "H": {
-      "item": "projecte:high_covalence_dust"
-    },
-    "I": {
-      "tag": "c:ingots/iron"
-    },
-    "L": {
-      "item": "projecte:low_covalence_dust"
-    },
-    "M": {
-      "item": "projecte:medium_covalence_dust"
-    },
-    "S": {
-      "tag": "c:stones"
-    }
+    "B": "#c:barrels/wooden",
+    "D": "#c:gems/diamond",
+    "H": "projecte:high_covalence_dust",
+    "I": "#c:ingots/iron",
+    "L": "projecte:low_covalence_dust",
+    "M": "projecte:medium_covalence_dust",
+    "S": "#c:stones"
   },
   "pattern": [
     "LMH",
@@ -30,7 +15,6 @@
     "IBI"
   ],
   "result": {
-    "count": 1,
     "id": "projecte:alchemical_barrel"
   }
 }

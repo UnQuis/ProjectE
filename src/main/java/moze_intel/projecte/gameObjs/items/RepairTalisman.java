@@ -1,5 +1,7 @@
 package moze_intel.projecte.gameObjs.items;
 
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.ResourceHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiPredicate;
@@ -112,7 +114,10 @@ public class RepairTalisman extends ItemPE implements IAlchBagItem, IAlchChestIt
 
 	private static void repairAllItems(Player player) {
 		repairAllItems(IItemHandler.of(player.getCapability(Capabilities.Item.ENTITY)), player, CAN_REPAIR_PLAYER_ITEM);
-		repairAllItems(player.getCapability(IntegrationHelper.CURIO_ITEM_HANDLER), player, CAN_REPAIR_PLAYER_ITEM);
+		ResourceHandler<ItemResource> curios = player.getCapability(IntegrationHelper.CURIO_ITEM_HANDLER);
+		if (curios != null) {
+			repairAllItems(IItemHandler.of(curios), player, CAN_REPAIR_PLAYER_ITEM);
+		}
 	}
 
 	private static <DATA> boolean repairAllItems(@Nullable IItemHandler inv, DATA data, BiPredicate<ItemStack, DATA> canRepairStack) {

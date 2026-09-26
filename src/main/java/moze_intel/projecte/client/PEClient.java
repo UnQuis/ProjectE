@@ -93,6 +93,10 @@ public class PEClient {
 		modEventBus.addListener(this::registerSpecialModelRenderers);
 		modEventBus.addListener(this::registerRangeSelectItemModelProperties);
 
+		//Client side of the former ProjectExpansion addon: screens, chest renderer, and the client hooks
+		moze_intel.projecte.expansion.client.ExpansionClient.register(modEventBus);
+		moze_intel.projecte.expansion.client.ExpansionClientHooks.install();
+
 		NeoForge.EVENT_BUS.addListener(this::onEntityJoinWorld);
 		NeoForge.EVENT_BUS.addListener(this::registerClientCommands);
 		NeoForge.EVENT_BUS.addListener(this::onDisconnect);
@@ -196,7 +200,8 @@ public class PEClient {
 		event.register(ACTIVE_OVERRIDE, ActiveProperty.MAP_CODEC);
 		event.register(MODE_OVERRIDE, ModeProperty.MAP_CODEC);
 		event.register(BLOCKING_OVERRIDE, UsingItemProperty.MAP_CODEC);
-		event.register(THROWING_OVERRIDE, UsingItemProperty.MAP_CODEC);
+		//Each property needs its own codec instance, registering the same one twice is rejected
+		event.register(THROWING_OVERRIDE, MapCodec.unit(new UsingItemProperty()));
 	}
 
 	private void onDisconnect(ClientPlayerNetworkEvent.LoggingOut event) {

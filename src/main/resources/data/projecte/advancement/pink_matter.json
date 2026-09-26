@@ -1,0 +1,32 @@
+{
+  "parent": "projecte:magenta_matter",
+  "criteria": {
+    "pink_matter": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projecte:pink_matter"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projecte.pink_matter.description"
+    },
+    "icon": {
+      "id": "projecte:pink_matter"
+    },
+    "title": {
+      "translate": "advancements.projecte.pink_matter"
+    }
+  },
+  "requirements": [
+    [
+      "pink_matter"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

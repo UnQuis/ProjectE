@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/fading",
+  "pattern": [
+    "CLC",
+    "RRR",
+    "RRR"
+  ],
+  "key": {
+    "L": "projecte:fading_emc_link",
+    "C": "projecte:fading_compressed_collector",
+    "R": "projecte:fading_relay"
+  },
+  "result": {
+    "id": "projecte:fading_power_flower"
+  }
+}

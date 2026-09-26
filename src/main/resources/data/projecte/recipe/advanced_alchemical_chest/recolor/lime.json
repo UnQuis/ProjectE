@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:advanced_alchemical_chest/lime",
+  "ingredients": [
+    "#projecte:advanced_alchemical_chest",
+    "minecraft:lime_dye"
+  ],
+  "result": {
+    "id": "projecte:lime_advanced_alchemical_chest"
+  }
+}

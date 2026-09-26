@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:fuel/purple",
+  "ingredients": [
+    "projecte:purple_fuel",
+    "projecte:purple_fuel",
+    "projecte:purple_fuel",
+    "projecte:purple_fuel",
+    "projecte:purple_fuel",
+    "projecte:purple_fuel",
+    "projecte:purple_fuel",
+    "projecte:purple_fuel",
+    "projecte:purple_fuel"
+  ],
+  "result": {
+    "id": "projecte:purple_fuel_block"
+  }
+}

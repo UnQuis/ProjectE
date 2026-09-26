@@ -2,15 +2,9 @@
   "type": "minecraft:crafting_shaped",
   "category": "equipment",
   "key": {
-    "M": {
-      "item": "projecte:red_matter"
-    },
-    "P": {
-      "item": "projecte:dark_matter"
-    },
-    "S": {
-      "item": "projecte:dark_matter_shield"
-    }
+    "M": "projecte:red_matter",
+    "P": "projecte:dark_matter",
+    "S": "projecte:dark_matter_shield"
   },
   "pattern": [
     "PMP",
@@ -18,7 +12,6 @@
     " P "
   ],
   "result": {
-    "count": 1,
     "id": "projecte:red_matter_shield"
   }
 }

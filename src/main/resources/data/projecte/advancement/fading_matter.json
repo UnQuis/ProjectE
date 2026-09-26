@@ -1,0 +1,32 @@
+{
+  "parent": "projecte:white_matter",
+  "criteria": {
+    "fading_matter": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projecte:fading_matter"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projecte.fading_matter.description"
+    },
+    "icon": {
+      "id": "projecte:fading_matter"
+    },
+    "title": {
+      "translate": "advancements.projecte.fading_matter"
+    }
+  },
+  "requirements": [
+    [
+      "fading_matter"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

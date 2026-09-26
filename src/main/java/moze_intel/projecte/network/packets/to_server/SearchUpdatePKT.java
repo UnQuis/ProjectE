@@ -1,6 +1,7 @@
 package moze_intel.projecte.network.packets.to_server;
 
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.expansion.ExpansionTransmutationSync;
 import moze_intel.projecte.gameObjs.container.TransmutationContainer;
 import moze_intel.projecte.network.packets.IPEPacket;
 import net.minecraft.network.RegistryFriendlyByteBuf;
@@ -34,6 +35,9 @@ public record SearchUpdatePKT(int slot, ItemStack itemStack) implements IPEPacke
 	public void handle(IPayloadContext context) {
 		if (context.player().containerMenu instanceof TransmutationContainer container) {
 			container.transmutationInventory.writeIntoOutputSlot(slot, itemStack);
+		} else {
+			//Let any transmutation gui that is not one of ours know which of its outputs to display
+			ExpansionTransmutationSync.onSearchUpdate(context.player(), slot, itemStack);
 		}
 	}
 }

@@ -1,0 +1,20 @@
+{
+  "values": [
+    "projecte:basic_emc_link",
+    "projecte:dark_emc_link",
+    "projecte:red_emc_link",
+    "projecte:magenta_emc_link",
+    "projecte:pink_emc_link",
+    "projecte:purple_emc_link",
+    "projecte:violet_emc_link",
+    "projecte:blue_emc_link",
+    "projecte:cyan_emc_link",
+    "projecte:green_emc_link",
+    "projecte:lime_emc_link",
+    "projecte:yellow_emc_link",
+    "projecte:orange_emc_link",
+    "projecte:white_emc_link",
+    "projecte:fading_emc_link",
+    "projecte:final_emc_link"
+  ]
+}

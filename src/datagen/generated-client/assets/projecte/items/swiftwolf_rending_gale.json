@@ -1,0 +1,40 @@
+{
+  "model": {
+    "type": "minecraft:range_dispatch",
+    "entries": [
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "projecte:item/swiftwolf_rending_gale"
+        },
+        "threshold": 0.0
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "projecte:item/swiftwolf_rending_gale_fly"
+        },
+        "threshold": 1.0
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "projecte:item/swiftwolf_rending_gale_repel"
+        },
+        "threshold": 2.0
+      },
+      {
+        "model": {
+          "type": "minecraft:model",
+          "model": "projecte:item/swiftwolf_rending_gale_fly_repel"
+        },
+        "threshold": 3.0
+      }
+    ],
+    "fallback": {
+      "type": "minecraft:model",
+      "model": "projecte:item/swiftwolf_rending_gale"
+    },
+    "property": "projecte:mode"
+  }
+}

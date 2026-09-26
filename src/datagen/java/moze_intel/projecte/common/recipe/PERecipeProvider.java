@@ -41,6 +41,8 @@ import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.conditions.NotCondition;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.world.item.ItemStackTemplate;
 import net.neoforged.neoforge.common.crafting.DataComponentIngredient;
 import org.jetbrains.annotations.NotNull;
 
@@ -164,9 +166,15 @@ public class PERecipeProvider extends RecipeProvider {
 				.save(recipeOutput.withConditions(TomeEnabledCondition.INSTANCE, FullKleinStarsCondition.INSTANCE),
 						PECore.rl("full_star_" + name).toString());
 		//Tome enabled but should not use full stars
-		baseTomeRecipe(alternate)
-				.define('K', PEItems.KLEIN_STAR_OMEGA)
-				.save(recipeOutput.withConditions(TomeEnabledCondition.INSTANCE, new NotCondition(FullKleinStarsCondition.INSTANCE)), PECore.rl(name).toString());
+		//Note: the id may not be passed to save when it is the default one, which is the result item's id, so only the
+		//alternate tome needs an explicit one
+		RecipeOutput plainTomeOutput = recipeOutput.withConditions(TomeEnabledCondition.INSTANCE, new NotCondition(FullKleinStarsCondition.INSTANCE));
+		ShapedRecipeBuilder plainTome = baseTomeRecipe(alternate).define('K', PEItems.KLEIN_STAR_OMEGA);
+		if (alternate) {
+			plainTome.save(plainTomeOutput, PECore.rl("tome_alt").toString());
+		} else {
+			plainTome.save(plainTomeOutput);
+		}
 	}
 
 	private ShapedRecipeBuilder baseTomeRecipe(boolean alternate) {
@@ -489,8 +497,10 @@ public class PERecipeProvider extends RecipeProvider {
 	}
 
 	private Ingredient getFullKleinStarIngredient(KleinTier tier) {
-		ItemStack star = PEItems.getStar(tier).asStack(1);
-		star.set(PEDataComponentTypes.STORED_EMC, tier.maxEmc);
+		//Item components are not bound yet while the recipe providers run, so an ItemStack can't be created here, the
+		//ingredient is built from a template with the stored EMC patched in instead
+		ItemStackTemplate star = new ItemStackTemplate(PEItems.getStar(tier).asItem(), 1,
+				DataComponentPatch.builder().set(PEDataComponentTypes.STORED_EMC.get(), tier.maxEmc).build());
 		return DataComponentIngredient.of(false, star);
 	}
 
@@ -502,7 +512,8 @@ public class PERecipeProvider extends RecipeProvider {
 		//Full stars should not be used
 		builder.get()
 				.requires(PEItems.KLEIN_STAR_OMEGA)
-				.save(recipeOutput.withConditions(new NotCondition(FullKleinStarsCondition.INSTANCE)), result.getId().toString());
+				//The id may not be passed to save when it is the default one, which is the result item's id
+				.save(recipeOutput.withConditions(new NotCondition(FullKleinStarsCondition.INSTANCE)));
 	}
 
 	private void fuelUpgradeRecipe(RecipeOutput recipeOutput, ItemLike input, ItemLike output) {

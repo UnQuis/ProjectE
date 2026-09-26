@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "HRH",
+    "EBP",
+    "HRH"
+  ],
+  "key": {
+    "H": "projecte:high_covalence_dust",
+    "R": "projecte:red_matter",
+    "E": "minecraft:ender_pearl",
+    "P": "projecte:philosophers_stone",
+    "B": "minecraft:book"
+  },
+  "result": {
+    "id": "projecte:basic_alchemical_book"
+  }
+}
