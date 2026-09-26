@@ -65,7 +65,7 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 				PEBlocks.MOBIUS_FUEL.asItem(),
 				PEItems.AETERNALIS_FUEL.get(),
 				PEBlocks.AETERNALIS_FUEL.asItem()
-		);
+		).addTag(PETags.Items.EXPANSION_COLLECTOR_FUEL);
 		tag(PETags.Items.COVALENCE_DUST).add(
 				PEItems.LOW_COVALENCE_DUST.get(),
 				PEItems.MEDIUM_COVALENCE_DUST.get(),
@@ -97,7 +97,8 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 		for (KleinTier tier : KleinTier.values()) {
 			kleinStarBuilder.add(PEItems.getStar(tier).value());
 		}
-		tag(PETags.Items.CURIOS_KLEIN_STAR).addTag(PETags.Items.KLEIN_STARS);
+		tag(PETags.Items.CURIOS_KLEIN_STAR).addTags(PETags.Items.KLEIN_STARS, PETags.Items.CURIOS_EXPANSION_KLEIN_STAR);
+		tag(PETags.Items.TRANSMUTATION_TABLET).addTag(PETags.Items.EXPANSION_TRANSMUTATION_TABLETS);
 		tag(PETags.Items.CURIOS_TRANSMUTATION_TABLET).addTag(PETags.Items.TRANSMUTATION_TABLET);
 		tag(PETags.Items.CURIOS_NECKLACE).add(
 				PEItems.BODY_STONE.get(),
@@ -131,7 +132,7 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 		);
 		tag(Tags.Items.CHESTS).add(
 				PEBlocks.ALCHEMICAL_CHEST.asItem()
-		);
+		).addTag(PETags.Items.EXPANSION_CHESTS);
 		tag(Tags.Items.PLAYER_WORKSTATIONS_FURNACES).add(
 				PEBlocks.DARK_MATTER_FURNACE.asItem(),
 				PEBlocks.RED_MATTER_FURNACE.asItem()

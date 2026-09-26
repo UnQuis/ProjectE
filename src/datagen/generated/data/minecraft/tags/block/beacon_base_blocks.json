@@ -1,6 +1,7 @@
 {
   "values": [
     "projecte:dark_matter_block",
-    "projecte:red_matter_block"
+    "projecte:red_matter_block",
+    "#minecraft:expansion_beacon_base_blocks"
   ]
 }
