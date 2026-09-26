@@ -14,7 +14,6 @@ import moze_intel.projecte.expansion.net.packets.to_server.PacketArcaneTransmuta
 import moze_intel.projecte.expansion.net.packets.to_server.PacketArcaneTransmutationTabletSmallButton;
 import moze_intel.projecte.expansion.net.packets.to_server.PacketCreateTeleportLocation;
 import moze_intel.projecte.expansion.net.packets.to_server.PacketDeleteTeleportLocation;
-import moze_intel.projecte.expansion.net.packets.to_server.PacketOpenTransmutationTablet;
 import moze_intel.projecte.expansion.net.packets.to_server.PacketTeleportBack;
 import moze_intel.projecte.expansion.net.packets.to_server.PacketTeleportToLocation;
 import net.minecraft.resources.ResourceLocation;
@@ -66,7 +65,6 @@ public final class ExpansionPacketHandler {
 		registrar.playToServer(PacketArcaneTransmutationTabletSmallButton.TYPE, PacketArcaneTransmutationTabletSmallButton.STREAM_CODEC, IPacket::handle);
 		registrar.playToServer(PacketCreateTeleportLocation.TYPE, PacketCreateTeleportLocation.STREAM_CODEC, IPacket::handle);
 		registrar.playToServer(PacketDeleteTeleportLocation.TYPE, PacketDeleteTeleportLocation.STREAM_CODEC, IPacket::handle);
-		registrar.playToServer(PacketOpenTransmutationTablet.TYPE, PacketOpenTransmutationTablet.STREAM_CODEC, IPacket::handle);
 		registrar.playToServer(PacketTeleportBack.TYPE, PacketTeleportBack.STREAM_CODEC, IPacket::handle);
 		registrar.playToServer(PacketTeleportToLocation.TYPE, PacketTeleportToLocation.STREAM_CODEC, IPacket::handle);
 		//Server to client

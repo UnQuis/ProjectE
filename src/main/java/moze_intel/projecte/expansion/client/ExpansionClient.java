@@ -57,7 +57,6 @@ public class ExpansionClient {
 	}
 
 	private static void registerKeyMappings(RegisterKeyMappingsEvent event) {
-		Keybinds.register(event);
 	}
 
 	private static void enqueueIMC(InterModEnqueueEvent event) {

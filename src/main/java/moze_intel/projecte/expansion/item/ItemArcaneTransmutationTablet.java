@@ -2,7 +2,7 @@ package moze_intel.projecte.expansion.item;
 
 import moze_intel.projecte.expansion.gui.container.ContainerArcaneTransmutationTablet;
 import moze_intel.projecte.expansion.util.ContainerData;
-import moze_intel.projecte.expansion.util.ITransmutationTablet;
+import moze_intel.projecte.api.item.ITransmutationTablet;
 import moze_intel.projecte.expansion.util.Lang;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;

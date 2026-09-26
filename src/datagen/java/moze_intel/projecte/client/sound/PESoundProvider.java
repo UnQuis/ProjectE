@@ -2,6 +2,7 @@ package moze_intel.projecte.client.sound;
 
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.gameObjs.registration.impl.SoundEventRegistryObject;
+import moze_intel.projecte.expansion.registries.ExpansionSoundEvents;
 import moze_intel.projecte.gameObjs.registries.PESoundEvents;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -19,6 +20,16 @@ public class PESoundProvider extends SoundDefinitionsProvider {
 		add(soundEventRO.get(), SoundDefinition.definition().subtitle(soundEventRO.getTranslationKey()).with(sound(location)));
 	}
 
+	/**
+	 * Adds a sound event that plays a sound file of another namespace (vanilla), which is what the content of the
+	 * former ProjectExpansion addon does instead of shipping its own sound files.
+	 */
+	protected void addSoundEventWithSubtitle(SoundEventRegistryObject<?> soundEventRO, ResourceLocation location, String namespace) {
+		add(soundEventRO.get(), SoundDefinition.definition().subtitle(soundEventRO.getTranslationKey())
+				.with(SoundDefinition.Sound.sound(ResourceLocation.fromNamespaceAndPath(namespace, location.getPath()),
+						SoundDefinition.SoundType.SOUND)));
+	}
+
 	@Override
 	public void registerSounds() {
 		addSoundEventWithSubtitle(PESoundEvents.WIND_MAGIC, PECore.rl("item/pewindmagic"));
@@ -29,6 +40,11 @@ public class PESoundProvider extends SoundDefinitionsProvider {
 		addSoundEventWithSubtitle(PESoundEvents.CHARGE, PECore.rl("item/pecharge"));
 		addSoundEventWithSubtitle(PESoundEvents.UNCHARGE, PECore.rl("item/peuncharge"));
 		addSoundEventWithSubtitle(PESoundEvents.TRANSMUTE, PECore.rl("item/petransmute"));
+		//Sounds of the former ProjectExpansion addon, which reuse vanilla sounds
+		addSoundEventWithSubtitle(ExpansionSoundEvents.KNOWLEDGE_SHARING_BOOK_STORE, ResourceLocation.withDefaultNamespace("random/orb"), "minecraft");
+		addSoundEventWithSubtitle(ExpansionSoundEvents.KNOWLEDGE_SHARING_BOOK_USE, ResourceLocation.withDefaultNamespace("random/break"), "minecraft");
+		addSoundEventWithSubtitle(ExpansionSoundEvents.KNOWLEDGE_SHARING_BOOK_USE_NONE, ResourceLocation.withDefaultNamespace("random/fizz"), "minecraft");
+		addSoundEventWithSubtitle(ExpansionSoundEvents.ALCHEMICAL_COLLECTION_COLLECT, ResourceLocation.withDefaultNamespace("mob/ghast/fireball4"), "minecraft");
 		//TODO: Evaluate the remaining sounds that we don't actually use anywhere
 	}
 }
