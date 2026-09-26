@@ -38,6 +38,7 @@ public class AdaptionWheelIntegration {
 
 	private static final Map<UUID, Integer> LAST_ADAPT_COUNT = new ConcurrentHashMap<>();
 	private static final java.util.Set<String> REGISTERED_CONCEPTS = ConcurrentHashMap.newKeySet();
+	private static final Map<UUID, Boolean> WEARING_STATE = new ConcurrentHashMap<>();
 	private static final int SYNC_INTERVAL = 20;
 
 	/**
@@ -80,8 +81,10 @@ public class AdaptionWheelIntegration {
 		}
 		if (!AdaptionWheelCompat.isWearingWheel(player)) {
 			LAST_ADAPT_COUNT.remove(player.getUUID());
+			reportWearingState(player, false);
 			return;
 		}
+		reportWearingState(player, true);
 		accelerateAnalysis(player);
 		syncAdaptCount(player);
 	}
@@ -90,14 +93,36 @@ public class AdaptionWheelIntegration {
 	public static void onPlayerLogin(PlayerEvent.PlayerLoggedInEvent event) {
 		if (event.getEntity() instanceof ServerPlayer player) {
 			LAST_ADAPT_COUNT.remove(player.getUUID());
-			syncAdaptCount(player);
+			if (AdaptionWheelCompat.isAvailable()) {
+				boolean wearing = AdaptionWheelCompat.isWearingWheel(player);
+				reportWearingState(player, wearing);
+				if (wearing) {
+					syncAdaptCount(player);
+				}
+			} else {
+				PECore.LOGGER.info("Adaption Wheel is loaded, but its API is not usable, the integration is off");
+			}
 		}
 	}
 
 	@SubscribeEvent
 	public static void onPlayerLogout(PlayerEvent.PlayerLoggedOutEvent event) {
 		LAST_ADAPT_COUNT.remove(event.getEntity().getUUID());
+		WEARING_STATE.remove(event.getEntity().getUUID());
 		EmcGainBonus.setPercent(event.getEntity().getUUID(), BigInteger.ZERO);
+	}
+
+	/**
+	 * Logs a change of the "wearing the wheel" state, which is the thing that silently breaks every mechanic of the
+	 * other mod when its Curios integration cannot find the wheel.
+	 */
+	private static void reportWearingState(ServerPlayer player, boolean wearing) {
+		if (WEARING_STATE.put(player.getUUID(), wearing) == wearing) {
+			return;
+		}
+		PECore.LOGGER.info("{} {} the Adaption Wheel ({} adaptations, {} running analyses)", player.getName().getString(),
+				wearing ? "equipped" : "removed", AdaptionWheelCompat.getAdaptCount(player),
+				AdaptionWheelCompat.getActiveTasks(player).size());
 	}
 
 	/**
