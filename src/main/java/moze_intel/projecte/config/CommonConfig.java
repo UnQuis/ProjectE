@@ -20,7 +20,6 @@ public class CommonConfig extends BasePEConfig {
 	public final CachedIntValue adaptionMaxAccelerationSteps;
 	public final CachedIntValue adaptionEmcReward;
 	public final CachedIntValue adaptionInsightPercent;
-	public final CachedIntValue adaptionMaxInsightPercent;
 
 	CommonConfig() {
 		ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -36,8 +35,7 @@ public class CommonConfig extends BasePEConfig {
 		adaptionEmcPerAccelerationStep = CachedIntValue.wrap(this, PEConfigTranslations.COMMON_ADAPTION_EMC_STEP.applyToBuilder(builder).defineInRange("emcPerAccelerationStep", 256, 0, Integer.MAX_VALUE));
 		adaptionMaxAccelerationSteps = CachedIntValue.wrap(this, PEConfigTranslations.COMMON_ADAPTION_MAX_STEPS.applyToBuilder(builder).defineInRange("maxAccelerationSteps", 4, 0, 64));
 		adaptionEmcReward = CachedIntValue.wrap(this, PEConfigTranslations.COMMON_ADAPTION_REWARD.applyToBuilder(builder).defineInRange("emcReward", 500, 0, Integer.MAX_VALUE));
-		adaptionInsightPercent = CachedIntValue.wrap(this, PEConfigTranslations.COMMON_ADAPTION_INSIGHT.applyToBuilder(builder).defineInRange("insightPercentPerAdaptation", 1, 0, 100));
-		adaptionMaxInsightPercent = CachedIntValue.wrap(this, PEConfigTranslations.COMMON_ADAPTION_MAX_INSIGHT.applyToBuilder(builder).defineInRange("maxInsightPercent", 50, 0, 1000));
+		adaptionInsightPercent = CachedIntValue.wrap(this, PEConfigTranslations.COMMON_ADAPTION_INSIGHT.applyToBuilder(builder).defineInRange("insightPercentPerAdaptation", 5, 0, 100));
 		builder.pop();
 		configSpec = builder.build();
 	}

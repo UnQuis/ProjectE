@@ -40,9 +40,7 @@ public enum PEConfigTranslations implements IConfigTranslation {
 	COMMON_ADAPTION_REWARD("common.adaption.reward", "EMC per Adaptation",
 			"EMC granted to the player once for every completed adaptation."),
 	COMMON_ADAPTION_INSIGHT("common.adaption.insight", "Insight per Adaptation",
-			"Percent that every adaptation permanently adds to all EMC the player gains."),
-	COMMON_ADAPTION_MAX_INSIGHT("common.adaption.max_insight", "Max Insight",
-			"Upper limit in percent for the EMC gain bonus coming from adaptations."),
+			"Percent that every adaptation permanently adds to all EMC the player gains. There is no upper limit."),
 
 	//Server Config
 	SERVER_COOLDOWN("server.cooldown", "Cooldown Settings",
