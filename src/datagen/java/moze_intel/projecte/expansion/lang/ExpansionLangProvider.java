@@ -37,6 +37,15 @@ public class ExpansionLangProvider extends PELangProvider {
 	 * game runs from a development environment. The addon used to live in its own namespace, so the key of its provider
 	 * has to be added under the ProjectE namespace now.
 	 */
+	/**
+	 * Adds the name of a block together with the {@code item.*} alias its block item needs. Since 26.x the tooltip of
+	 * a block item resolves the {@code item.*} key, and a plain {@link #add(String, String)} does not create that alias.
+	 */
+	private void addBlock(String key, String value) {
+		add(key, value);
+		add("item." + key.substring("block.".length()), value);
+	}
+
 	private void addJadeConfig() {
 		add("config.jade.plugin_projecte.expansion_provider", "Project Expansion Provider");
 	}
@@ -381,283 +390,283 @@ public class ExpansionLangProvider extends PELangProvider {
 				"Obtain a yellow matter block.");
 		add("attribute.projecte.sun_exposure_protection",
 				"Sun Exposure Protection");
-		add("block.projecte.advanced_alchemical_chest.color",
+		addBlock("block.projecte.advanced_alchemical_chest.color",
 				"Current Color: %s");
-		add("block.projecte.advanced_alchemical_chest.color_set",
+		addBlock("block.projecte.advanced_alchemical_chest.color_set",
 				"The color has been set to %s.");
-		add("block.projecte.advanced_alchemical_chest.invalid_item",
+		addBlock("block.projecte.advanced_alchemical_chest.invalid_item",
 				"You must be holding a %s to set the color.");
-		add("block.projecte.advanced_alchemical_chest.tooltip",
+		addBlock("block.projecte.advanced_alchemical_chest.tooltip",
 				"Just like the alchemical bag, but in a chest form. Shift click with a bag to set the color.");
-		add("block.projecte.arcane_table",
+		addBlock("block.projecte.arcane_table",
 				"Arcane Table");
-		add("block.projecte.basic_collector",
+		addBlock("block.projecte.basic_collector",
 				"Basic Collector [MK 1]");
-		add("block.projecte.basic_emc_link",
+		addBlock("block.projecte.basic_emc_link",
 				"Basic EMC Link [MK 1]");
-		add("block.projecte.basic_power_flower",
+		addBlock("block.projecte.basic_power_flower",
 				"Basic Power Flower [MK 1]");
-		add("block.projecte.basic_relay",
+		addBlock("block.projecte.basic_relay",
 				"Basic Relay [MK 1]");
-		add("block.projecte.black_advanced_alchemical_chest",
+		addBlock("block.projecte.black_advanced_alchemical_chest",
 				"Black Advanced Alchemical Chest");
-		add("block.projecte.blue_advanced_alchemical_chest",
+		addBlock("block.projecte.blue_advanced_alchemical_chest",
 				"Blue Advanced Alchemical Chest");
-		add("block.projecte.blue_collector",
+		addBlock("block.projecte.blue_collector",
 				"Blue Collector [MK 8]");
-		add("block.projecte.blue_emc_link",
+		addBlock("block.projecte.blue_emc_link",
 				"Blue EMC Link [MK 8]");
-		add("block.projecte.blue_fuel_block",
+		addBlock("block.projecte.blue_fuel_block",
 				"Blue Fuel Block");
-		add("block.projecte.blue_matter_block",
+		addBlock("block.projecte.blue_matter_block",
 				"Blue Matter Block");
-		add("block.projecte.blue_power_flower",
+		addBlock("block.projecte.blue_power_flower",
 				"Blue Power Flower [MK 8]");
-		add("block.projecte.blue_relay",
+		addBlock("block.projecte.blue_relay",
 				"Blue Relay [MK 8]");
-		add("block.projecte.brown_advanced_alchemical_chest",
+		addBlock("block.projecte.brown_advanced_alchemical_chest",
 				"Brown Advanced Alchemical Chest");
-		add("block.projecte.collector",
+		addBlock("block.projecte.collector",
 				"Collector.");
-		add("block.projecte.collector.emc",
+		addBlock("block.projecte.collector.emc",
 				"Maximum Produced EMC: %s/s");
-		add("block.projecte.collector.max_storage",
+		addBlock("block.projecte.collector.max_storage",
 				"Maximum Stored EMC: %s");
-		add("block.projecte.collector.stack_emc",
+		addBlock("block.projecte.collector.stack_emc",
 				"Stack Produced EMC: %s/s");
-		add("block.projecte.collector.tooltip",
+		addBlock("block.projecte.collector.tooltip",
 				"Generates EMC when exposed to light.");
-		add("block.projecte.compact_sun",
+		addBlock("block.projecte.compact_sun",
 				"Compact Sun");
-		add("block.projecte.compact_sun.tooltip",
+		addBlock("block.projecte.compact_sun.tooltip",
 				"The power of the sun in a single block.");
-		add("block.projecte.compact_sun.tooltip2",
+		addBlock("block.projecte.compact_sun.tooltip2",
 				"When put above or below certain blocks, multiplies their output by %s.");
-		add("block.projecte.condenser_mk3",
+		addBlock("block.projecte.condenser_mk3",
 				"Energy Condenser MK3");
-		add("block.projecte.condenser_mk3.tooltip",
+		addBlock("block.projecte.condenser_mk3.tooltip",
 				"5 Condensers in one, each side (except down) is a separate condenser with its own input, processing, and lock slot. The down side is the output for all other sides.");
-		add("block.projecte.cyan_advanced_alchemical_chest",
+		addBlock("block.projecte.cyan_advanced_alchemical_chest",
 				"Cyan Advanced Alchemical Chest");
-		add("block.projecte.cyan_collector",
+		addBlock("block.projecte.cyan_collector",
 				"Cyan Collector [MK 9]");
-		add("block.projecte.cyan_emc_link",
+		addBlock("block.projecte.cyan_emc_link",
 				"Cyan EMC Link [MK 9]");
-		add("block.projecte.cyan_fuel_block",
+		addBlock("block.projecte.cyan_fuel_block",
 				"Cyan Fuel Block");
-		add("block.projecte.cyan_matter_block",
+		addBlock("block.projecte.cyan_matter_block",
 				"Cyan Matter Block");
-		add("block.projecte.cyan_power_flower",
+		addBlock("block.projecte.cyan_power_flower",
 				"Cyan Power Flower [MK 9]");
-		add("block.projecte.cyan_relay",
+		addBlock("block.projecte.cyan_relay",
 				"Cyan Relay [MK 9]");
-		add("block.projecte.dark_collector",
+		addBlock("block.projecte.dark_collector",
 				"Dark Collector [MK 2]");
-		add("block.projecte.dark_emc_link",
+		addBlock("block.projecte.dark_emc_link",
 				"Dark EMC Link [MK 2]");
-		add("block.projecte.dark_power_flower",
+		addBlock("block.projecte.dark_power_flower",
 				"Dark Power Flower [MK 2]");
-		add("block.projecte.dark_relay",
+		addBlock("block.projecte.dark_relay",
 				"Dark Relay [MK 2]");
-		add("block.projecte.emc_link.already_set",
+		addBlock("block.projecte.emc_link.already_set",
 				"An export item has already been set, clear the current export first.");
-		add("block.projecte.emc_link.cleared",
+		addBlock("block.projecte.emc_link.cleared",
 				"Export item has been cleared.");
-		add("block.projecte.emc_link.empty_hand",
+		addBlock("block.projecte.emc_link.empty_hand",
 				"Empty your hand to retrieve items.");
-		add("block.projecte.emc_link.fluid_export_efficiency",
+		addBlock("block.projecte.emc_link.fluid_export_efficiency",
 				"Fluid Export Efficiency: %s");
-		add("block.projecte.emc_link.limit_emc",
+		addBlock("block.projecte.emc_link.limit_emc",
 				"EMC Limit: %s/s");
-		add("block.projecte.emc_link.limit_fluids",
+		addBlock("block.projecte.emc_link.limit_fluids",
 				"Fluid Export Limit: %s mB/s");
-		add("block.projecte.emc_link.limit_items",
+		addBlock("block.projecte.emc_link.limit_items",
 				"Item Import/Export Limit: %s/s");
-		add("block.projecte.emc_link.no_emc_value",
+		addBlock("block.projecte.emc_link.no_emc_value",
 				"%s does not have an emc value.");
-		add("block.projecte.emc_link.no_export_remaining",
+		addBlock("block.projecte.emc_link.no_export_remaining",
 				"Export limit has been reached, please wait a second.");
-		add("block.projecte.emc_link.not_enough_emc",
+		addBlock("block.projecte.emc_link.not_enough_emc",
 				"You do not have enough emc to purchase this, you need %s.");
-		add("block.projecte.emc_link.not_set",
+		addBlock("block.projecte.emc_link.not_set",
 				"An export item has not been set.");
-		add("block.projecte.emc_link.set",
+		addBlock("block.projecte.emc_link.set",
 				"Export item has been set to %s.");
-		add("block.projecte.emc_link.tooltip",
+		addBlock("block.projecte.emc_link.tooltip",
 				"Can be used to import emc & items, and export items & fluids.");
-		add("block.projecte.fading_collector",
+		addBlock("block.projecte.fading_collector",
 				"Fading Collector [MK 15]");
-		add("block.projecte.fading_emc_link",
+		addBlock("block.projecte.fading_emc_link",
 				"Fading EMC Link [MK 15]");
-		add("block.projecte.fading_matter_block",
+		addBlock("block.projecte.fading_matter_block",
 				"Fading Matter Block");
-		add("block.projecte.fading_power_flower",
+		addBlock("block.projecte.fading_power_flower",
 				"Fading Power Flower [MK 15]");
-		add("block.projecte.fading_relay",
+		addBlock("block.projecte.fading_relay",
 				"Fading Relay [MK 15]");
-		add("block.projecte.final_collector",
+		addBlock("block.projecte.final_collector",
 				"Final Collector [MK 16]");
-		add("block.projecte.final_emc_link",
+		addBlock("block.projecte.final_emc_link",
 				"Final EMC Link [MK 16]");
-		add("block.projecte.final_power_flower",
+		addBlock("block.projecte.final_power_flower",
 				"Final Power Flower [MK 16]");
-		add("block.projecte.final_relay",
+		addBlock("block.projecte.final_relay",
 				"Final Relay [MK 16]");
-		add("block.projecte.gray_advanced_alchemical_chest",
+		addBlock("block.projecte.gray_advanced_alchemical_chest",
 				"Gray Advanced Alchemical Chest");
-		add("block.projecte.green_advanced_alchemical_chest",
+		addBlock("block.projecte.green_advanced_alchemical_chest",
 				"Green Advanced Alchemical Chest");
-		add("block.projecte.green_collector",
+		addBlock("block.projecte.green_collector",
 				"Green Collector [MK 10]");
-		add("block.projecte.green_emc_link",
+		addBlock("block.projecte.green_emc_link",
 				"Green EMC Link [MK 10]");
-		add("block.projecte.green_fuel_block",
+		addBlock("block.projecte.green_fuel_block",
 				"Green Fuel Block");
-		add("block.projecte.green_matter_block",
+		addBlock("block.projecte.green_matter_block",
 				"Green Matter Block");
-		add("block.projecte.green_power_flower",
+		addBlock("block.projecte.green_power_flower",
 				"Green Power Flower [MK 10]");
-		add("block.projecte.green_relay",
+		addBlock("block.projecte.green_relay",
 				"Green Relay [MK 10]");
-		add("block.projecte.light_blue_advanced_alchemical_chest",
+		addBlock("block.projecte.light_blue_advanced_alchemical_chest",
 				"Light Blue Advanced Alchemical Chest");
-		add("block.projecte.light_gray_advanced_alchemical_chest",
+		addBlock("block.projecte.light_gray_advanced_alchemical_chest",
 				"Light Gray Advanced Alchemical Chest");
-		add("block.projecte.lime_advanced_alchemical_chest",
+		addBlock("block.projecte.lime_advanced_alchemical_chest",
 				"Lime Advanced Alchemical Chest");
-		add("block.projecte.lime_collector",
+		addBlock("block.projecte.lime_collector",
 				"Lime Collector [MK 11]");
-		add("block.projecte.lime_emc_link",
+		addBlock("block.projecte.lime_emc_link",
 				"Lime EMC Link [MK 11]");
-		add("block.projecte.lime_fuel_block",
+		addBlock("block.projecte.lime_fuel_block",
 				"Lime Fuel Block");
-		add("block.projecte.lime_matter_block",
+		addBlock("block.projecte.lime_matter_block",
 				"Lime Matter Block");
-		add("block.projecte.lime_power_flower",
+		addBlock("block.projecte.lime_power_flower",
 				"Lime Power Flower [MK 11]");
-		add("block.projecte.lime_relay",
+		addBlock("block.projecte.lime_relay",
 				"Lime Relay [MK 11]");
-		add("block.projecte.magenta_advanced_alchemical_chest",
+		addBlock("block.projecte.magenta_advanced_alchemical_chest",
 				"Magenta Advanced Alchemical Chest");
-		add("block.projecte.magenta_collector",
+		addBlock("block.projecte.magenta_collector",
 				"Magenta Collector [MK 4]");
-		add("block.projecte.magenta_emc_link",
+		addBlock("block.projecte.magenta_emc_link",
 				"Magenta EMC Link [MK 4]");
-		add("block.projecte.magenta_fuel_block",
+		addBlock("block.projecte.magenta_fuel_block",
 				"Magenta Fuel Block");
-		add("block.projecte.magenta_matter_block",
+		addBlock("block.projecte.magenta_matter_block",
 				"Magenta Matter Block");
-		add("block.projecte.magenta_power_flower",
+		addBlock("block.projecte.magenta_power_flower",
 				"Magenta Power Flower [MK 4]");
-		add("block.projecte.magenta_relay",
+		addBlock("block.projecte.magenta_relay",
 				"Magenta Relay [MK 4]");
-		add("block.projecte.orange_advanced_alchemical_chest",
+		addBlock("block.projecte.orange_advanced_alchemical_chest",
 				"Orange Advanced Alchemical Chest");
-		add("block.projecte.orange_collector",
+		addBlock("block.projecte.orange_collector",
 				"Orange Collector [MK 13]");
-		add("block.projecte.orange_emc_link",
+		addBlock("block.projecte.orange_emc_link",
 				"Orange EMC Link [MK 13]");
-		add("block.projecte.orange_fuel_block",
+		addBlock("block.projecte.orange_fuel_block",
 				"Orange Fuel Block");
-		add("block.projecte.orange_matter_block",
+		addBlock("block.projecte.orange_matter_block",
 				"Orange Matter Block");
-		add("block.projecte.orange_power_flower",
+		addBlock("block.projecte.orange_power_flower",
 				"Orange Power Flower [MK 13]");
-		add("block.projecte.orange_relay",
+		addBlock("block.projecte.orange_relay",
 				"Orange Relay [MK 13]");
-		add("block.projecte.pink_advanced_alchemical_chest",
+		addBlock("block.projecte.pink_advanced_alchemical_chest",
 				"Pink Advanced Alchemical Chest");
-		add("block.projecte.pink_collector",
+		addBlock("block.projecte.pink_collector",
 				"Pink Collector [MK 5]");
-		add("block.projecte.pink_emc_link",
+		addBlock("block.projecte.pink_emc_link",
 				"Pink EMC Link [MK 5]");
-		add("block.projecte.pink_fuel_block",
+		addBlock("block.projecte.pink_fuel_block",
 				"Pink Fuel Block");
-		add("block.projecte.pink_matter_block",
+		addBlock("block.projecte.pink_matter_block",
 				"Pink Matter Block");
-		add("block.projecte.pink_power_flower",
+		addBlock("block.projecte.pink_power_flower",
 				"Pink Power Flower [MK 5]");
-		add("block.projecte.pink_relay",
+		addBlock("block.projecte.pink_relay",
 				"Pink Relay [MK 5]");
-		add("block.projecte.power_flower.emc",
+		addBlock("block.projecte.power_flower.emc",
 				"Produced EMC: %s/s");
-		add("block.projecte.power_flower.stack_emc",
+		addBlock("block.projecte.power_flower.stack_emc",
 				"Stack Produced EMC: %s/s");
-		add("block.projecte.power_flower.tooltip",
+		addBlock("block.projecte.power_flower.tooltip",
 				"Generates EMC once per %s tick%s. (20/second)");
-		add("block.projecte.purple_advanced_alchemical_chest",
+		addBlock("block.projecte.purple_advanced_alchemical_chest",
 				"Purple Advanced Alchemical Chest");
-		add("block.projecte.purple_collector",
+		addBlock("block.projecte.purple_collector",
 				"Purple Collector [MK 6]");
-		add("block.projecte.purple_emc_link",
+		addBlock("block.projecte.purple_emc_link",
 				"Purple EMC Link [MK 6]");
-		add("block.projecte.purple_fuel_block",
+		addBlock("block.projecte.purple_fuel_block",
 				"Purple Fuel Block");
-		add("block.projecte.purple_matter_block",
+		addBlock("block.projecte.purple_matter_block",
 				"Purple Matter Block");
-		add("block.projecte.purple_power_flower",
+		addBlock("block.projecte.purple_power_flower",
 				"Purple Power Flower [MK 6]");
-		add("block.projecte.purple_relay",
+		addBlock("block.projecte.purple_relay",
 				"Purple Relay [MK 6]");
-		add("block.projecte.red_advanced_alchemical_chest",
+		addBlock("block.projecte.red_advanced_alchemical_chest",
 				"Red Advanced Alchemical Chest");
-		add("block.projecte.red_collector",
+		addBlock("block.projecte.red_collector",
 				"Red Collector [MK 3]");
-		add("block.projecte.red_emc_link",
+		addBlock("block.projecte.red_emc_link",
 				"Red EMC Link [MK 3]");
-		add("block.projecte.red_power_flower",
+		addBlock("block.projecte.red_power_flower",
 				"Red Power Flower [MK 3]");
-		add("block.projecte.red_relay",
+		addBlock("block.projecte.red_relay",
 				"Red Relay [MK 3]");
-		add("block.projecte.relay.bonus",
+		addBlock("block.projecte.relay.bonus",
 				"Relay Bonus: %s/s");
-		add("block.projecte.relay.tooltip",
+		addBlock("block.projecte.relay.tooltip",
 				"Transfers EMC once per second.");
-		add("block.projecte.relay.transfer",
+		addBlock("block.projecte.relay.transfer",
 				"Max EMC Transfer: %s/s");
-		add("block.projecte.transmutation_interface",
+		addBlock("block.projecte.transmutation_interface",
 				"Transmutation Interface");
-		add("block.projecte.transmutation_interface.tooltip",
+		addBlock("block.projecte.transmutation_interface.tooltip",
 				"This can be used with compatible mods like Applied Energistics to access your transmutation inventory.");
-		add("block.projecte.violet_collector",
+		addBlock("block.projecte.violet_collector",
 				"Violet Collector [MK 7]");
-		add("block.projecte.violet_emc_link",
+		addBlock("block.projecte.violet_emc_link",
 				"Violet EMC Link [MK 7]");
-		add("block.projecte.violet_fuel_block",
+		addBlock("block.projecte.violet_fuel_block",
 				"Violet Fuel Block");
-		add("block.projecte.violet_matter_block",
+		addBlock("block.projecte.violet_matter_block",
 				"Violet Matter Block");
-		add("block.projecte.violet_power_flower",
+		addBlock("block.projecte.violet_power_flower",
 				"Violet Power Flower [MK 7]");
-		add("block.projecte.violet_relay",
+		addBlock("block.projecte.violet_relay",
 				"Violet Relay [MK 7]");
-		add("block.projecte.white_advanced_alchemical_chest",
+		addBlock("block.projecte.white_advanced_alchemical_chest",
 				"White Advanced Alchemical Chest");
-		add("block.projecte.white_collector",
+		addBlock("block.projecte.white_collector",
 				"White Collector [MK 14]");
-		add("block.projecte.white_emc_link",
+		addBlock("block.projecte.white_emc_link",
 				"White EMC Link [MK 14]");
-		add("block.projecte.white_fuel_block",
+		addBlock("block.projecte.white_fuel_block",
 				"White Fuel Block");
-		add("block.projecte.white_matter_block",
+		addBlock("block.projecte.white_matter_block",
 				"White Matter Block");
-		add("block.projecte.white_power_flower",
+		addBlock("block.projecte.white_power_flower",
 				"White Power Flower [MK 14]");
-		add("block.projecte.white_relay",
+		addBlock("block.projecte.white_relay",
 				"White Relay [MK 14]");
-		add("block.projecte.yellow_advanced_alchemical_chest",
+		addBlock("block.projecte.yellow_advanced_alchemical_chest",
 				"Yellow Advanced Alchemical Chest");
-		add("block.projecte.yellow_collector",
+		addBlock("block.projecte.yellow_collector",
 				"Yellow Collector [MK 12]");
-		add("block.projecte.yellow_emc_link",
+		addBlock("block.projecte.yellow_emc_link",
 				"Yellow EMC Link [MK 12]");
-		add("block.projecte.yellow_fuel_block",
+		addBlock("block.projecte.yellow_fuel_block",
 				"Yellow Fuel Block");
-		add("block.projecte.yellow_matter_block",
+		addBlock("block.projecte.yellow_matter_block",
 				"Yellow Matter Block");
-		add("block.projecte.yellow_power_flower",
+		addBlock("block.projecte.yellow_power_flower",
 				"Yellow Power Flower [MK 12]");
-		add("block.projecte.yellow_relay",
+		addBlock("block.projecte.yellow_relay",
 				"Yellow Relay [MK 12]");
 		add("command.projecte.book.add.duplicate_name",
 				"A location with that name already exists.");
@@ -1115,7 +1124,7 @@ public class ExpansionLangProvider extends PELangProvider {
 				"Yellow Fuel");
 		add("item.projecte.yellow_matter",
 				"Yellow Matter");
-		add("itemGroup.projecte",
+		add("itemGroup.projecte.expansion",
 				"Project Expansion");
 		add("key.projecte.curios.open_transmutation_tablet",
 				"Open Transmutation Tablet");
