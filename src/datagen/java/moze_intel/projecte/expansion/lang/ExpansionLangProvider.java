@@ -29,6 +29,16 @@ public class ExpansionLangProvider extends PELangProvider {
 		super.addTranslations();
 		addExpansion();
 		addItemDescriptions();
+		addJadeConfig();
+	}
+
+	/**
+	 * Jade builds the config key of a data provider from its uid, and asserts that the key has a translation when the
+	 * game runs from a development environment. The addon used to live in its own namespace, so the key of its provider
+	 * has to be added under the ProjectE namespace now.
+	 */
+	private void addJadeConfig() {
+		add("config.jade.plugin_projecte.expansion_provider", "Project Expansion Provider");
 	}
 
 	private void addItemDescriptions() {
@@ -775,8 +785,6 @@ public class ExpansionLangProvider extends PELangProvider {
 				"Invalid block.");
 		add("command.projecte.set_owner.success",
 				"Successfully set the owner of the block to %s.");
-		add("config.jade.plugin_projectexpansion.provider",
-				"Project Expansion Provider");
 		add("configuration.projecte.edit_others_alchemical_books.disabled",
 				"Disabled");
 		add("configuration.projecte.edit_others_alchemical_books.enabled",
