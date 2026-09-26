@@ -274,6 +274,12 @@ dependencies {
     compileOnly("top.theillusivec4.curios:curios-neoforge:${curios_version}:api")
     localRuntime("top.theillusivec4.curios:curios-neoforge:${curios_version}")
 
+    //Optional dev-time integration with the Adaption Wheel mod. This is NOT a real dependency, ProjectE works without it.
+    //Usage: ./gradlew runClient -Padaptionwheel=/path/to/adaptionwheel.jar
+    if (project.hasProperty('adaptionwheel')) {
+        localRuntime(files(project.property('adaptionwheel')))
+    }
+
     //Jade is fetched from Modrinth as it does not publish its API as a separate tracked dependency version
     compileOnly("maven.modrinth:jade:${jade_version}")
     localRuntime("maven.modrinth:jade:${jade_version}")
