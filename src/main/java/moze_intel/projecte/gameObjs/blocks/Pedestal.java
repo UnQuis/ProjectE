@@ -132,6 +132,12 @@ public class Pedestal extends Block implements SimpleWaterloggedBlock, PEEntityB
 					level.sendBlockUpdated(pos, state, state, Block.UPDATE_IMMEDIATE);
 				}
 			} else if (!stack.isEmpty() && item.isEmpty()) {
+				//Note: Only items that actually do something on a pedestal may be placed on it. Anything else used to be
+				//moved into the pedestal, stayed there doing nothing and could not be taken back out, which quietly ate
+				//the item (a clock, for example)
+				if (stack.getCapability(PECapabilities.PEDESTAL_ITEM_CAPABILITY) == null) {
+					return InteractionResult.PASS;
+				}
 				ItemHelper.setStack(pedestal.getInventory(), 0, stack.split(1));
 			}
 		}
