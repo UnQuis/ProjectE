@@ -8,6 +8,7 @@ import moze_intel.projecte.PECore;
 import moze_intel.projecte.PEPermissions;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
+import moze_intel.projecte.api.event.PlayerLearnedItemEvent;
 import moze_intel.projecte.api.capabilities.PECapabilities;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.utils.text.ILangEntry;
@@ -22,6 +23,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.neoforged.neoforge.common.NeoForge;
 import org.jetbrains.annotations.Nullable;
 
 public class KnowledgeCMD {
@@ -114,6 +116,9 @@ public class KnowledgeCMD {
 					return failure(source, PELang.COMMAND_KNOWLEDGE_LEARN_FAIL, player, displayName);
 				}
 				provider.addKnowledge(itemInfo);
+				//Fire the same event as the transmutation table, so learning an item from the command counts as
+				//learning it for everything listening (e.g. the optional Adaption Wheel integration)
+				NeoForge.EVENT_BUS.post(new PlayerLearnedItemEvent(player, itemInfo));
 				success(source, PELang.COMMAND_KNOWLEDGE_LEARN_SUCCESS, player, displayName);
 			}
 			case UNLEARN -> {
