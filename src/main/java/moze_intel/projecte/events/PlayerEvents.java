@@ -1,6 +1,5 @@
 package moze_intel.projecte.events;
 
-import moze_intel.projecte.PECore;
 import moze_intel.projecte.api.capabilities.IAlchBagProvider;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
@@ -36,7 +35,6 @@ import net.neoforged.neoforge.event.entity.player.ItemEntityPickupEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.transfer.ResourceHandler;
 import net.neoforged.neoforge.transfer.item.ItemResource;
-import net.minecraft.world.entity.ai.attributes.Attributes;
 
 @EventBusSubscriber(modid = PECore.MODID)
 public class PlayerEvents {
@@ -148,8 +146,6 @@ public class PlayerEvents {
 	}
 
 	//This event gets called when calculating how much damage to do to the entity, even if it is canceled the entity will still get "hit"
-	private static long lastArmorDebug;
-
 	@SubscribeEvent
 	public static void onLivingDamaged(LivingIncomingDamageEvent event) {
 		DamageContainer damageContainer = event.getContainer();
@@ -174,13 +170,6 @@ public class PlayerEvents {
 					float damageAbsorbed = container.getNewDamage() * info.percentReduced();
 					return reduction + Math.min(damageAbsorbed, info.maxDamagedAbsorbed());
 				});
-				if (System.currentTimeMillis() - lastArmorDebug > 1000) {
-					lastArmorDebug = System.currentTimeMillis();
-					PECore.LOGGER.info("[DEBUG ARMOR] src={} dmg={} original={} percent={} cap={} armorAttr={}",
-							damageContainer.getSource(), damageContainer.getNewDamage(), damageContainer.getOriginalDamage(),
-							reductionInfo.percentReduced(), reductionInfo.maxDamagedAbsorbed(),
-							event.getEntity().getAttributeValue(Attributes.ARMOR));
-				}
 			}
 		}
 	}
