@@ -237,6 +237,13 @@ repositories { RepositoryHandler handler ->
 
 test {
     useJUnitPlatform()
+
+//Some tests read the assets straight from the project directory (to check that every item has a texture and a
+//name), so those directories have to be declared as inputs, or the task would consider itself up to date even
+//though the assets changed
+inputs.dir('src/main/resources/assets').withPathSensitivity(PathSensitivity.RELATIVE)
+inputs.dir('src/datagen/generated/assets').withPathSensitivity(PathSensitivity.RELATIVE)
+
 }
 
 dependencies {
