@@ -45,18 +45,26 @@ public class AdaptionWheelIntegration {
 	 */
 	@SubscribeEvent
 	public static void onLearnedItem(PlayerLearnedItemEvent event) {
-		if (event.getPlayer() instanceof ServerPlayer player && ProjectEConfig.common.adaptionIntegrationEnabled.get()) {
-			AdaptationMappings.AdaptationMapping mapping = AdaptationMappings.INSTANCE.get(event.getLearnedInfo().createStack());
-			if (mapping != null && !mapping.concept().isBlank()) {
-				String concept = mapping.concept();
-				registerMetadata(concept);
-				boolean started = mapping.instant() ? AdaptionWheelCompat.grant(player, concept, mapping.levels()) :
-						AdaptionWheelCompat.startTask(player, concept, mapping.effectiveTicks());
-				if (started) {
-					PECore.debugLog("Started adaptation {} for {} after learning an item", concept, player.getName().getString());
-				}
-			}
+		if (!(event.getPlayer() instanceof ServerPlayer player) || !ProjectEConfig.common.adaptionIntegrationEnabled.get()) {
+			return;
 		}
+		AdaptationMappings.AdaptationMapping mapping = AdaptationMappings.INSTANCE.get(event.getLearnedInfo().createStack());
+		if (mapping == null || mapping.concept().isBlank()) {
+			PECore.debugLog("Learned {} but it teaches no adaptation", event.getLearnedInfo());
+			return;
+		}
+		if (!AdaptionWheelCompat.isWearingWheel(player)) {
+			PECore.LOGGER.info("Learned {} would teach '{}', but {} is not wearing the Adaption Wheel",
+					event.getLearnedInfo(), mapping.concept(), player.getName().getString());
+			return;
+		}
+		String concept = mapping.concept();
+		registerMetadata(concept);
+		boolean started = mapping.instant() ? AdaptionWheelCompat.grant(player, concept, mapping.levels()) :
+				AdaptionWheelCompat.startTask(player, concept, mapping.effectiveTicks());
+		PECore.LOGGER.info("Learned {} -> {} adaptation '{}' for {}",
+				event.getLearnedInfo(), started ? (mapping.instant() ? "granted" : "started") : "FAILED to start",
+				concept, player.getName().getString());
 	}
 
 	/**
