@@ -1,229 +1,498 @@
-[
-  {
-    "output": "projecte:blue_fuel",
-    "ingredients": {
-      "projecte:blue_fuel_block": 1
-    },
-    "count": 9
-  },
-  {
-    "output": "projecte:blue_fuel",
-    "ingredients": {
-      "projecte:philosophers_stone": 1,
-      "projecte:violet_fuel": 4
-    }
-  },
-  {
-    "output": "projecte:blue_fuel_block",
-    "ingredients": {
-      "projecte:blue_fuel": 9
-    }
-  },
-  {
-    "output": "projecte:cyan_fuel",
-    "ingredients": {
-      "projecte:cyan_fuel_block": 1
-    },
-    "count": 9
-  },
-  {
-    "output": "projecte:cyan_fuel",
-    "ingredients": {
-      "projecte:blue_fuel": 4,
-      "projecte:philosophers_stone": 1
-    }
-  },
-  {
-    "output": "projecte:cyan_fuel_block",
-    "ingredients": {
-      "projecte:cyan_fuel": 9
-    }
-  },
-  {
-    "output": "projecte:green_fuel",
-    "ingredients": {
-      "projecte:green_fuel_block": 1
-    },
-    "count": 9
-  },
-  {
-    "output": "projecte:green_fuel",
-    "ingredients": {
-      "projecte:cyan_fuel": 4,
-      "projecte:philosophers_stone": 1
-    }
-  },
-  {
-    "output": "projecte:green_fuel_block",
-    "ingredients": {
-      "projecte:green_fuel": 9
-    }
-  },
-  {
-    "output": "projecte:infinite_fuel",
-    "ingredients": {
-      "minecraft:coal": 8,
-      "projecte:transmutation_tablet": 1
-    }
-  },
-  {
-    "output": "projecte:lime_fuel",
-    "ingredients": {
-      "projecte:lime_fuel_block": 1
-    },
-    "count": 9
-  },
-  {
-    "output": "projecte:lime_fuel",
-    "ingredients": {
-      "projecte:green_fuel": 4,
-      "projecte:philosophers_stone": 1
-    }
-  },
-  {
-    "output": "projecte:lime_fuel_block",
-    "ingredients": {
-      "projecte:lime_fuel": 9
-    }
-  },
-  {
-    "output": "projecte:magenta_fuel",
-    "ingredients": {
-      "projecte:magenta_fuel_block": 1
-    },
-    "count": 9
-  },
-  {
-    "output": "projecte:magenta_fuel",
-    "ingredients": {
-      "projecte:aeternalis_fuel": 4,
-      "projecte:philosophers_stone": 1
-    }
-  },
-  {
-    "output": "projecte:magenta_fuel_block",
-    "ingredients": {
-      "projecte:magenta_fuel": 9
-    }
-  },
-  {
-    "output": "projecte:orange_fuel",
-    "ingredients": {
-      "projecte:orange_fuel_block": 1
-    },
-    "count": 9
-  },
-  {
-    "output": "projecte:orange_fuel",
-    "ingredients": {
-      "projecte:philosophers_stone": 1,
-      "projecte:yellow_fuel": 4
-    }
-  },
-  {
-    "output": "projecte:orange_fuel_block",
-    "ingredients": {
-      "projecte:orange_fuel": 9
-    }
-  },
-  {
-    "output": "projecte:pink_fuel",
-    "ingredients": {
-      "projecte:pink_fuel_block": 1
-    },
-    "count": 9
-  },
-  {
-    "output": "projecte:pink_fuel",
-    "ingredients": {
-      "projecte:magenta_fuel": 4,
-      "projecte:philosophers_stone": 1
-    }
-  },
-  {
-    "output": "projecte:pink_fuel_block",
-    "ingredients": {
-      "projecte:pink_fuel": 9
-    }
-  },
-  {
-    "output": "projecte:purple_fuel",
-    "ingredients": {
-      "projecte:purple_fuel_block": 1
-    },
-    "count": 9
-  },
-  {
-    "output": "projecte:purple_fuel",
-    "ingredients": {
-      "projecte:philosophers_stone": 1,
-      "projecte:pink_fuel": 4
-    }
-  },
-  {
-    "output": "projecte:purple_fuel_block",
-    "ingredients": {
-      "projecte:purple_fuel": 9
-    }
-  },
-  {
-    "output": "projecte:violet_fuel",
-    "ingredients": {
-      "projecte:violet_fuel_block": 1
-    },
-    "count": 9
-  },
-  {
-    "output": "projecte:violet_fuel",
-    "ingredients": {
-      "projecte:philosophers_stone": 1,
-      "projecte:purple_fuel": 4
-    }
-  },
-  {
-    "output": "projecte:violet_fuel_block",
-    "ingredients": {
-      "projecte:violet_fuel": 9
-    }
-  },
-  {
-    "output": "projecte:white_fuel",
-    "ingredients": {
-      "projecte:white_fuel_block": 1
-    },
-    "count": 9
-  },
-  {
-    "output": "projecte:white_fuel",
-    "ingredients": {
-      "projecte:orange_fuel": 4,
-      "projecte:philosophers_stone": 1
-    }
-  },
-  {
-    "output": "projecte:white_fuel_block",
-    "ingredients": {
-      "projecte:white_fuel": 9
-    }
-  },
-  {
-    "output": "projecte:yellow_fuel",
-    "ingredients": {
-      "projecte:yellow_fuel_block": 1
-    },
-    "count": 9
-  },
-  {
-    "output": "projecte:yellow_fuel",
-    "ingredients": {
-      "projecte:lime_fuel": 4,
-      "projecte:philosophers_stone": 1
-    }
-  },
-  {
-    "output": "projecte:yellow_fuel_block",
-    "ingredients": {
-      "projecte:yellow_fuel": 9
+{
+  "groups": {
+    "expansion_fuel": {
+      "conversions": [
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:blue_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:blue_fuel_block"
+            }
+          ],
+          "count": 9
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:blue_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:philosophers_stone"
+            },
+            {
+              "type": "projecte:item",
+              "id": "projecte:violet_fuel",
+              "amount": 4
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:blue_fuel_block"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:blue_fuel",
+              "amount": 9
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:cyan_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:cyan_fuel_block"
+            }
+          ],
+          "count": 9
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:cyan_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:blue_fuel",
+              "amount": 4
+            },
+            {
+              "type": "projecte:item",
+              "id": "projecte:philosophers_stone"
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:cyan_fuel_block"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:cyan_fuel",
+              "amount": 9
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:green_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:green_fuel_block"
+            }
+          ],
+          "count": 9
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:green_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:cyan_fuel",
+              "amount": 4
+            },
+            {
+              "type": "projecte:item",
+              "id": "projecte:philosophers_stone"
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:green_fuel_block"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:green_fuel",
+              "amount": 9
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:infinite_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "minecraft:coal",
+              "amount": 8
+            },
+            {
+              "type": "projecte:item",
+              "id": "projecte:transmutation_tablet"
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:lime_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:lime_fuel_block"
+            }
+          ],
+          "count": 9
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:lime_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:green_fuel",
+              "amount": 4
+            },
+            {
+              "type": "projecte:item",
+              "id": "projecte:philosophers_stone"
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:lime_fuel_block"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:lime_fuel",
+              "amount": 9
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:magenta_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:magenta_fuel_block"
+            }
+          ],
+          "count": 9
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:magenta_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:aeternalis_fuel",
+              "amount": 4
+            },
+            {
+              "type": "projecte:item",
+              "id": "projecte:philosophers_stone"
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:magenta_fuel_block"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:magenta_fuel",
+              "amount": 9
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:orange_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:orange_fuel_block"
+            }
+          ],
+          "count": 9
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:orange_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:philosophers_stone"
+            },
+            {
+              "type": "projecte:item",
+              "id": "projecte:yellow_fuel",
+              "amount": 4
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:orange_fuel_block"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:orange_fuel",
+              "amount": 9
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:pink_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:pink_fuel_block"
+            }
+          ],
+          "count": 9
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:pink_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:magenta_fuel",
+              "amount": 4
+            },
+            {
+              "type": "projecte:item",
+              "id": "projecte:philosophers_stone"
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:pink_fuel_block"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:pink_fuel",
+              "amount": 9
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:purple_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:purple_fuel_block"
+            }
+          ],
+          "count": 9
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:purple_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:philosophers_stone"
+            },
+            {
+              "type": "projecte:item",
+              "id": "projecte:pink_fuel",
+              "amount": 4
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:purple_fuel_block"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:purple_fuel",
+              "amount": 9
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:violet_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:violet_fuel_block"
+            }
+          ],
+          "count": 9
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:violet_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:philosophers_stone"
+            },
+            {
+              "type": "projecte:item",
+              "id": "projecte:purple_fuel",
+              "amount": 4
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:violet_fuel_block"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:violet_fuel",
+              "amount": 9
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:white_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:white_fuel_block"
+            }
+          ],
+          "count": 9
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:white_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:orange_fuel",
+              "amount": 4
+            },
+            {
+              "type": "projecte:item",
+              "id": "projecte:philosophers_stone"
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:white_fuel_block"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:white_fuel",
+              "amount": 9
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:yellow_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:yellow_fuel_block"
+            }
+          ],
+          "count": 9
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:yellow_fuel"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:lime_fuel",
+              "amount": 4
+            },
+            {
+              "type": "projecte:item",
+              "id": "projecte:philosophers_stone"
+            }
+          ]
+        },
+        {
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:yellow_fuel_block"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:yellow_fuel",
+              "amount": 9
+            }
+          ]
+        }
+      ]
     }
   }
-]
+}
