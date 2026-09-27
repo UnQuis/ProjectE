@@ -138,7 +138,12 @@ public class Pedestal extends Block implements SimpleWaterloggedBlock, PEEntityB
 				if (stack.getCapability(PECapabilities.PEDESTAL_ITEM_CAPABILITY) == null) {
 					return InteractionResult.PASS;
 				}
-				ItemHelper.setStack(pedestal.getInventory(), 0, stack.split(1));
+				//The item is only taken away once it really is in the pedestal, so a refused insert cannot eat it
+				if (ItemHelper.setStack(pedestal.getInventory(), 0, stack.copyWithCount(1))) {
+					stack.shrink(1);
+				} else {
+					return InteractionResult.PASS;
+				}
 			}
 		}
 		return InteractionResult.SUCCESS;
