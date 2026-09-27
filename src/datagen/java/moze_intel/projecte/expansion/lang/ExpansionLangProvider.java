@@ -1,6 +1,7 @@
 package moze_intel.projecte.expansion.lang;
 
 import moze_intel.projecte.client.lang.PELangProvider;
+import moze_intel.projecte.expansion.registries.ExpansionSoundEvents;
 import moze_intel.projecte.gameObjs.items.ExpansionItemDescriptions;
 import net.minecraft.data.PackOutput;
 
@@ -29,6 +30,7 @@ public class ExpansionLangProvider extends PELangProvider {
 		super.addTranslations();
 		addExpansion();
 		addItemDescriptions();
+		addSoundEvents();
 		addJadeConfig();
 	}
 
@@ -44,6 +46,17 @@ public class ExpansionLangProvider extends PELangProvider {
 	private void addBlock(String key, String value) {
 		add(key, value);
 		add("item." + key.substring("block.".length()), value);
+	}
+
+	/**
+	 * Subtitles of the sound events the addon registers. The translation key of a sound event is built by the game out
+	 * of the sound registry name, so it can not be taken from the addon's own en_us.json.
+	 */
+	private void addSoundEvents() {
+		add(ExpansionSoundEvents.KNOWLEDGE_SHARING_BOOK_STORE, "Knowledge Stored");
+		add(ExpansionSoundEvents.KNOWLEDGE_SHARING_BOOK_USE, "Knowledge Gained");
+		add(ExpansionSoundEvents.KNOWLEDGE_SHARING_BOOK_USE_NONE, "No Knowledge Gained");
+		add(ExpansionSoundEvents.ALCHEMICAL_COLLECTION_COLLECT, "Collected with Alchemical Collection");
 	}
 
 	private void addJadeConfig() {

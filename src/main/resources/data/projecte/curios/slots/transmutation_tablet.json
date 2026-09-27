@@ -1,3 +1,5 @@
 {
-  "icon": "projecte:curios/transmutation_tablet"
+  "order": 200,
+  "icon": "projecte:slot/transmutation_tablet",
+  "validators": ["curios:tag"]
 }
