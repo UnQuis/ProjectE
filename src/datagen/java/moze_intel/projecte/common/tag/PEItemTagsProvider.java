@@ -99,7 +99,9 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 		}
 		tag(PETags.Items.CURIOS_KLEIN_STAR).addTags(PETags.Items.KLEIN_STARS, PETags.Items.CURIOS_EXPANSION_KLEIN_STAR);
 		tag(PETags.Items.TRANSMUTATION_TABLET).addTag(PETags.Items.EXPANSION_TRANSMUTATION_TABLETS);
-		tag(PETags.Items.CURIOS_TRANSMUTATION_TABLET).addTag(PETags.Items.TRANSMUTATION_TABLET);
+		//The Curio slot of the transmutation tablet has to accept the arcane tablet of the addon as well, it is the
+		//same kind of item from the user's point of view
+		tag(PETags.Items.CURIOS_TRANSMUTATION_TABLET).addTags(PETags.Items.TRANSMUTATION_TABLET, PETags.Items.EXPANSION_TRANSMUTATION_TABLETS);
 		tag(PETags.Items.CURIOS_NECKLACE).add(
 				PEItems.BODY_STONE.get(),
 				PEItems.EVERTIDE_AMULET.get(),
