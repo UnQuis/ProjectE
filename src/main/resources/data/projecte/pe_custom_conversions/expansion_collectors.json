@@ -5,7 +5,7 @@
         {
           "output": "projecte:basic_collector",
           "ingredients": {
-            "#c:glass_blocks": 1,
+            "#forge:glass_blocks": 1,
             "minecraft:furnace": 1,
             "minecraft:glowstone": 6,
             "projecte:aeternalis_fuel_block": 1

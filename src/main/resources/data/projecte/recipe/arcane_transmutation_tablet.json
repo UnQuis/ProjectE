@@ -13,10 +13,10 @@
       "item": "projecte:magenta_matter"
     },
     "W": {
-      "tag": "c:player_workstations/crafting_tables"
+      "tag": "forge:crafting_tables"
     },
     "C": {
-      "tag": "c:chests"
+      "tag": "forge:chests"
     },
     "S": {
       "item": "projecte:magnum_star_ein"

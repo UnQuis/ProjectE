@@ -5,8 +5,8 @@
         {
           "output": "projecte:basic_relay",
           "ingredients": {
-            "#c:glass_blocks": 1,
-            "#c:obsidians": 7,
+            "#forge:glass_blocks": 1,
+            "#forge:obsidians": 7,
             "projecte:aeternalis_fuel_block": 1
           }
         },

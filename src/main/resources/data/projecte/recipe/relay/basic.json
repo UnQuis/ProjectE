@@ -8,13 +8,13 @@
   ],
   "key": {
     "O": {
-      "tag": "c:obsidians"
+      "tag": "forge:obsidians"
     },
     "A": {
       "item": "projecte:aeternalis_fuel_block"
     },
     "S": {
-      "tag": "c:glass_blocks"
+      "tag": "forge:glass_blocks"
     }
   },
   "result": {

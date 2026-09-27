@@ -21,8 +21,8 @@
         {
           "output": "projecte:arcane_transmutation_tablet",
           "ingredients": {
-            "#c:chests": 1,
-            "#c:player_workstations/crafting_tables": 1,
+            "#forge:chests": 1,
+            "#forge:crafting_tables": 1,
             "projecte:magenta_matter": 2,
             "projecte:magnum_star_ein": 1,
             "projecte:transmutation_tablet": 4
