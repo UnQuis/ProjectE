@@ -14,6 +14,7 @@ import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider.TargetUpdateType;
 import moze_intel.projecte.api.capabilities.PECapabilities;
+import moze_intel.projecte.expansion.util.Util;
 import moze_intel.projecte.api.capabilities.block_entity.IEmcStorage.EmcAction;
 import moze_intel.projecte.api.capabilities.item.IItemEmcHolder;
 import moze_intel.projecte.api.event.PlayerAttemptLearnEvent;
@@ -436,6 +437,14 @@ public class TransmutationInventory extends CombinedInvWrapper {
 	/**
 	 * @return EMC available from the Provider + any klein stars in the input slots.
 	 */
+	/**
+	 * @return The emc that is available to the player, clamped to what a long can hold so it can be compared to the
+	 * emc value of a single item
+	 */
+	public long getAvailableEmcAsLong() {
+		return Util.safeLongValue(getAvailableEmc());
+	}
+
 	public BigInteger getAvailableEmc() {
 		BigInteger emc = provider.getEmc();
 		for (int i = 0; i < inputLocks.getSlots(); i++) {
