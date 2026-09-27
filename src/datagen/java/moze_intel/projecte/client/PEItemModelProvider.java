@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.client.rendering.item.ShieldISTER;
 import moze_intel.projecte.client.rendering.item.TridentISTER;
+import moze_intel.projecte.expansion.registries.ExpansionBlocks;
 import moze_intel.projecte.gameObjs.items.KleinStar.KleinTier;
 import moze_intel.projecte.gameObjs.registration.INamedEntry;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
@@ -129,6 +130,8 @@ public class PEItemModelProvider extends ModelProvider {
 		generateChest(models, PEBlocks.ALCHEMICAL_CHEST);
 		generateChest(models, PEBlocks.CONDENSER);
 		generateChest(models, PEBlocks.CONDENSER_MK2);
+		//The mk3 condenser came from the ProjectExpansion addon, but it is a chest just like the other two
+		generateChest(models, ExpansionBlocks.CONDENSER_MK3);
 	}
 
 	private void generateChest(ItemModelGenerators models,
@@ -234,8 +237,11 @@ public class PEItemModelProvider extends ModelProvider {
 	}
 
 	private void generateShieldModel(ItemModelGenerators models, ItemLike item) {
-		ItemModel.Unbaked normal = ItemModelUtils.specialModel(PECore.rl("shield"), new ShieldISTER.Unbaked());
-		ItemModel.Unbaked blocking = ItemModelUtils.specialModel(PECore.rl("shield"), new ShieldISTER.Unbaked());
+		//The base model of a special model has to exist, and vanilla's shield model also provides the hand transforms
+		// our renderer needs, so it is used instead of one of our own
+		Identifier base = Identifier.withDefaultNamespace("item/shield");
+		ItemModel.Unbaked normal = ItemModelUtils.specialModel(base, new ShieldISTER.Unbaked());
+		ItemModel.Unbaked blocking = ItemModelUtils.specialModel(base, new ShieldISTER.Unbaked());
 		models.itemModelOutput.accept(item.asItem(), ItemModelUtils.rangeSelect(USING_ITEM_PROPERTY, normal,
 				ItemModelUtils.override(normal, 0), ItemModelUtils.override(blocking, 1)));
 	}
@@ -248,8 +254,8 @@ public class PEItemModelProvider extends ModelProvider {
 	private void generateTridentModel(ItemModelGenerators models, ItemLike item) {
 		Identifier flat = ModelTemplates.FLAT_ITEM.create(ModelLocationUtils.getModelLocation(item.asItem()),
 				TextureMapping.layer0(material("item/" + itemName(item))), models.modelOutput);
-		ItemModel.Unbaked normal = ItemModelUtils.specialModel(PECore.rl("trident"), new TridentISTER.Unbaked());
-		ItemModel.Unbaked throwingModel = ItemModelUtils.specialModel(PECore.rl("trident"), new TridentISTER.Unbaked());
+		ItemModel.Unbaked normal = ItemModelUtils.specialModel(Identifier.withDefaultNamespace("item/trident_in_hand"), new TridentISTER.Unbaked());
+		ItemModel.Unbaked throwingModel = ItemModelUtils.specialModel(Identifier.withDefaultNamespace("item/trident_throwing"), new TridentISTER.Unbaked());
 		ItemModel.Unbaked inHand = ItemModelUtils.rangeSelect(USING_ITEM_PROPERTY, normal,
 				ItemModelUtils.override(normal, 0), ItemModelUtils.override(throwingModel, 1));
 		ItemModel.Unbaked dispatched = ItemModelUtils.select(new net.minecraft.client.renderer.item.properties.select.DisplayContext(), inHand,
