@@ -260,6 +260,7 @@ test {
 //The generated folders are declared as file trees because the server data generation does not produce any
 //assets, so that folder does not exist at all in a clean checkout
 inputs.dir('src/main/resources/assets').withPathSensitivity(PathSensitivity.RELATIVE)
+inputs.dir('src/main/resources/data').withPathSensitivity(PathSensitivity.RELATIVE)
 inputs.files(fileTree('src/datagen/generated/assets')).withPropertyName('generatedServerAssets').withPathSensitivity(PathSensitivity.RELATIVE)
 inputs.files(fileTree('src/datagen/generated-client/assets')).withPropertyName('generatedClientAssets').withPathSensitivity(PathSensitivity.RELATIVE)
 }
