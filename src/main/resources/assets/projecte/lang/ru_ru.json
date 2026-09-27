@@ -1460,6 +1460,7 @@
   "pedestal.projecte.life_stone.1": "Восстанавливает голод и здоровье",
   "pedestal.projecte.life_stone.2": "По половинке сердца и голода каждые %s",
   "pedestal.projecte.mind_stone": "Всасывает ближайшие сферы опыта в камень разума",
+  "pedestal.projecte.no_room": "No room to take the item off the pedestal!",
   "pedestal.projecte.on_pedestal": "На пьедестале:",
   "pedestal.projecte.repair_talisman.1": "Восстанавливает предметы ближайших игроков",
   "pedestal.projecte.repair_talisman.2": "Восстанавливает 1 прочность каждые %s",
