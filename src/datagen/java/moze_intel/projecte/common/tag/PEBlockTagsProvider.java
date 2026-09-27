@@ -1,11 +1,15 @@
 package moze_intel.projecte.common.tag;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.expansion.datagen.ExpansionTagData;
 import moze_intel.projecte.gameObjs.PETags;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
@@ -38,41 +42,42 @@ public class PEBlockTagsProvider extends BlockTagsProvider {
 		);
 		tag(PETags.Blocks.BLACKLIST_TIME_WATCH);
 		//Vanilla/Forge Tags
-		tag(Tags.Blocks.CHESTS).add(
+		tag(Tags.Blocks.CHESTS).addTag(PETags.Blocks.EXPANSION_CHESTS).add(
 				PEBlocks.ALCHEMICAL_CHEST.getBlock()
 		);
-		tag(BlockTags.BEACON_BASE_BLOCKS).add(
+		tag(BlockTags.BEACON_BASE_BLOCKS).addTag(PETags.Blocks.EXPANSION_BEACON_BASE_BLOCKS).add(
 				PEBlocks.DARK_MATTER.getBlock(),
 				PEBlocks.RED_MATTER.getBlock()
 		);
-		tag(BlockTags.GUARDED_BY_PIGLINS).add(
+		tag(BlockTags.GUARDED_BY_PIGLINS).addTag(PETags.Blocks.EXPANSION_GUARDED_BY_PIGLINS).add(
 				PEBlocks.ALCHEMICAL_CHEST.getBlock(),
 				PEBlocks.CONDENSER.getBlock(),
 				PEBlocks.CONDENSER_MK2.getBlock()
 		);
-		tag(BlockTags.INFINIBURN_OVERWORLD).add(
+		tag(BlockTags.INFINIBURN_OVERWORLD).addTag(PETags.Blocks.EXPANSION_INFINIBURN_OVERWORLD).add(
 				PEBlocks.ALCHEMICAL_COAL.getBlock(),
 				PEBlocks.MOBIUS_FUEL.getBlock(),
 				PEBlocks.AETERNALIS_FUEL.getBlock()
 		);
-		addImmuneBlocks(BlockTags.DRAGON_IMMUNE);
-		addImmuneBlocks(BlockTags.WITHER_IMMUNE);
+		addImmuneBlocks(BlockTags.DRAGON_IMMUNE, PETags.Blocks.EXPANSION_DRAGON_IMMUNE);
+		addExpansionTags();
+		addImmuneBlocks(BlockTags.WITHER_IMMUNE, PETags.Blocks.EXPANSION_WITHER_IMMUNE);
 
 		tag(PETags.Blocks.MINEABLE_WITH_HAMMER);
 		tag(PETags.Blocks.MINEABLE_WITH_KATAR);
 		tag(PETags.Blocks.MINEABLE_WITH_MORNING_STAR);
 
-		tag(PETags.Blocks.NEEDS_DARK_MATTER_TOOL).add(
+		tag(PETags.Blocks.NEEDS_DARK_MATTER_TOOL).addTag(PETags.Blocks.EXPANSION_NEEDS_DARK_MATTER_TOOL).add(
 				PEBlocks.DARK_MATTER.getBlock(),
 				PEBlocks.DARK_MATTER_FURNACE.getBlock(),
 				PEBlocks.DARK_MATTER_PEDESTAL.getBlock()
 		);
-		tag(PETags.Blocks.NEEDS_RED_MATTER_TOOL).add(
+		tag(PETags.Blocks.NEEDS_RED_MATTER_TOOL).addTag(PETags.Blocks.EXPANSION_NEEDS_RED_MATTER_TOOL).add(
 				PEBlocks.RED_MATTER.getBlock(),
 				PEBlocks.RED_MATTER_FURNACE.getBlock()
 		);
 
-		tag(BlockTags.MINEABLE_WITH_PICKAXE).add(
+		tag(BlockTags.MINEABLE_WITH_PICKAXE).addTag(PETags.Blocks.EXPANSION_MINEABLE_WITH_PICKAXE).add(
 				PEBlocks.ALCHEMICAL_CHEST.getBlock(),
 				PEBlocks.ALCHEMICAL_COAL.getBlock(),
 				PEBlocks.MOBIUS_FUEL.getBlock(),
@@ -124,8 +129,31 @@ public class PEBlockTagsProvider extends BlockTagsProvider {
 		tag(BlockTags.WALL_POST_OVERRIDE).add(PEBlocks.INTERDICTION_TORCH.getBlock());
 	}
 
-	private void addImmuneBlocks(TagKey<Block> tag) {
-		tag(tag).add(
+	private void addExpansionTags() {
+		//Tags of the content that came from the ProjectExpansion addon. 1.20.4 only accepts references to tags it
+		//knows about while data generation runs, so they are generated here instead of being side car files
+		tag(PETags.Blocks.EXPANSION_CHESTS).add(expansionBlocks(ExpansionTagData.BLOCK_EXPANSION_CHESTS));
+		tag(PETags.Blocks.EXPANSION_BEACON_BASE_BLOCKS).add(expansionBlocks(ExpansionTagData.BLOCK_EXPANSION_BEACON_BASE_BLOCKS));
+		tag(PETags.Blocks.EXPANSION_DRAGON_IMMUNE).add(expansionBlocks(ExpansionTagData.BLOCK_EXPANSION_DRAGON_IMMUNE));
+		tag(PETags.Blocks.EXPANSION_GUARDED_BY_PIGLINS).add(expansionBlocks(ExpansionTagData.BLOCK_EXPANSION_GUARDED_BY_PIGLINS));
+		tag(PETags.Blocks.EXPANSION_INFINIBURN_OVERWORLD).add(expansionBlocks(ExpansionTagData.BLOCK_EXPANSION_INFINIBURN_OVERWORLD));
+		tag(PETags.Blocks.EXPANSION_WITHER_IMMUNE).add(expansionBlocks(ExpansionTagData.BLOCK_EXPANSION_WITHER_IMMUNE));
+		tag(PETags.Blocks.EXPANSION_MINEABLE_WITH_PICKAXE).add(expansionBlocks(ExpansionTagData.BLOCK_MINEABLE_EXPANSION_PICKAXE));
+		tag(PETags.Blocks.EXPANSION_NEEDS_DARK_MATTER_TOOL).add(expansionBlocks(ExpansionTagData.BLOCK_EXPANSION_NEEDS_DARK_MATTER_TOOL));
+		tag(PETags.Blocks.EXPANSION_NEEDS_RED_MATTER_TOOL).add(expansionBlocks(ExpansionTagData.BLOCK_EXPANSION_NEEDS_RED_MATTER_TOOL));
+	}
+
+	private static Block[] expansionBlocks(String[] ids) {
+		Block[] blocks = new Block[ids.length];
+		for (int i = 0; i < ids.length; i++) {
+			//Resolving hard so a typo fails data generation instead of writing a tag with a missing block
+			blocks[i] = Objects.requireNonNull(BuiltInRegistries.BLOCK.get(new ResourceLocation(ids[i])), "Unknown block " + ids[i]);
+		}
+		return blocks;
+	}
+
+	private void addImmuneBlocks(TagKey<Block> tag, TagKey<Block>... additional) {
+		tag(tag).addTags(additional).add(
 				PEBlocks.DARK_MATTER.getBlock(),
 				PEBlocks.DARK_MATTER_FURNACE.getBlock(),
 				PEBlocks.DARK_MATTER_PEDESTAL.getBlock(),

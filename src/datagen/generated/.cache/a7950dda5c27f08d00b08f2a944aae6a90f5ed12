@@ -1,6 +1,6 @@
-// 1.20.4	2024-01-05T13:18:06.4039208	Tags for minecraft:item mod id projecte
+// 1.20.4	2026-09-27T10:54:30.935558852	Tags for minecraft:item mod id projecte
 b3907f1aa02b78471363a02cc94dc9569664a81d data/curios/tags/items/belt.json
-9090bbbb09865a842a67d6a0c05eaf72df3720f7 data/curios/tags/items/klein_star.json
+6c912afff4674f69dc3fa52de70e6095a0c040a2 data/curios/tags/items/klein_star.json
 58753d63ef9f09a75ea529395bb7c6d282310f2b data/curios/tags/items/necklace.json
 0d7912a5e8d1f8651e741cd6d82efa0d3b1797e6 data/curios/tags/items/ring.json
 f3cd32ff5690bd62d3da533d39a025f2c6ffe8fd data/forge/tags/items/armors/armors/dark_matter.json
@@ -15,7 +15,7 @@ f33965e7ed848383b080a95f4a05cc45b179f7a7 data/forge/tags/items/armors/helmets.js
 6aa0fd5521de0e3a0415910dad4d7af7062fcc82 data/forge/tags/items/armors/leggings.json
 92d522614c4f581b178a8a16ed83688bd0785c22 data/forge/tags/items/armors/leggings/dark_matter.json
 c0ca740770be6778924048657299de572b5a5cb5 data/forge/tags/items/armors/leggings/red_matter.json
-b1526b0ba3ea9a6445822180462b59f848cbf363 data/forge/tags/items/chests.json
+a90d4907045634d2ca67afc5cb11fffa7551da3e data/forge/tags/items/chests.json
 23bba3c6ab8a4ee4fe3dfcf867543820950ed620 data/forge/tags/items/shears.json
 9371747ec1f0e7a7b6fdf75dbafcf9fb21873c1c data/forge/tags/items/tools.json
 e2724cf8d846ee774c47971405225f9ce2fb78f0 data/forge/tags/items/tools/axes/dark_matter.json
@@ -45,6 +45,10 @@ c0c895aec0eccea5b1e43005bb6a4a229785c6a6 data/minecraft/tags/items/shovels.json
 2f2e661b587b0abe45422503e7f5abb654653311 data/minecraft/tags/items/swords.json
 15bad8476e6c3186e4f675660f2bfb390086c021 data/minecraft/tags/items/trimmable_armor.json
 823df3f383ec8da9f84db57523a1d8ee863903b7 data/projecte/tags/items/alchemical_bags.json
-e4725bb8b1976c0a55fd0ced5bb9741612220299 data/projecte/tags/items/collector_fuel.json
+eded130e75718567002fba007177432b536aafbb data/projecte/tags/items/collector_fuel.json
 fd5806da7a4775edf3b8f6520ee2bdd6d4068164 data/projecte/tags/items/covalence_dust.json
+5d0fe0108d76838825a6e37c537599881202cdc7 data/projecte/tags/items/expansion_chests.json
+f2cf216ed0f2309c6a8725727ed2f50e7eb6e71c data/projecte/tags/items/expansion_collector_fuel.json
+4ce6e78abcb93ca669d606aa7e32b6e4057069d1 data/projecte/tags/items/expansion_klein_star.json
+13b2076b6c71c6e5a25846cf9cdf943b2d258bb1 data/projecte/tags/items/expansion_transmutation_tablets.json
 35133e95f1c8fdd7a1c21afcc231fc0bffefb9a8 data/projecte/tags/items/nbt_whitelist.json

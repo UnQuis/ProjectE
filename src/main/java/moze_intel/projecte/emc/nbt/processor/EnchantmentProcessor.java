@@ -11,6 +11,8 @@ import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.enchantment.Enchantment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import moze_intel.projecte.expansion.ExpansionSettings;
+import net.minecraft.world.item.Items;
 
 @NBTProcessor
 public class EnchantmentProcessor implements INBTProcessor {
@@ -59,6 +61,11 @@ public class EnchantmentProcessor implements INBTProcessor {
 	@Nullable
 	@Override
 	public CompoundTag getPersistentNBT(@NotNull ItemInfo info) {
+		if (ExpansionSettings.persistEnchantedBooksOnly() && info.getItem() != Items.ENCHANTED_BOOK) {
+			//Note: Only enchanted books are able to keep their enchantments when this is enabled, as the enchantments
+			//of any other item would be lost the moment the item is remade
+			return null;
+		}
 		CompoundTag tag = info.getNBT();
 		if (tag == null) {
 			return null;

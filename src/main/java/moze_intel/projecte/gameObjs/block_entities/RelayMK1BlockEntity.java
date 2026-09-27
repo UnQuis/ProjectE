@@ -199,7 +199,7 @@ public class RelayMK1BlockEntity extends EmcBlockEntity implements MenuProvider 
 		tag.putDouble("BonusEMC", bonusEMC);
 	}
 
-	protected double getBonusToAdd() {
+	public double getBonusToAdd() {
 		return 0.05;
 	}
 

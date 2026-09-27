@@ -10,6 +10,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
+import moze_intel.projecte.expansion.ExpansionSettings;
+import moze_intel.projecte.expansion.ExpansionTransmutationSync;
 
 public record KnowledgeSyncEmcPKT(BigInteger emc) implements IPEPacket<PlayPayloadContext> {
 
@@ -37,10 +39,16 @@ public record KnowledgeSyncEmcPKT(BigInteger emc) implements IPEPacket<PlayPaylo
 				knowledge.setEmc(emc);
 				if (player.containerMenu instanceof TransmutationContainer container) {
 					container.transmutationInventory.updateClientTargets();
+				} else {
+					//Let any transmutation gui that is not one of ours know that its targets may have changed
+					ExpansionTransmutationSync.onKnowledgeEmcSynced(player);
 				}
 			}
 		});
-		PECore.debugLog("** RECEIVED TRANSMUTATION EMC DATA CLIENTSIDE **");
+		if (!ExpansionSettings.suppressTransmutationSyncLogs()) {
+			PECore.debugLog("** RECEIVED TRANSMUTATION EMC DATA CLIENTSIDE **");
+		}
+
 	}
 
 	@Override

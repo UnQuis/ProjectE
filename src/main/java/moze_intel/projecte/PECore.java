@@ -149,6 +149,10 @@ public class PECore {
 		PERecipeConditions.CONDITION_CODECS.register(modEventBus);
 		PERecipeSerializers.RECIPE_SERIALIZERS.register(modEventBus);
 		PESoundEvents.SOUND_EVENTS.register(modEventBus);
+		//Everything that used to live in the ProjectExpansion addon. It is a plain (non @Mod) part of ProjectE now, so
+		//its registries and packets are simply driven from here
+		moze_intel.projecte.expansion.ExpansionCore.register(modEventBus);
+		moze_intel.projecte.expansion.net.ExpansionPacketHandler.register(modEventBus);
 		NeoForge.EVENT_BUS.addListener(this::addReloadListeners);
 		NeoForge.EVENT_BUS.addListener(this::tagsUpdated);
 		NeoForge.EVENT_BUS.addListener(this::registerCommands);
@@ -181,6 +185,7 @@ public class PECore {
 		EMCMappingHandler.loadMappers();
 		CraftingMapper.loadMappers();
 		NBTManager.loadProcessors();
+		moze_intel.projecte.expansion.ExpansionCore.init();
 
 		event.enqueueWork(() -> {
 			//Dispenser Behavior

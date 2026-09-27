@@ -45,6 +45,7 @@ import net.minecraft.world.phys.HitResult;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import moze_intel.projecte.expansion.ExpansionItemUse;
 
 public class PhilosophersStone extends ItemMode<PhilosophersStoneMode> implements IProjectileShooter, IExtraFunction {
 
@@ -82,6 +83,14 @@ public class PhilosophersStone extends ItemMode<PhilosophersStoneMode> implement
 			return InteractionResult.SUCCESS;
 		}
 
+		if (!ctx.getLevel().isClientSide && player != null) {
+			//Let addons that add blocks with extra interactions handle being used with the stone first
+			//Note: We use the same block we would transmute, so that sneaking on a sign or a fluid still targets the right block
+			BlockHitResult interactionHit = getHitBlock(player);
+			if (ExpansionItemUse.tryToggleNbtFilter(ctx.getLevel(), player, interactionHit.getBlockPos())) {
+				return InteractionResult.SUCCESS;
+			}
+		}
 		BlockHitResult rtr = getHitBlock(player);
 		if (rtr.getType() == HitResult.Type.BLOCK && !rtr.getBlockPos().equals(pos)) {
 			pos = rtr.getBlockPos();

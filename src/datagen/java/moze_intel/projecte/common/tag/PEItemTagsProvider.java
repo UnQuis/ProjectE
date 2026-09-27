@@ -1,12 +1,16 @@
 package moze_intel.projecte.common.tag;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.expansion.datagen.ExpansionTagData;
 import moze_intel.projecte.gameObjs.PETags;
 import moze_intel.projecte.gameObjs.items.KleinStar.EnumKleinTier;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import moze_intel.projecte.gameObjs.registries.PEItems;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.IntrinsicHolderTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
@@ -39,7 +43,7 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 		}
 		tag(ItemTags.BOOKSHELF_BOOKS).add(PEItems.TOME_OF_KNOWLEDGE.get());
 		tag(ItemTags.FREEZE_IMMUNE_WEARABLES).add(PEItems.GEM_CHESTPLATE.get());
-		tag(PETags.Items.COLLECTOR_FUEL).add(
+		tag(PETags.Items.COLLECTOR_FUEL).addTag(PETags.Items.EXPANSION_COLLECTOR_FUEL).add(
 				Items.CHARCOAL,
 				Items.REDSTONE,
 				Items.REDSTONE_BLOCK,
@@ -67,6 +71,8 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 				PEItems.WATCH_OF_FLOWING_TIME.get()
 		);
 		IntrinsicHolderTagsProvider.IntrinsicTagAppender<Item> kleinStarBuilder = tag(PETags.Items.CURIOS_KLEIN_STAR);
+		kleinStarBuilder.addTag(PETags.Items.CURIOS_EXPANSION_KLEIN_STAR);
+		addExpansionTags();
 		for (EnumKleinTier tier : EnumKleinTier.values()) {
 			kleinStarBuilder.add(PEItems.getStar(tier).value());
 		}
@@ -92,7 +98,7 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 				PEItems.RED_MATTER_SHEARS.get(),
 				PEItems.RED_MATTER_KATAR.get()
 		);
-		tag(Tags.Items.CHESTS).add(
+		tag(Tags.Items.CHESTS).addTag(PETags.Items.EXPANSION_CHESTS).add(
 				PEBlocks.ALCHEMICAL_CHEST.asItem()
 		);
 		tag(ItemTags.BEACON_PAYMENT_ITEMS).add(
@@ -188,5 +194,25 @@ public class PEItemTagsProvider extends ItemTagsProvider {
 	private TagKey<Item> makeTag(TagKey<Item> tag, ItemLike item) {
 		tag(tag).add(item.asItem());
 		return tag;
+	}
+
+	/**
+	 * Tags of the content that came from the ProjectExpansion addon. 1.20.4 only accepts references to tags it knows
+	 * about while data generation runs, so they are generated here instead of being side car files.
+	 */
+	private void addExpansionTags() {
+		tag(PETags.Items.EXPANSION_COLLECTOR_FUEL).add(expansionItems(ExpansionTagData.ITEM_EXPANSION_COLLECTOR_FUEL));
+		tag(PETags.Items.EXPANSION_TRANSMUTATION_TABLETS).add(expansionItems(ExpansionTagData.ITEM_EXPANSION_TRANSMUTATION_TABLETS));
+		tag(PETags.Items.EXPANSION_CHESTS).add(expansionItems(ExpansionTagData.ITEM_EXPANSION_CHESTS));
+		tag(PETags.Items.CURIOS_EXPANSION_KLEIN_STAR).add(expansionItems(ExpansionTagData.ITEM_EXPANSION_KLEIN_STAR));
+	}
+
+	private static Item[] expansionItems(String[] ids) {
+		Item[] items = new Item[ids.length];
+		for (int i = 0; i < ids.length; i++) {
+			//Resolving hard so a typo fails data generation instead of writing a tag with a missing item
+			items[i] = Objects.requireNonNull(BuiltInRegistries.ITEM.get(new ResourceLocation(ids[i])), "Unknown item " + ids[i]);
+		}
+		return items;
 	}
 }

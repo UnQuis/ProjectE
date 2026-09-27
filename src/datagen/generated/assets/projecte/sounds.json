@@ -1,4 +1,10 @@
 {
+  "alchemical_collection.collect": {
+    "sounds": [
+      "mob/ghast/fireball4"
+    ],
+    "subtitle": "sound_event.projecte.alchemical_collection.collect"
+  },
   "charge": {
     "sounds": [
       "projecte:item/pecharge"
@@ -16,6 +22,24 @@
       "projecte:item/peheal"
     ],
     "subtitle": "sound_event.projecte.heal"
+  },
+  "knowledge_sharing_book.store": {
+    "sounds": [
+      "random/orb"
+    ],
+    "subtitle": "sound_event.projecte.knowledge_sharing_book.store"
+  },
+  "knowledge_sharing_book.use": {
+    "sounds": [
+      "random/break"
+    ],
+    "subtitle": "sound_event.projecte.knowledge_sharing_book.use"
+  },
+  "knowledge_sharing_book.use_none": {
+    "sounds": [
+      "random/fizz"
+    ],
+    "subtitle": "sound_event.projecte.knowledge_sharing_book.use_none"
   },
   "power": {
     "sounds": [

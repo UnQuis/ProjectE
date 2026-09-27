@@ -72,9 +72,17 @@ public class PETags {
 		public static final TagKey<Item> TOOLS_KATARS_RED_MATTER = forgeTag("tools/katars/red_matter");
 		public static final TagKey<Item> TOOLS_MORNING_STARS_RED_MATTER = forgeTag("tools/morning_stars/red_matter");
 
+		//Tags of the content that came from the ProjectExpansion addon. They are kept apart (instead of being merged
+		//into the tags above) so ProjectE's own generated tags stay small and reviewable
+		public static final TagKey<Item> EXPANSION_COLLECTOR_FUEL = tag("expansion_collector_fuel");
+		public static final TagKey<Item> EXPANSION_TRANSMUTATION_TABLETS = tag("expansion_transmutation_tablets");
+		public static final TagKey<Item> EXPANSION_CHESTS = tag("expansion_chests");
+		public static final TagKey<Item> CURIOS_EXPANSION_KLEIN_STAR = tag("expansion_klein_star");
+
 		private static TagKey<Item> tag(String name) {
 			return ItemTags.create(PECore.rl(name));
 		}
+
 
 		private static TagKey<Item> curiosTag(String name) {
 			return ItemTags.create(new ResourceLocation(IntegrationHelper.CURIO_MODID, name));
@@ -114,10 +122,21 @@ public class PETags {
 		public static final TagKey<Block> MINEABLE_WITH_KATAR = forgeTag("mineable/katar");
 		public static final TagKey<Block> MINEABLE_WITH_MORNING_STAR = forgeTag("mineable/morning_star");
 
+		//Tags of the content that came from the ProjectExpansion addon
+		public static final TagKey<Block> EXPANSION_NEEDS_DARK_MATTER_TOOL = tag("expansion_needs_dark_matter_tool");
+		public static final TagKey<Block> EXPANSION_NEEDS_RED_MATTER_TOOL = tag("expansion_needs_red_matter_tool");
+		public static final TagKey<Block> EXPANSION_CHESTS = tag("expansion_chests");
+		public static final TagKey<Block> EXPANSION_BEACON_BASE_BLOCKS = tag("expansion_beacon_base_blocks");
+		public static final TagKey<Block> EXPANSION_DRAGON_IMMUNE = tag("expansion_dragon_immune");
+		public static final TagKey<Block> EXPANSION_GUARDED_BY_PIGLINS = tag("expansion_guarded_by_piglins");
+		public static final TagKey<Block> EXPANSION_INFINIBURN_OVERWORLD = tag("expansion_infiniburn_overworld");
+		public static final TagKey<Block> EXPANSION_WITHER_IMMUNE = tag("expansion_wither_immune");
+		public static final TagKey<Block> EXPANSION_MINEABLE_WITH_PICKAXE = tag("mineable/expansion_pickaxe");
 
 		private static TagKey<Block> tag(String name) {
 			return BlockTags.create(PECore.rl(name));
 		}
+
 
 		private static TagKey<Block> forgeTag(String name) {
 			return BlockTags.create(new ResourceLocation("forge", name));

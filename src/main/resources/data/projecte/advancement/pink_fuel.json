@@ -1,0 +1,32 @@
+{
+  "parent": "projecte:magenta_fuel",
+  "criteria": {
+    "pink_fuel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projecte:pink_fuel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projecte.pink_fuel.description"
+    },
+    "icon": {
+      "id": "projecte:pink_fuel"
+    },
+    "title": {
+      "translate": "advancements.projecte.pink_fuel"
+    }
+  },
+  "requirements": [
+    [
+      "pink_fuel"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

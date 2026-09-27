@@ -2,10 +2,26 @@ package moze_intel.projecte.utils;
 
 import java.math.BigInteger;
 import java.text.NumberFormat;
+import org.jetbrains.annotations.Nullable;
 
 public final class Constants {
 
-	public static final NumberFormat EMC_FORMATTER = getFormatter();
+	/**
+	 * The formatter used to display EMC values. Addons that live in ProjectE can replace it, see
+	 * {@link #setEmcFormatter(NumberFormat)}.
+	 */
+	public static NumberFormat EMC_FORMATTER = getFormatter();
+
+	/**
+	 * Replaces the formatter used to display EMC values.
+	 *
+	 * @param formatter The formatter to use, or null to restore our default formatter
+	 * @apiNote The given formatter is expected to format numbers the same way our default one does, unless the addon
+	 * using it intends to change how EMC values are displayed.
+	 */
+	public static void setEmcFormatter(@Nullable NumberFormat formatter) {
+		EMC_FORMATTER = formatter == null ? getFormatter() : formatter;
+	}
 
 	private static NumberFormat getFormatter() {
 		NumberFormat format = NumberFormat.getInstance();

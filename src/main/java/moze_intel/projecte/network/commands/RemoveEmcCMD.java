@@ -15,6 +15,7 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
+import moze_intel.projecte.expansion.ExpansionReloadNotice;
 
 public class RemoveEmcCMD {
 
@@ -31,7 +32,7 @@ public class RemoveEmcCMD {
 	private static int removeEmc(CommandContext<CommandSourceStack> ctx, NSSItem item) {
 		CustomEMCParser.addToFile(item, 0);
 		ctx.getSource().sendSuccess(() -> PELang.COMMAND_REMOVE_SUCCESS.translate(item), true);
-		ctx.getSource().sendSuccess(PELang.RELOAD_NOTICE::translate, true);
+		ctx.getSource().sendSuccess(ExpansionReloadNotice.get(), true);
 		return Command.SINGLE_SUCCESS;
 	}
 

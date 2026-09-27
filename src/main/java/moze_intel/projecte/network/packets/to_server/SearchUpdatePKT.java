@@ -9,6 +9,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
+import java.util.Optional;
+import moze_intel.projecte.expansion.ExpansionTransmutationSync;
 
 public record SearchUpdatePKT(int slot, ItemStack itemStack) implements IPEPacket<PlayPayloadContext> {
 
@@ -30,8 +32,13 @@ public record SearchUpdatePKT(int slot, ItemStack itemStack) implements IPEPacke
 
 	@Override
 	public void handle(PlayPayloadContext context) {
-		PacketUtils.container(context, TransmutationContainer.class)
-				.ifPresent(container -> container.transmutationInventory.writeIntoOutputSlot(slot, itemStack));
+		Optional<TransmutationContainer> container = PacketUtils.container(context, TransmutationContainer.class);
+		if (container.isPresent()) {
+			container.get().transmutationInventory.writeIntoOutputSlot(slot, itemStack);
+		} else {
+			//Let any transmutation gui that is not one of ours know which of its outputs to display
+			ExpansionTransmutationSync.onSearchUpdate(context.player().orElse(null), slot, itemStack);
+		}
 	}
 
 	@Override

@@ -77,6 +77,10 @@ public class ClientRegistration {
 
 	@SubscribeEvent
 	public static void clientSetup(FMLClientSetupEvent evt) {
+		//Client side of the former ProjectExpansion addon: the hooks that let its screens read the hit result and
+		//open the alchemical book gui
+		moze_intel.projecte.expansion.client.ExpansionClientHooks.install();
+
 		if (ModList.get().isLoaded("jei")) {
 			//Note: This listener is only registered if JEI is loaded
 			NeoForge.EVENT_BUS.addListener(EventPriority.LOWEST, (ScreenEvent.Opening event) -> {

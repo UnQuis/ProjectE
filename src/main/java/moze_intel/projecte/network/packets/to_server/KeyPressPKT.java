@@ -25,6 +25,7 @@ import net.neoforged.neoforge.capabilities.ItemCapability;
 import net.neoforged.neoforge.common.util.NonNullPredicate;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
+import moze_intel.projecte.expansion.ExpansionAlchemicalCollection;
 
 public record KeyPressPKT(PEKeybind key) implements IPEPacket<PlayPayloadContext> {
 
@@ -108,6 +109,9 @@ public record KeyPressPKT(PEKeybind key) implements IPEPacket<PlayPayloadContext
 				}
 			}
 		}
+	
+		//Let addons that use our extra function keybind do something with it, for example toggling an enchantment based mode
+		ExpansionAlchemicalCollection.handleExtraFunctionKey(player, key);
 	}
 
 	private static <CAPABILITY> boolean tryPerformCapability(ItemStack stack, ItemCapability<CAPABILITY, Void> capability, NonNullPredicate<CAPABILITY> perform) {

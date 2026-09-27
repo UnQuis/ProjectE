@@ -13,6 +13,8 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
+import moze_intel.projecte.expansion.ExpansionSettings;
+import moze_intel.projecte.expansion.ExpansionTransmutationSync;
 
 public record KnowledgeSyncInputsAndLocksPKT(Map<Integer, ItemStack> stacksToSync, TargetUpdateType updateTargets) implements IPEPacket<PlayPayloadContext> {
 
@@ -34,18 +36,26 @@ public record KnowledgeSyncInputsAndLocksPKT(Map<Integer, ItemStack> stacksToSyn
 			IKnowledgeProvider knowledge = player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
 			if (knowledge != null) {
 				knowledge.receiveInputsAndLocks(stacksToSync);
-				if (updateTargets != TargetUpdateType.NONE && player.containerMenu instanceof TransmutationContainer container) {
-					//Update targets in case total available EMC is now different
-					TransmutationInventory transmutationInventory = container.transmutationInventory;
-					if (updateTargets == TargetUpdateType.ALL) {
-						transmutationInventory.updateClientTargets();
-					} else {//If needed
-						transmutationInventory.checkForUpdates();
+				if (updateTargets != TargetUpdateType.NONE) {
+					if (player.containerMenu instanceof TransmutationContainer container) {
+						//Update targets in case total available EMC is now different
+						TransmutationInventory transmutationInventory = container.transmutationInventory;
+						if (updateTargets == TargetUpdateType.ALL) {
+							transmutationInventory.updateClientTargets();
+						} else {//If needed
+							transmutationInventory.checkForUpdates();
+						}
+					} else {
+						//Let any transmutation gui that is not one of ours know that its targets may have changed
+						ExpansionTransmutationSync.onInputsAndLocksSynced(player, updateTargets);
 					}
 				}
 			}
 		});
-		PECore.debugLog("** RECEIVED TRANSMUTATION INPUT AND LOCK DATA CLIENTSIDE **");
+		if (!ExpansionSettings.suppressTransmutationSyncLogs()) {
+			PECore.debugLog("** RECEIVED TRANSMUTATION INPUT AND LOCK DATA CLIENTSIDE **");
+		}
+
 	}
 
 	@Override

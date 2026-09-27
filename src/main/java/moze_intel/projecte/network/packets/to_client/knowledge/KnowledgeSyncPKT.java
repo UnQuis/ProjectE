@@ -11,6 +11,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
+import moze_intel.projecte.expansion.ExpansionSettings;
+import moze_intel.projecte.expansion.ExpansionTransmutationSync;
 
 public record KnowledgeSyncPKT(CompoundTag nbt) implements IPEPacket<PlayPayloadContext> {
 
@@ -36,9 +38,17 @@ public record KnowledgeSyncPKT(CompoundTag nbt) implements IPEPacket<PlayPayload
 			player.getData(PEAttachmentTypes.KNOWLEDGE).deserializeNBT(nbt);
 			if (player.containerMenu instanceof TransmutationContainer container) {
 				container.transmutationInventory.updateClientTargets();
+			} else {
+				//Let any transmutation gui that is not one of ours know that its targets may have changed
+				//Note: pass the context's player, not the LocalPlayer above: handing a LocalPlayer to a method that takes a
+				//Player makes the verifier resolve the client only class, which a dedicated server cannot load
+				ExpansionTransmutationSync.onKnowledgeSynced(player);
 			}
 		}
-		PECore.debugLog("** RECEIVED TRANSMUTATION DATA CLIENTSIDE **");
+		if (!ExpansionSettings.suppressTransmutationSyncLogs()) {
+			PECore.debugLog("** RECEIVED TRANSMUTATION DATA CLIENTSIDE **");
+		}
+
 	}
 
 	@Override

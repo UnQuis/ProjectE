@@ -1,0 +1,36 @@
+package moze_intel.projecte.expansion.item;
+
+import moze_intel.projecte.expansion.util.Lang;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.TooltipFlag;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
+
+import java.util.List;
+import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.Nullable;
+
+public class ItemFinalStar extends Item {
+	@SuppressWarnings("unused")
+	public ItemFinalStar() {
+		super(new Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant());
+	}
+
+	@OnlyIn(Dist.CLIENT)
+	@Override
+	public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> list, TooltipFlag flag) {
+		super.appendHoverText(stack, level, list, flag);
+		list.add(Lang.Items.FINAL_STAR_SHARD_TOOLTIP.translateColored(ChatFormatting.GRAY));
+		list.add(Lang.SEE_WIKI.translateColored(ChatFormatting.AQUA));
+	}
+
+	@Override
+	public boolean isFoil(ItemStack stack) {
+		return true;
+	}
+}
+

@@ -18,6 +18,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
+import moze_intel.projecte.expansion.ExpansionEmcFormat;
 
 public class CollectorRecipeCategory implements IRecipeCategory<FuelUpgradeRecipe> {
 
@@ -66,7 +67,7 @@ public class CollectorRecipeCategory implements IRecipeCategory<FuelUpgradeRecip
 
 	@Override
 	public void draw(FuelUpgradeRecipe recipe, @NotNull IRecipeSlotsView recipeSlotsView, @NotNull GuiGraphics graphics, double mouseX, double mouseY) {
-		Component emc = PELang.EMC.translate(recipe.upgradeEMC());
+		Component emc = ExpansionEmcFormat.formatEmc(recipe.upgradeEMC());
 		Font fontRenderer = Minecraft.getInstance().font;
 		int stringWidth = fontRenderer.width(emc);
 		graphics.drawString(fontRenderer, emc.getVisualOrderText(), (getBackground().getWidth() - stringWidth) / 2F, 5, 0x808080, false);

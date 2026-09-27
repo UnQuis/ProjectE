@@ -44,6 +44,7 @@ public class TransmutationInventory extends CombinedInvWrapper {
 	public int unlearnFlag = 0;
 	public String filter = "";
 	public int searchpage = 0;
+	private boolean hasNextPage;
 	private List<ItemInfo> knowledge = Collections.emptyList();
 
 	public TransmutationInventory(Player player) {
@@ -150,6 +151,7 @@ public class TransmutationInventory extends CombinedInvWrapper {
 		}
 
 		int pagecounter = 0;
+		hasNextPage = false;
 		int desiredPage = searchpage * 12;
 		ItemInfo lockInfo = null;
 		BigInteger availableEMC = getAvailableEmc();
@@ -206,11 +208,69 @@ public class TransmutationInventory extends CombinedInvWrapper {
 				if (fuelCounter < 4) {
 					outputs.setStackInSlot(FUEL_START + fuelCounter, stack);
 					fuelCounter++;
+				} else {
+					//There is at least one more fuel item than we can display
+					hasNextPage = true;
 				}
 			} else if (matterCounter < 12) {
 				outputs.setStackInSlot(matterCounter, stack);
 				matterCounter++;
+			} else {
+				//There is at least one more item than we can display
+				hasNextPage = true;
 			}
+		}
+	}
+
+	/**
+	 * Sets the search filter of the transmutation outputs and jumps back to the first page.
+	 *
+	 * @apiNote Call on client only
+	 */
+	public void updateFilter(String text) {
+		String search = text.trim().toLowerCase(Locale.ROOT);
+		if (!filter.equals(search)) {
+			filter = search;
+			searchpage = 0;
+			updateClientTargets();
+		}
+	}
+
+	/**
+	 * @return {@code true} if there is a page of transmutation outputs before the one currently shown
+	 */
+	public boolean hasPreviousPage() {
+		return searchpage > 0;
+	}
+
+	/**
+	 * @return {@code true} if there is a page of transmutation outputs after the one currently shown
+	 */
+	public boolean hasNextPage() {
+		return hasNextPage;
+	}
+
+	/**
+	 * Shows the previous page of transmutation outputs.
+	 *
+	 * @apiNote Call on client only
+	 */
+	public void previousPage() {
+		if (hasPreviousPage()) {
+			searchpage--;
+			updateClientTargets();
+		}
+	}
+
+	/**
+	 * Shows the next page of transmutation outputs.
+	 *
+	 * @apiNote Call on client only
+	 */
+	public void nextPage() {
+		if (hasNextPage()) {
+			searchpage++;
+			updateClientTargets();
 		}
 	}
 

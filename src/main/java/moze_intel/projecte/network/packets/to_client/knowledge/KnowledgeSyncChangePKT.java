@@ -11,6 +11,8 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.network.handling.PlayPayloadContext;
 import org.jetbrains.annotations.NotNull;
+import moze_intel.projecte.expansion.ExpansionSettings;
+import moze_intel.projecte.expansion.ExpansionTransmutationSync;
 
 public record KnowledgeSyncChangePKT(ItemInfo change, boolean learned) implements IPEPacket<PlayPayloadContext> {
 
@@ -32,15 +34,28 @@ public record KnowledgeSyncChangePKT(ItemInfo change, boolean learned) implement
 			IKnowledgeProvider knowledge = player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
 			if (knowledge != null) {
 				if (learned) {
-					if (!knowledge.hasKnowledge(change) && knowledge.addKnowledge(change) && player.containerMenu instanceof TransmutationContainer container) {
-						container.transmutationInventory.itemLearned();
+					if (!knowledge.hasKnowledge(change) && knowledge.addKnowledge(change)) {
+						if (player.containerMenu instanceof TransmutationContainer container) {
+							container.transmutationInventory.itemLearned();
+						} else {
+							//Let any transmutation gui that is not one of ours know that it learned an item
+							ExpansionTransmutationSync.onKnowledgeChangeSynced(player, change, true);
+						}
 					}
-				} else if (knowledge.hasKnowledge(change) && knowledge.removeKnowledge(change) && player.containerMenu instanceof TransmutationContainer container) {
-					container.transmutationInventory.itemUnlearned();
+				} else if (knowledge.hasKnowledge(change) && knowledge.removeKnowledge(change)) {
+					if (player.containerMenu instanceof TransmutationContainer container) {
+						container.transmutationInventory.itemUnlearned();
+					} else {
+						//Let any transmutation gui that is not one of ours know that it unlearned an item
+						ExpansionTransmutationSync.onKnowledgeChangeSynced(player, change, false);
+					}
 				}
 			}
 		});
-		PECore.debugLog("** RECEIVED TRANSMUTATION KNOWLEDGE CHANGE DATA CLIENTSIDE **");
+		if (!ExpansionSettings.suppressTransmutationSyncLogs()) {
+			PECore.debugLog("** RECEIVED TRANSMUTATION KNOWLEDGE CHANGE DATA CLIENTSIDE **");
+		}
+
 	}
 
 	@Override

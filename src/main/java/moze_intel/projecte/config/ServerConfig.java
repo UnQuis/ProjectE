@@ -20,6 +20,7 @@ public final class ServerConfig extends BasePEConfig {
 	public final Effects effects;
 	public final Misc misc;
 	public final Cooldown cooldown;
+	public final Expansion expansion;
 
 	ServerConfig() {
 		ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -32,6 +33,7 @@ public final class ServerConfig extends BasePEConfig {
 		effects = new Effects(this, builder);
 		misc = new Misc(this, builder);
 		cooldown = new Cooldown(this, builder);
+		expansion = new Expansion(this, builder);
 		builder.pop();
 		configSpec = builder.build();
 	}
@@ -240,6 +242,62 @@ public final class ServerConfig extends BasePEConfig {
 						.defineInRange("zero", 2 * SharedConstants.TICKS_PER_SECOND, -1, Integer.MAX_VALUE));
 				builder.pop();
 			}
+		}
+	}
+
+	public static class Expansion {
+
+		public final CachedIntValue tickDelay;
+		public final CachedBooleanValue notifyCommandChanges;
+		public final CachedBooleanValue notifyKnowledgeBookGains;
+		public final CachedBooleanValue limitEmcLinkVendor;
+		public final CachedBooleanValue enableFluidEfficiency;
+		public final CachedIntValue transmutationInterfaceItemCount;
+		public final CachedDoubleValue collectorMultiplier;
+		public final CachedDoubleValue emcLinkItemLimitMultiplier;
+		public final CachedDoubleValue emcLinkFluidLimitMultiplier;
+		public final CachedDoubleValue emcLinkEMCLimitMultiplier;
+		public final CachedDoubleValue powerflowerMultiplier;
+		public final CachedDoubleValue relayBonusMultiplier;
+		public final CachedDoubleValue relayTransferMultiplier;
+		public final CachedIntValue infiniteFuelCost;
+		public final CachedIntValue infiniteFuelBurnTime;
+		public final CachedIntValue infiniteSteakCost;
+		public final CachedBooleanValue persistEnchantedBooksOnly;
+		public final ModConfigSpec.EnumValue<moze_intel.projecte.expansion.config.Config.AlchemicalBookEditLevel> editOthersAlchemicalBooks;
+		public final CachedBooleanValue zeroEmcFluidsAreFree;
+		public final CachedBooleanValue enableCollectorOptimizations;
+		public final CachedIntValue compactSunBonus;
+		public final CachedBooleanValue sunMultiplierPriceCompensation;
+		public final CachedBooleanValue enableReloadEMCCommand;
+
+		private Expansion(BasePEConfig config, ModConfigSpec.Builder builder) {
+			builder.push("expansion");
+			tickDelay = CachedIntValue.wrap(config, builder.comment("The delay between mod operations (in ticks, default 20) - this will slightly effect the amount of emc generated via rounding - increase if you're noticing lag.").defineInRange("tickDelay", 20, 1, 200));
+			notifyCommandChanges = CachedBooleanValue.wrap(config, builder.comment("Notify users when something is changed about them via commands.").define("notifyCommandChanges", true));
+			notifyKnowledgeBookGains = CachedBooleanValue.wrap(config, builder.comment("Tell users the list of items they gained when using a knowledge book.").define("notifyKnowledgeBookGains", true));
+			limitEmcLinkVendor = CachedBooleanValue.wrap(config, builder.comment("If EMC Link Right-Click functionality should be Limited by Tier or Not.").define("limitEmcLinkVendor", true));
+			enableFluidEfficiency = CachedBooleanValue.wrap(config, builder.comment("If fluid efficiency should be enabled.").define("enableFluidEfficiency", true));
+			transmutationInterfaceItemCount = CachedIntValue.wrap(config, builder.comment("The amount of items that the transmutation interface will report to have. Depending on your usage, you may want this to be a high value.").defineInRange("transmutationInterfaceItemCount", Integer.MAX_VALUE, 1, Integer.MAX_VALUE));
+			collectorMultiplier = CachedDoubleValue.wrap(config, builder.comment("Multiplies the output of Collectors.").defineInRange("collectorMultiplier", 1.0D, 0.1D, 50D));
+			emcLinkItemLimitMultiplier = CachedDoubleValue.wrap(config, builder.comment("Multiplies the item limit of EMC Links.").defineInRange("emcLinkItemLimitMultiplier", 1.0D, 0.1D, 50D));
+			emcLinkFluidLimitMultiplier = CachedDoubleValue.wrap(config, builder.comment("Multiplies the fluid limit of EMC Links.").defineInRange("emcLinkFluidLimitMultiplier", 1.0D, 0.1D, 50D));
+			emcLinkEMCLimitMultiplier = CachedDoubleValue.wrap(config, builder.comment("Multiplies the emc limit of EMC Links.").defineInRange("emcLinkEMCLimitMultiplier", 1.0D, 0.1D, 50D));
+			powerflowerMultiplier = CachedDoubleValue.wrap(config, builder.comment("Multiplies the output of Power Flowers.").defineInRange("powerflowerMultiplier", 1.0D, 0.1D, 50D));
+			relayBonusMultiplier = CachedDoubleValue.wrap(config, builder.comment("Multiplies the bonus of Relays.").defineInRange("relayBonusMultiplier", 1.0D, 0.1D, 50D));
+			relayTransferMultiplier = CachedDoubleValue.wrap(config, builder.comment("Multiplies the transfer limit of Relays.").defineInRange("relayTransferMultiplier", 1.0D, 0.1D, 50D));
+			infiniteFuelCost = CachedIntValue.wrap(config, builder.comment("The cost of using the infinite fuel item.").defineInRange("infiniteFuelCost", 128, 1, Integer.MAX_VALUE));
+			infiniteFuelBurnTime = CachedIntValue.wrap(config, builder.comment("The ticks each usage of the infinite fuel item will give.").defineInRange("infiniteFuelBurnTime", 1600, 1, Integer.MAX_VALUE));
+			infiniteSteakCost = CachedIntValue.wrap(config, builder.comment("The cost of using the infinite steak item.").defineInRange("infiniteSteakCost", 64, 1, Integer.MAX_VALUE));
+			persistEnchantedBooksOnly = CachedBooleanValue.wrap(config, builder.comment("If ProjectE's processors.EnchantmentProcessor.persistent option should only include enchanted books.").define("persistEnchantedBooksOnly", false));
+			editOthersAlchemicalBooks = builder.comment("If players should be allowed to edit books bound to other players. A player is considered to be \"OP\" when they have an op level of 2 or greater.")
+					.defineEnum("editOthersAlchemicalBooks", moze_intel.projecte.expansion.config.Config.AlchemicalBookEditLevel.DISABLED);
+			zeroEmcFluidsAreFree = CachedBooleanValue.wrap(config, builder.comment("If fluids which end their calculations at zero emc should be returned as free.").define("zeroEmcFluidsAreFree", true));
+			enableCollectorOptimizations = CachedBooleanValue.wrap(config, builder.comment("If optimizations (ticking only once per second) should be enabled for collectors. This will make them process at most one item each second.").define("enableCollectorOptimizations", false));
+			compactSunBonus = CachedIntValue.wrap(config, builder.comment("The bonus (multiplicative) the compact sun block should give. Set to 0 to disable.").defineInRange("compactSunBonus", 10, 0, Integer.MAX_VALUE));
+			sunMultiplierPriceCompensation = CachedBooleanValue.wrap(config, builder.comment("Enable determining the sun bonus multiplier via the difference in emc price between the final power flower and the compact sun block, rounded up to the next 10. If either block has no emc value or the multiplier is lower than compact_sun_bonus, that value will be used instead.").define("sunMultiplierPriceCompensation", true));
+			enableReloadEMCCommand = CachedBooleanValue.wrap(config, builder.comment("Enable the /px reloademc command.").define("enableReloadEMCCommand", true));
+			builder.pop();
 		}
 	}
 }

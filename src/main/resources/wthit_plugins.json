@@ -3,5 +3,10 @@
     "initializer": "moze_intel.projecte.integration.wthit.PEWTHITPlugin",
     "side": "*",
     "required": []
+  },
+  "projecte:expansion_plugin": {
+    "initializer": "moze_intel.projecte.expansion.integrations.wthit.WTHITPlugin",
+    "side": "*",
+    "required": []
   }
 }

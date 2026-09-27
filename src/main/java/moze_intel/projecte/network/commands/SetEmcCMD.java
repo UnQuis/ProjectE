@@ -12,6 +12,7 @@ import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import moze_intel.projecte.expansion.ExpansionReloadNotice;
 
 public class SetEmcCMD {
 
@@ -28,7 +29,7 @@ public class SetEmcCMD {
 	private static int setEmc(CommandContext<CommandSourceStack> ctx, NSSItem toSet, long emc) {
 		CustomEMCParser.addToFile(toSet, emc);
 		ctx.getSource().sendSuccess(() -> PELang.COMMAND_SET_SUCCESS.translate(toSet, emc), true);
-		ctx.getSource().sendSuccess(PELang.RELOAD_NOTICE::translate, true);
+		ctx.getSource().sendSuccess(ExpansionReloadNotice.get(), true);
 		return Command.SINGLE_SUCCESS;
 	}
 }

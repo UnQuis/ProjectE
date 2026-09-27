@@ -1,0 +1,32 @@
+{
+  "parent": "projecte:violet_matter",
+  "criteria": {
+    "blue_matter": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projecte:blue_matter"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projecte.blue_matter.description"
+    },
+    "icon": {
+      "id": "projecte:blue_matter"
+    },
+    "title": {
+      "translate": "advancements.projecte.blue_matter"
+    }
+  },
+  "requirements": [
+    [
+      "blue_matter"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

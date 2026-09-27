@@ -19,10 +19,12 @@ public class ClientConfig extends BasePEConfig {
 	public final CachedBooleanValue pedestalToolTips;
 	public final CachedBooleanValue pulsatingOverlay;
 
+	public final Expansion expansion;
 	ClientConfig() {
 		ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
 		//We push as client in case we ever want to add an overarching comment to the client config
 		builder.push("client");
+		expansion = new Expansion(this, builder);
 		tagToolTips = CachedBooleanValue.wrap(this, builder
 				.comment("Show item tags in tooltips (useful for custom EMC registration)")
 				.define("tagToolTips", false));
@@ -61,5 +63,30 @@ public class ClientConfig extends BasePEConfig {
 	@Override
 	public ModConfig.Type getConfigType() {
 		return ModConfig.Type.CLIENT;
+	}
+
+	public static class Expansion {
+
+		public final CachedBooleanValue formatEMC;
+		public final CachedBooleanValue fullNumberNames;
+		public final CachedBooleanValue emcDisplay;
+		public final ModConfigSpec.EnumValue<moze_intel.projecte.expansion.gui.EMCDisplay.EmcDisplayPosition> emcDisplayPosition;
+		public final CachedBooleanValue enableLearnedTooltip;
+		public final CachedBooleanValue alchemicalCollectionSound;
+		public final ModConfigSpec.EnumValue<moze_intel.projecte.expansion.util.SearchType> searchType;
+
+		private Expansion(BasePEConfig config, ModConfigSpec.Builder builder) {
+			builder.push("expansion");
+			formatEMC = CachedBooleanValue.wrap(config, builder.comment("If EMC should be formatted as M/B/T/etc.").define("formatEMC", true));
+			fullNumberNames = CachedBooleanValue.wrap(config, builder.comment("If full number names (Million/Billion/Trillion) should be used instead of abbreviations.").define("fullNumberNames", true));
+			emcDisplay = CachedBooleanValue.wrap(config, builder.comment("Displays your current emc and gained emc per second in the top left corner.").define("emcDisplay", true));
+			emcDisplayPosition = builder.comment("The position of the emc display.")
+					.defineEnum("emcDisplayPosition", moze_intel.projecte.expansion.gui.EMCDisplay.EmcDisplayPosition.TOP_LEFT);
+			enableLearnedTooltip = CachedBooleanValue.wrap(config, builder.comment("If a tooltip should be shown on items which can be learned, denoting if the item has been learned or not. Note: ProjectE's client.shift_emc applies to this.").define("enableLearnedTooltip", true));
+			alchemicalCollectionSound = CachedBooleanValue.wrap(config, builder.comment("If a sound should be played when something is collected with Alchemical Collection.").define("alchemicalCollectionSound", true));
+			searchType = builder.comment("How the transmutation search should behave.")
+					.defineEnum("searchType", moze_intel.projecte.expansion.util.SearchType.NORMAL);
+			builder.pop();
+		}
 	}
 }

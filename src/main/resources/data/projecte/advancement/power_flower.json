@@ -1,0 +1,32 @@
+{
+  "parent": "projecte:condenser",
+  "criteria": {
+    "power_flower": {
+      "conditions": {
+        "items": [
+          {
+            "items": "#projecte:power_flower"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projecte.power_flower.description"
+    },
+    "icon": {
+      "id": "projecte:basic_power_flower"
+    },
+    "title": {
+      "translate": "advancements.projecte.power_flower"
+    }
+  },
+  "requirements": [
+    [
+      "power_flower"
+    ]
+  ],
+  "sends_telemetry_event": true
+}
