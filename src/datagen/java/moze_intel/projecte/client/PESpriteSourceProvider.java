@@ -23,9 +23,8 @@ public class PESpriteSourceProvider extends SpriteSourceProvider {
 
 	@Override
 	protected void gather() {
-		//Note: We always stitch this even when curios isn't loaded, but I don't think there is much we can do about that,
-		// and it is only a small texture, so it won't matter too much
-		addFiles(atlas(BLOCKS_ATLAS), PECore.rl("curios/empty_klein_star"));
+		//Note: The curios slot icons are not stitched here, they live in textures/slot/ which curios itself adds
+		// to the atlas it renders slot backgrounds from
 	}
 
 	protected void addFiles(SourceList atlas, ResourceLocation... resourceLocations) {
