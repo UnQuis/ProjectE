@@ -1,4 +1,4 @@
-// 26.1.2	2026-09-27T09:02:19.092509877	ProjectE Item Models
+// 26.1.2	2026-09-27T14:04:44.424989938	ProjectE Item Models
 c7dea018dfc5c9ff72f86071f5e60d95cd3e881f assets/projecte/items/advanced_alchemical_book.json
 47543cc40f0158c5ed9bc11f266a1b0d0f5fae57 assets/projecte/items/aeternalis_fuel.json
 c4caed748e6bcf7e20f3fc60fa4292f6adabe643 assets/projecte/items/aeternalis_fuel_block.json
@@ -46,7 +46,7 @@ baacc53a335ce46deaa3ec20d5f78302f3915ce9 assets/projecte/items/colossal_star_vie
 f6ef97f0bda64105b9f55b301b606c0d00ce670a assets/projecte/items/compact_sun.json
 5f3a22ac925414f62fa12771d9c7180cdc28c8dd assets/projecte/items/condenser_mk1.json
 95b243744da79a66a4a2b1e9a6d34699345b48f4 assets/projecte/items/condenser_mk2.json
-41991034104d4aa5a0289a746a574d9280e6e646 assets/projecte/items/condenser_mk3.json
+f5ea9d5e9f594ab0ab983cd49392b7c6fb231a5a assets/projecte/items/condenser_mk3.json
 ab0fcd1745ebd5a6647a119b9fc5a448fb03cf8a assets/projecte/items/cyan_advanced_alchemical_chest.json
 bd2270887f862e17ca1cd3ef43136ff3ed3bc04d assets/projecte/items/cyan_alchemical_bag.json
 a4120ebe6b869b2ffca726331d9ee9ffee2d50b7 assets/projecte/items/cyan_collector.json
@@ -63,8 +63,8 @@ e53375041f71b82adcacd96959cbc70b1930d49c assets/projecte/items/dark_compressed_c
 86f0bfb1167f0fda11928b2b28e3c010140624a1 assets/projecte/items/dark_emc_link.json
 bc8d05fb2da4815d3c3515374a64d958f50bd1bf assets/projecte/items/dark_matter.json
 e07fcd89ec7188628669549db7d4ec34ad750366 assets/projecte/items/dark_matter_block.json
-f2ad367a2909927a19a915da224405c6239e1439 assets/projecte/items/dark_matter_shield.json
-0f59ce509ce9422bdceb5db956662f1abffaa8db assets/projecte/items/dark_matter_trident.json
+ec53e66f169884052e5683eac010aa4e805c54ce assets/projecte/items/dark_matter_shield.json
+e6a7a1ebda7e5881a52624c6cf6e5976bc5679eb assets/projecte/items/dark_matter_trident.json
 6e0883fbe5c2171164cc2cf71e33484719075f91 assets/projecte/items/dark_power_flower.json
 39e4662d0fe12b5e1ceca1e55acd87e671fdc345 assets/projecte/items/dark_relay.json
 0e228e610bd0ce3525ea8fb8220d54512d925d4a assets/projecte/items/destruction_catalyst.json
@@ -224,8 +224,8 @@ abb6ea3c8c4201b74bccfe57a95a7bcaacd9bfa1 assets/projecte/items/purple_power_flow
 098d0da2f9ff72e9da2a81c8072f1c5c87cb76a2 assets/projecte/items/red_emc_link.json
 782b2e650f3e6b1f0944c1b6b2d36f01cec71e3c assets/projecte/items/red_matter.json
 c7fe919a7a089cfc10f43a8d5e125e743d0751bd assets/projecte/items/red_matter_block.json
-f2ad367a2909927a19a915da224405c6239e1439 assets/projecte/items/red_matter_shield.json
-1d75b1ab1085b3457ecdfebd20ac5409c65b368e assets/projecte/items/red_matter_trident.json
+ec53e66f169884052e5683eac010aa4e805c54ce assets/projecte/items/red_matter_shield.json
+599ce7ad579cd1167bf3e5681dee2facec86b3c4 assets/projecte/items/red_matter_trident.json
 b9587832af3842c8b78b420d9f810f928c6b45c5 assets/projecte/items/red_power_flower.json
 06633bd66f6a86a760bd64b160067bc1c40e42ef assets/projecte/items/red_relay.json
 83159b28d1c7a61acc31f38cab73b09de077eb44 assets/projecte/items/relay_mk1.json
@@ -309,6 +309,7 @@ dc643a13ab8940980784c796ae5b7c24b48f5828 assets/projecte/models/item/brown_alche
 3dc12575d56ece277a53a2ebf76840d384d7a959 assets/projecte/models/item/catalytic_lens.json
 0933a278516f8ad918ec697e86e59974a1b4f5a6 assets/projecte/models/item/condenser_mk1.json
 9fd9ecff50fbd25d939f414d53bf774a3b0d936a assets/projecte/models/item/condenser_mk2.json
+b59946cf3fcb3387cbe5bda4d26d171335b6999c assets/projecte/models/item/condenser_mk3.json
 438ec2a4912e6a02bae1c21b242ddf3419cc81b4 assets/projecte/models/item/cyan_alchemical_bag.json
 b87644aa98f01cdaef60e1c41dc93e409fa7d336 assets/projecte/models/item/dark_matter.json
 c9572447cce3d2a13704438ca845eaabc72cc725 assets/projecte/models/item/dark_matter_trident.json
