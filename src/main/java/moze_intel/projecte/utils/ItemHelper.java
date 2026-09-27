@@ -137,7 +137,8 @@ public final class ItemHelper {
 		ItemResource newResource = ItemResource.of(stack);
 		int newAmount = stack.getCount();
 		try (Transaction transaction = Transaction.open(parent)) {
-			if (handler.extract(index, currentResource, currentAmount, transaction) != currentAmount) {
+			//Note: Extracting an empty resource is rejected outright, so an empty slot is simply left alone
+			if (currentAmount > 0 && handler.extract(index, currentResource, currentAmount, transaction) != currentAmount) {
 				return false;
 			}
 			if (newAmount > 0 && handler.insert(index, newResource, newAmount, transaction) != newAmount) {

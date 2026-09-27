@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import moze_intel.projecte.PECore;
 import moze_intel.projecte.client.rendering.item.ShieldISTER;
 import moze_intel.projecte.client.rendering.item.TridentISTER;
+import moze_intel.projecte.expansion.registries.ExpansionBlocks;
 import moze_intel.projecte.gameObjs.items.KleinStar.KleinTier;
 import moze_intel.projecte.gameObjs.registration.INamedEntry;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
@@ -135,6 +136,8 @@ public class PEItemModelProvider extends ModelProvider {
 		generateChest(models, PEBlocks.ALCHEMICAL_CHEST);
 		generateChest(models, PEBlocks.CONDENSER);
 		generateChest(models, PEBlocks.CONDENSER_MK2);
+		//The mk3 condenser came from the ProjectExpansion addon, but it is a chest just like the other two
+		generateChest(models, ExpansionBlocks.CONDENSER_MK3);
 	}
 
 	private void generateChest(ItemModelGenerators models,

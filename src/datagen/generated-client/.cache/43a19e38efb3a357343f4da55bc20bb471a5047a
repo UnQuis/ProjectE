@@ -1,4 +1,4 @@
-// 26.3	2026-09-26T19:06:41.347955651	ProjectE Item Models
+// 26.3	2026-09-27T13:44:03.660395488	ProjectE Item Models
 c7dea018dfc5c9ff72f86071f5e60d95cd3e881f assets/projecte/items/advanced_alchemical_book.json
 47543cc40f0158c5ed9bc11f266a1b0d0f5fae57 assets/projecte/items/aeternalis_fuel.json
 c4caed748e6bcf7e20f3fc60fa4292f6adabe643 assets/projecte/items/aeternalis_fuel_block.json
@@ -46,7 +46,7 @@ baacc53a335ce46deaa3ec20d5f78302f3915ce9 assets/projecte/items/colossal_star_vie
 f6ef97f0bda64105b9f55b301b606c0d00ce670a assets/projecte/items/compact_sun.json
 5f3a22ac925414f62fa12771d9c7180cdc28c8dd assets/projecte/items/condenser_mk1.json
 95b243744da79a66a4a2b1e9a6d34699345b48f4 assets/projecte/items/condenser_mk2.json
-41991034104d4aa5a0289a746a574d9280e6e646 assets/projecte/items/condenser_mk3.json
+f5ea9d5e9f594ab0ab983cd49392b7c6fb231a5a assets/projecte/items/condenser_mk3.json
 ab0fcd1745ebd5a6647a119b9fc5a448fb03cf8a assets/projecte/items/cyan_advanced_alchemical_chest.json
 bd2270887f862e17ca1cd3ef43136ff3ed3bc04d assets/projecte/items/cyan_alchemical_bag.json
 a4120ebe6b869b2ffca726331d9ee9ffee2d50b7 assets/projecte/items/cyan_collector.json
@@ -309,6 +309,7 @@ dc643a13ab8940980784c796ae5b7c24b48f5828 assets/projecte/models/item/brown_alche
 3dc12575d56ece277a53a2ebf76840d384d7a959 assets/projecte/models/item/catalytic_lens.json
 0062545021a7aa07985869f35dd3b8ddf3d588d1 assets/projecte/models/item/condenser_mk1.json
 6a97207d12db27d90915ce04edaca2154baf41a9 assets/projecte/models/item/condenser_mk2.json
+55b34f2003275b0170fa56f8b43bc03b2e081386 assets/projecte/models/item/condenser_mk3.json
 438ec2a4912e6a02bae1c21b242ddf3419cc81b4 assets/projecte/models/item/cyan_alchemical_bag.json
 b87644aa98f01cdaef60e1c41dc93e409fa7d336 assets/projecte/models/item/dark_matter.json
 c9572447cce3d2a13704438ca845eaabc72cc725 assets/projecte/models/item/dark_matter_trident.json
