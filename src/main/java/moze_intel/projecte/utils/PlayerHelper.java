@@ -1,5 +1,8 @@
 package moze_intel.projecte.utils;
 
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.ResourceHandler;
 import java.math.BigInteger;
 import java.util.List;
 import java.util.function.BiPredicate;
@@ -126,10 +129,10 @@ public final class PlayerHelper {
 		if (!offhand.isEmpty() && checker.test(player, offhand)) {
 			return true;
 		}
-		IItemHandler curios = player.getCapability(IntegrationHelper.CURIO_ITEM_HANDLER);
+		ResourceHandler<ItemResource> curios = player.getCapability(IntegrationHelper.CURIO_ITEM_HANDLER);
 		if (curios != null) {
-			for (int i = 0, slots = curios.getSlots(); i < slots; i++) {
-				ItemStack stack = curios.getStackInSlot(i);
+			for (int i = 0, slots = curios.size(); i < slots; i++) {
+				ItemStack stack = ItemUtil.getStack(curios, i);
 				if (!stack.isEmpty() && checker.test(player, stack)) {
 					return true;
 				}

@@ -1,5 +1,11 @@
 package moze_intel.projecte.utils;
 
+import java.util.Objects;
+import net.neoforged.neoforge.transfer.transaction.TransactionContext;
+import net.neoforged.neoforge.transfer.transaction.Transaction;
+import net.neoforged.neoforge.transfer.item.ItemUtil;
+import net.neoforged.neoforge.transfer.item.ItemResource;
+import net.neoforged.neoforge.transfer.ResourceHandler;
 import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.core.NonNullList;
@@ -91,6 +97,32 @@ public final class ItemHelper {
 				return true;
 			}
 		};
+	}
+
+	public static boolean setStack(ResourceHandler<ItemResource> handler, int index, ItemStack stack) {
+		return setStack(handler, index, stack, null);
+	}
+
+	public static boolean setStack(ResourceHandler<ItemResource> handler, int index, ItemStack stack, @Nullable TransactionContext parent) {
+		Objects.checkIndex(index, handler.size());
+		ItemStack current = ItemUtil.getStack(handler, index);
+		if (ItemStack.matches(current, stack)) {
+			return true;
+		}
+		ItemResource currentResource = handler.getResource(index);
+		int currentAmount = handler.getAmountAsInt(index);
+		ItemResource newResource = ItemResource.of(stack);
+		int newAmount = stack.getCount();
+		try (Transaction transaction = Transaction.open(parent)) {
+			if (handler.extract(index, currentResource, currentAmount, transaction) != currentAmount) {
+				return false;
+			}
+			if (newAmount > 0 && handler.insert(index, newResource, newAmount, transaction) != newAmount) {
+				return false;
+			}
+			transaction.commit();
+			return true;
+		}
 	}
 
 	public static boolean isRepairableDamagedItem(ItemStack stack) {

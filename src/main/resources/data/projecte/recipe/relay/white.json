@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:matter/white",
+  "ingredients": [
+    "projecte:orange_relay",
+    "projecte:white_matter"
+  ],
+  "result": {
+    "id": "projecte:white_relay"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:fuel/violet",
+  "ingredients": [
+    "projecte:philosophers_stone",
+    "projecte:purple_fuel",
+    "projecte:purple_fuel",
+    "projecte:purple_fuel",
+    "projecte:purple_fuel"
+  ],
+  "result": {
+    "id": "projecte:violet_fuel"
+  }
+}

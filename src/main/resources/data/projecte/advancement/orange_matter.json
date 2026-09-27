@@ -1,0 +1,32 @@
+{
+  "parent": "projecte:yellow_matter",
+  "criteria": {
+    "orange_matter": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projecte:orange_matter"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projecte.orange_matter.description"
+    },
+    "icon": {
+      "id": "projecte:orange_matter"
+    },
+    "title": {
+      "translate": "advancements.projecte.orange_matter"
+    }
+  },
+  "requirements": [
+    [
+      "orange_matter"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -5,7 +5,7 @@
       "conditions": {
         "items": [
           {
-            "items": "projecte:condenser_mk1"
+            "items": "projecte:collector_mk1"
           }
         ]
       },
@@ -17,7 +17,6 @@
       "translate": "advancements.projecte.collector.description"
     },
     "icon": {
-      "count": 1,
       "id": "projecte:collector_mk1"
     },
     "title": {

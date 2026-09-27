@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/fading",
+  "pattern": [
+    "LMH",
+    "TCT",
+    "HML"
+  ],
+  "key": {
+    "L": "projecte:low_covalence_dust",
+    "M": "projecte:medium_covalence_dust",
+    "H": "projecte:high_covalence_dust",
+    "T": "projecte:fading_matter",
+    "C": "projecte:white_emc_link"
+  },
+  "result": {
+    "id": "projecte:fading_emc_link"
+  }
+}

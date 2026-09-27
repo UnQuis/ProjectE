@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:fuel/pink",
+  "ingredients": [
+    "projecte:pink_fuel",
+    "projecte:pink_fuel",
+    "projecte:pink_fuel",
+    "projecte:pink_fuel",
+    "projecte:pink_fuel",
+    "projecte:pink_fuel",
+    "projecte:pink_fuel",
+    "projecte:pink_fuel",
+    "projecte:pink_fuel"
+  ],
+  "result": {
+    "id": "projecte:pink_fuel_block"
+  }
+}

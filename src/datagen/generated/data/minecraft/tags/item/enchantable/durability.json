@@ -1,17 +1,5 @@
 {
-  "remove": [
-    "projecte:dm_helmet",
-    "projecte:rm_helmet",
-    "projecte:gem_helmet",
-    "projecte:dm_chestplate",
-    "projecte:rm_chestplate",
-    "projecte:gem_chestplate",
-    "projecte:dm_leggings",
-    "projecte:rm_leggings",
-    "projecte:gem_leggings",
-    "projecte:dm_boots",
-    "projecte:rm_boots",
-    "projecte:gem_boots",
+  "values": [
     "projecte:dm_sword",
     "projecte:rm_sword",
     "projecte:dm_axe",
@@ -24,8 +12,6 @@
     "projecte:rm_hoe",
     "projecte:dm_hammer",
     "projecte:rm_hammer",
-    "projecte:rm_katar",
     "projecte:rm_morning_star"
-  ],
-  "values": []
+  ]
 }

@@ -9,6 +9,7 @@ import com.mojang.datafixers.util.Either;
 import moze_intel.projecte.PEPermissions;
 import moze_intel.projecte.api.nss.NSSItem;
 import moze_intel.projecte.config.CustomEMCParser;
+import moze_intel.projecte.expansion.ExpansionReloadNotice;
 import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -49,7 +50,7 @@ public class SetEmcCMD {
 	private static int setEmc(CommandContext<CommandSourceStack> ctx, NSSItem toSet, long emc) {
 		CustomEMCParser.addToFile(toSet, emc);
 		ctx.getSource().sendSuccess(() -> PELang.COMMAND_SET_SUCCESS.translate(toSet, emc), true);
-		ctx.getSource().sendSuccess(PELang.RELOAD_NOTICE::translate, true);
+		ctx.getSource().sendSuccess(ExpansionReloadNotice.get(), true);
 		return Command.SINGLE_SUCCESS;
 	}
 }

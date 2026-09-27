@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:fuel/yellow",
+  "ingredients": [
+    "projecte:philosophers_stone",
+    "projecte:lime_fuel",
+    "projecte:lime_fuel",
+    "projecte:lime_fuel",
+    "projecte:lime_fuel"
+  ],
+  "result": {
+    "id": "projecte:yellow_fuel"
+  }
+}

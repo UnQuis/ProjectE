@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:matter/final",
+  "ingredients": [
+    "projecte:fading_collector",
+    "projecte:final_star_shard"
+  ],
+  "result": {
+    "id": "projecte:final_collector"
+  }
+}

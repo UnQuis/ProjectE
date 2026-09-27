@@ -1,0 +1,332 @@
+{
+  "groups": {
+    "expansion_matter": {
+      "conversions": [
+        {
+          "output": "projecte:blue_matter",
+          "ingredients": {
+            "projecte:blue_matter_block": 1
+          },
+          "count": 4
+        },
+        {
+          "output": "projecte:blue_matter",
+          "ingredients": {
+            "projecte:violet_fuel": 6,
+            "projecte:violet_matter": 3
+          }
+        },
+        {
+          "output": "projecte:blue_matter",
+          "ingredients": {
+            "projecte:violet_fuel": 6,
+            "projecte:violet_matter": 3
+          }
+        },
+        {
+          "output": "projecte:blue_matter_block",
+          "ingredients": {
+            "projecte:blue_matter": 4
+          }
+        },
+        {
+          "output": "projecte:cyan_matter",
+          "ingredients": {
+            "projecte:cyan_matter_block": 1
+          },
+          "count": 4
+        },
+        {
+          "output": "projecte:cyan_matter",
+          "ingredients": {
+            "projecte:blue_fuel": 6,
+            "projecte:blue_matter": 3
+          }
+        },
+        {
+          "output": "projecte:cyan_matter",
+          "ingredients": {
+            "projecte:blue_fuel": 6,
+            "projecte:blue_matter": 3
+          }
+        },
+        {
+          "output": "projecte:cyan_matter_block",
+          "ingredients": {
+            "projecte:cyan_matter": 4
+          }
+        },
+        {
+          "output": "projecte:fading_matter",
+          "ingredients": {
+            "projecte:fading_matter_block": 1
+          },
+          "count": 4
+        },
+        {
+          "output": "projecte:fading_matter",
+          "ingredients": {
+            "projecte:white_fuel": 6,
+            "projecte:white_matter": 3
+          }
+        },
+        {
+          "output": "projecte:fading_matter",
+          "ingredients": {
+            "projecte:white_fuel": 6,
+            "projecte:white_matter": 3
+          }
+        },
+        {
+          "output": "projecte:fading_matter_block",
+          "ingredients": {
+            "projecte:fading_matter": 4
+          }
+        },
+        {
+          "output": "projecte:green_matter",
+          "ingredients": {
+            "projecte:green_matter_block": 1
+          },
+          "count": 4
+        },
+        {
+          "output": "projecte:green_matter",
+          "ingredients": {
+            "projecte:cyan_fuel": 6,
+            "projecte:cyan_matter": 3
+          }
+        },
+        {
+          "output": "projecte:green_matter",
+          "ingredients": {
+            "projecte:cyan_fuel": 6,
+            "projecte:cyan_matter": 3
+          }
+        },
+        {
+          "output": "projecte:green_matter_block",
+          "ingredients": {
+            "projecte:green_matter": 4
+          }
+        },
+        {
+          "output": "projecte:lime_matter",
+          "ingredients": {
+            "projecte:lime_matter_block": 1
+          },
+          "count": 4
+        },
+        {
+          "output": "projecte:lime_matter",
+          "ingredients": {
+            "projecte:green_fuel": 6,
+            "projecte:green_matter": 3
+          }
+        },
+        {
+          "output": "projecte:lime_matter",
+          "ingredients": {
+            "projecte:green_fuel": 6,
+            "projecte:green_matter": 3
+          }
+        },
+        {
+          "output": "projecte:lime_matter_block",
+          "ingredients": {
+            "projecte:lime_matter": 4
+          }
+        },
+        {
+          "output": "projecte:magenta_matter",
+          "ingredients": {
+            "projecte:magenta_matter_block": 1
+          },
+          "count": 4
+        },
+        {
+          "output": "projecte:magenta_matter",
+          "ingredients": {
+            "projecte:aeternalis_fuel": 6,
+            "projecte:red_matter": 3
+          }
+        },
+        {
+          "output": "projecte:magenta_matter",
+          "ingredients": {
+            "projecte:aeternalis_fuel": 6,
+            "projecte:red_matter": 3
+          }
+        },
+        {
+          "output": "projecte:magenta_matter_block",
+          "ingredients": {
+            "projecte:magenta_matter": 4
+          }
+        },
+        {
+          "output": "projecte:orange_matter",
+          "ingredients": {
+            "projecte:orange_matter_block": 1
+          },
+          "count": 4
+        },
+        {
+          "output": "projecte:orange_matter",
+          "ingredients": {
+            "projecte:yellow_fuel": 6,
+            "projecte:yellow_matter": 3
+          }
+        },
+        {
+          "output": "projecte:orange_matter",
+          "ingredients": {
+            "projecte:yellow_fuel": 6,
+            "projecte:yellow_matter": 3
+          }
+        },
+        {
+          "output": "projecte:orange_matter_block",
+          "ingredients": {
+            "projecte:orange_matter": 4
+          }
+        },
+        {
+          "output": "projecte:pink_matter",
+          "ingredients": {
+            "projecte:pink_matter_block": 1
+          },
+          "count": 4
+        },
+        {
+          "output": "projecte:pink_matter",
+          "ingredients": {
+            "projecte:magenta_fuel": 6,
+            "projecte:magenta_matter": 3
+          }
+        },
+        {
+          "output": "projecte:pink_matter",
+          "ingredients": {
+            "projecte:magenta_fuel": 6,
+            "projecte:magenta_matter": 3
+          }
+        },
+        {
+          "output": "projecte:pink_matter_block",
+          "ingredients": {
+            "projecte:pink_matter": 4
+          }
+        },
+        {
+          "output": "projecte:purple_matter",
+          "ingredients": {
+            "projecte:purple_matter_block": 1
+          },
+          "count": 4
+        },
+        {
+          "output": "projecte:purple_matter",
+          "ingredients": {
+            "projecte:pink_fuel": 6,
+            "projecte:pink_matter": 3
+          }
+        },
+        {
+          "output": "projecte:purple_matter",
+          "ingredients": {
+            "projecte:pink_fuel": 6,
+            "projecte:pink_matter": 3
+          }
+        },
+        {
+          "output": "projecte:purple_matter_block",
+          "ingredients": {
+            "projecte:purple_matter": 4
+          }
+        },
+        {
+          "output": "projecte:violet_matter",
+          "ingredients": {
+            "projecte:violet_matter_block": 1
+          },
+          "count": 4
+        },
+        {
+          "output": "projecte:violet_matter",
+          "ingredients": {
+            "projecte:purple_fuel": 6,
+            "projecte:purple_matter": 3
+          }
+        },
+        {
+          "output": "projecte:violet_matter",
+          "ingredients": {
+            "projecte:purple_fuel": 6,
+            "projecte:purple_matter": 3
+          }
+        },
+        {
+          "output": "projecte:violet_matter_block",
+          "ingredients": {
+            "projecte:violet_matter": 4
+          }
+        },
+        {
+          "output": "projecte:white_matter",
+          "ingredients": {
+            "projecte:white_matter_block": 1
+          },
+          "count": 4
+        },
+        {
+          "output": "projecte:white_matter",
+          "ingredients": {
+            "projecte:orange_fuel": 6,
+            "projecte:orange_matter": 3
+          }
+        },
+        {
+          "output": "projecte:white_matter",
+          "ingredients": {
+            "projecte:orange_fuel": 6,
+            "projecte:orange_matter": 3
+          }
+        },
+        {
+          "output": "projecte:white_matter_block",
+          "ingredients": {
+            "projecte:white_matter": 4
+          }
+        },
+        {
+          "output": "projecte:yellow_matter",
+          "ingredients": {
+            "projecte:yellow_matter_block": 1
+          },
+          "count": 4
+        },
+        {
+          "output": "projecte:yellow_matter",
+          "ingredients": {
+            "projecte:lime_fuel": 6,
+            "projecte:lime_matter": 3
+          }
+        },
+        {
+          "output": "projecte:yellow_matter",
+          "ingredients": {
+            "projecte:lime_fuel": 6,
+            "projecte:lime_matter": 3
+          }
+        },
+        {
+          "output": "projecte:yellow_matter_block",
+          "ingredients": {
+            "projecte:yellow_matter": 4
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:advanced_alchemical_chest/gray",
+  "ingredients": [
+    "#projecte:advanced_alchemical_chest",
+    "minecraft:gray_dye"
+  ],
+  "result": {
+    "id": "projecte:gray_advanced_alchemical_chest"
+  }
+}

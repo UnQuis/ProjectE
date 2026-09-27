@@ -1,0 +1,32 @@
+{
+  "parent": "projecte:magenta_matter",
+  "criteria": {
+    "magenta_matter_block": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projecte:magenta_matter_block"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projecte.magenta_matter_block.description"
+    },
+    "icon": {
+      "id": "projecte:magenta_matter_block"
+    },
+    "title": {
+      "translate": "advancements.projecte.magenta_matter_block"
+    }
+  },
+  "requirements": [
+    [
+      "magenta_matter_block"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

@@ -1,0 +1,33 @@
+{
+  "parent": "projecte:expansion_relay",
+  "criteria": {
+    "final_relay": {
+      "conditions": {
+        "items": [
+          {
+            "items": "projecte:final_relay"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    }
+  },
+  "display": {
+    "description": {
+      "translate": "advancements.projecte.final_relay.description"
+    },
+    "frame": "goal",
+    "icon": {
+      "id": "projecte:final_relay"
+    },
+    "title": {
+      "translate": "advancements.projecte.final_relay"
+    }
+  },
+  "requirements": [
+    [
+      "final_relay"
+    ]
+  ],
+  "sends_telemetry_event": true
+}

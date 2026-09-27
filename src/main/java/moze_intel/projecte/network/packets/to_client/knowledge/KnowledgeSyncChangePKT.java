@@ -1,6 +1,7 @@
 package moze_intel.projecte.network.packets.to_client.knowledge;
 
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.expansion.ExpansionTransmutationSync;
 import moze_intel.projecte.api.ItemInfo;
 import moze_intel.projecte.api.capabilities.IKnowledgeProvider;
 import moze_intel.projecte.api.capabilities.PECapabilities;
@@ -35,11 +36,21 @@ public record KnowledgeSyncChangePKT(ItemInfo change, boolean learned) implement
 		IKnowledgeProvider knowledge = player.getCapability(PECapabilities.KNOWLEDGE_CAPABILITY);
 		if (knowledge != null) {
 			if (learned) {
-				if (!knowledge.hasKnowledge(change) && knowledge.addKnowledge(change) && player.containerMenu instanceof TransmutationContainer container) {
-					container.transmutationInventory.itemLearned(change);
+				if (!knowledge.hasKnowledge(change) && knowledge.addKnowledge(change)) {
+					if (player.containerMenu instanceof TransmutationContainer container) {
+						container.transmutationInventory.itemLearned(change);
+					} else {
+						//Let any transmutation gui that is not one of ours know that it learned an item
+						ExpansionTransmutationSync.onKnowledgeChangeSynced(player, change, true);
+					}
 				}
-			} else if (knowledge.hasKnowledge(change) && knowledge.removeKnowledge(change) && player.containerMenu instanceof TransmutationContainer container) {
-				container.transmutationInventory.itemUnlearned(change);
+			} else if (knowledge.hasKnowledge(change) && knowledge.removeKnowledge(change)) {
+				if (player.containerMenu instanceof TransmutationContainer container) {
+					container.transmutationInventory.itemUnlearned(change);
+				} else {
+					//Let any transmutation gui that is not one of ours know that it unlearned an item
+					ExpansionTransmutationSync.onKnowledgeChangeSynced(player, change, false);
+				}
 			}
 		}
 		PECore.debugLog("** RECEIVED TRANSMUTATION KNOWLEDGE CHANGE DATA CLIENTSIDE **");

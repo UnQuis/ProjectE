@@ -1,0 +1,127 @@
+{
+  "groups": {
+    "expansion_misc": {
+      "conversions": [
+        {
+          "output": "projecte:advanced_alchemical_book",
+          "ingredients": {
+            "projecte:basic_alchemical_book": 1,
+            "projecte:magnum_star_ein": 4,
+            "projecte:magnum_star_omega": 4
+          }
+        },
+        {
+          "output": "projecte:arcane_alchemical_book",
+          "ingredients": {
+            "projecte:final_star": 4,
+            "projecte:final_star_shard": 4,
+            "projecte:master_alchemical_book": 1
+          }
+        },
+        {
+          "output": "projecte:arcane_transmutation_tablet",
+          "ingredients": {
+            "#c:chests": 1,
+            "#c:player_workstations/crafting_tables": 1,
+            "projecte:magenta_matter": 2,
+            "projecte:magnum_star_ein": 1,
+            "projecte:transmutation_tablet": 4
+          }
+        },
+        {
+          "output": "projecte:basic_alchemical_book",
+          "ingredients": {
+            "minecraft:book": 1,
+            "minecraft:ender_pearl": 1,
+            "projecte:high_covalence_dust": 4,
+            "projecte:philosophers_stone": 1,
+            "projecte:red_matter": 2
+          }
+        },
+        {
+          "output": "projecte:compact_sun",
+          "ingredients": {
+            "projecte:final_star": 4,
+            "projecte:final_star_shard": 4,
+            "projecte:yellow_matter": 1
+          }
+        },
+        {
+          "output": "projecte:compact_sun",
+          "ingredients": {
+            "projecte:final_star": 4,
+            "projecte:final_star_shard": 4,
+            "projecte:yellow_matter": 1
+          }
+        },
+        {
+          "output": "projecte:condenser_mk3",
+          "ingredients": {
+            "projecte:condenser_mk2": 5,
+            "projecte:magenta_matter_block": 4
+          }
+        },
+        {
+          "output": "projecte:final_star",
+          "ingredients": {
+            "minecraft:dragon_egg": 1,
+            "projecte:final_power_flower": 8
+          }
+        },
+        {
+          "output": "projecte:infinite_steak",
+          "ingredients": {
+            "minecraft:cooked_beef": 8,
+            "projecte:transmutation_tablet": 1
+          }
+        },
+        {
+          "output": "projecte:knowledge_sharing_book",
+          "ingredients": {
+            "minecraft:book": 1,
+            "minecraft:nether_star": 2,
+            "projecte:violet_matter": 6
+          }
+        },
+        {
+          "output": "projecte:master_alchemical_book",
+          "ingredients": {
+            "projecte:advanced_alchemical_book": 1,
+            "projecte:colossal_star_ein": 4,
+            "projecte:colossal_star_omega": 4
+          }
+        },
+        {
+          "output": "projecte:matter_upgrader",
+          "ingredients": {
+            "minecraft:lime_dye": 1,
+            "projecte:basic_collector": 1,
+            "projecte:basic_emc_link": 4,
+            "projecte:basic_power_flower": 1,
+            "projecte:basic_relay": 1,
+            "projecte:dark_matter": 1
+          }
+        },
+        {
+          "output": "projecte:matter_upgrader",
+          "ingredients": {
+            "minecraft:lime_dye": 1,
+            "projecte:basic_collector": 1,
+            "projecte:basic_emc_link": 4,
+            "projecte:basic_power_flower": 1,
+            "projecte:dark_matter": 1,
+            "projecte:relay_mk1": 1
+          }
+        },
+        {
+          "output": "projecte:transmutation_interface",
+          "ingredients": {
+            "projecte:condenser_mk2": 4,
+            "projecte:final_emc_link": 4,
+            "projecte:final_star_shard": 1
+          }
+        }
+      ]
+    }
+  }
+}

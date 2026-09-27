@@ -12,6 +12,9 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.*;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.InstrumentComponent;
 import net.minecraft.world.item.alchemy.PotionContents;
 import net.minecraft.world.item.alchemy.Potions;
 import net.neoforged.neoforge.common.Tags;
@@ -47,7 +50,10 @@ public class PECustomConversionProvider extends CustomConversionProvider {
 				.conversion(ingotTag("cyanite"), 4).ingredient(ingotTag("uranium")).propagateTags().end()
 		;
 		NormalizedSimpleStack singleEMC = NSSFake.create("single_emc");
-		ItemStack waterBottle = PotionContents.createItemStack(Items.POTION, Potions.WATER);
+		//Item components are not bound yet while the providers run, so an ItemStack can't be created here, a normalized
+		//stack with the potion contents patched in is used instead
+		NSSItem waterBottle = NSSItem.createItem(Items.POTION.builtInRegistryHolder(),
+				DataComponentPatch.builder().set(DataComponents.POTION_CONTENTS, new PotionContents(Potions.WATER)).build());
 		createConversionBuilder(PECore.rl("defaults"))
 				.comment("Default values for vanilla items.")
 				.group("default")
@@ -382,8 +388,11 @@ public class PECustomConversionProvider extends CustomConversionProvider {
 				;
 	}
 
-	private ItemStack horn(HolderLookup.Provider registries, ResourceKey<Instrument> instrument) {
-		return InstrumentItem.create(Items.GOAT_HORN, registries.holderOrThrow(instrument));
+	private NormalizedSimpleStack horn(HolderLookup.Provider registries, ResourceKey<Instrument> instrument) {
+		//Item components are not bound yet while the providers run, so an ItemStack can't be created here, a normalized
+		//stack with the instrument patched in is used instead
+		return NSSItem.createItem(Items.GOAT_HORN, DataComponentPatch.builder()
+				.set(DataComponents.INSTRUMENT, new InstrumentComponent(registries.<Instrument>holderOrThrow(instrument))).build());
 	}
 
 	private static NormalizedSimpleStack ingotTag(String ingot) {

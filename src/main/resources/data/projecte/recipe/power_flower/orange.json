@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/orange",
+  "pattern": [
+    "CLC",
+    "RRR",
+    "RRR"
+  ],
+  "key": {
+    "L": "projecte:orange_emc_link",
+    "C": "projecte:orange_compressed_collector",
+    "R": "projecte:orange_relay"
+  },
+  "result": {
+    "id": "projecte:orange_power_flower"
+  }
+}

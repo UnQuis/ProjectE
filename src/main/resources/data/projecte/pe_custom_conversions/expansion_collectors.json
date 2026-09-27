@@ -1,0 +1,236 @@
+{
+  "groups": {
+    "expansion_collectors": {
+      "conversions": [
+        {
+          "output": "projecte:basic_collector",
+          "ingredients": {
+            "#c:glass_blocks": 1,
+            "minecraft:furnace": 1,
+            "minecraft:glowstone": 6,
+            "projecte:aeternalis_fuel_block": 1
+          }
+        },
+        {
+          "output": "projecte:basic_collector",
+          "ingredients": {
+            "projecte:collector_mk1": 1
+          }
+        },
+        {
+          "output": "projecte:basic_compressed_collector",
+          "ingredients": {
+            "projecte:basic_collector": 9
+          }
+        },
+        {
+          "output": "projecte:blue_collector",
+          "ingredients": {
+            "projecte:blue_matter": 1,
+            "projecte:violet_collector": 1
+          }
+        },
+        {
+          "output": "projecte:blue_compressed_collector",
+          "ingredients": {
+            "projecte:blue_collector": 9
+          }
+        },
+        {
+          "output": "projecte:cyan_collector",
+          "ingredients": {
+            "projecte:blue_collector": 1,
+            "projecte:cyan_matter": 1
+          }
+        },
+        {
+          "output": "projecte:cyan_compressed_collector",
+          "ingredients": {
+            "projecte:cyan_collector": 9
+          }
+        },
+        {
+          "output": "projecte:dark_collector",
+          "ingredients": {
+            "projecte:basic_collector": 1,
+            "projecte:dark_matter": 1
+          }
+        },
+        {
+          "output": "projecte:dark_collector",
+          "ingredients": {
+            "projecte:collector_mk2": 1
+          }
+        },
+        {
+          "output": "projecte:dark_compressed_collector",
+          "ingredients": {
+            "projecte:dark_collector": 9
+          }
+        },
+        {
+          "output": "projecte:fading_collector",
+          "ingredients": {
+            "projecte:fading_matter": 1,
+            "projecte:white_collector": 1
+          }
+        },
+        {
+          "output": "projecte:fading_compressed_collector",
+          "ingredients": {
+            "projecte:fading_collector": 9
+          }
+        },
+        {
+          "output": "projecte:final_collector",
+          "ingredients": {
+            "projecte:fading_collector": 1,
+            "projecte:final_star_shard": 1
+          }
+        },
+        {
+          "output": "projecte:final_compressed_collector",
+          "ingredients": {
+            "projecte:final_collector": 9
+          }
+        },
+        {
+          "output": "projecte:green_collector",
+          "ingredients": {
+            "projecte:cyan_collector": 1,
+            "projecte:green_matter": 1
+          }
+        },
+        {
+          "output": "projecte:green_compressed_collector",
+          "ingredients": {
+            "projecte:green_collector": 9
+          }
+        },
+        {
+          "output": "projecte:lime_collector",
+          "ingredients": {
+            "projecte:green_collector": 1,
+            "projecte:lime_matter": 1
+          }
+        },
+        {
+          "output": "projecte:lime_compressed_collector",
+          "ingredients": {
+            "projecte:lime_collector": 9
+          }
+        },
+        {
+          "output": "projecte:magenta_collector",
+          "ingredients": {
+            "projecte:magenta_matter": 1,
+            "projecte:red_collector": 1
+          }
+        },
+        {
+          "output": "projecte:magenta_compressed_collector",
+          "ingredients": {
+            "projecte:magenta_collector": 9
+          }
+        },
+        {
+          "output": "projecte:orange_collector",
+          "ingredients": {
+            "projecte:orange_matter": 1,
+            "projecte:yellow_collector": 1
+          }
+        },
+        {
+          "output": "projecte:orange_compressed_collector",
+          "ingredients": {
+            "projecte:orange_collector": 9
+          }
+        },
+        {
+          "output": "projecte:pink_collector",
+          "ingredients": {
+            "projecte:magenta_collector": 1,
+            "projecte:pink_matter": 1
+          }
+        },
+        {
+          "output": "projecte:pink_compressed_collector",
+          "ingredients": {
+            "projecte:pink_collector": 9
+          }
+        },
+        {
+          "output": "projecte:purple_collector",
+          "ingredients": {
+            "projecte:pink_collector": 1,
+            "projecte:purple_matter": 1
+          }
+        },
+        {
+          "output": "projecte:purple_compressed_collector",
+          "ingredients": {
+            "projecte:purple_collector": 9
+          }
+        },
+        {
+          "output": "projecte:red_collector",
+          "ingredients": {
+            "projecte:collector_mk3": 1
+          }
+        },
+        {
+          "output": "projecte:red_collector",
+          "ingredients": {
+            "projecte:dark_collector": 1,
+            "projecte:red_matter": 1
+          }
+        },
+        {
+          "output": "projecte:red_compressed_collector",
+          "ingredients": {
+            "projecte:red_collector": 9
+          }
+        },
+        {
+          "output": "projecte:violet_collector",
+          "ingredients": {
+            "projecte:purple_collector": 1,
+            "projecte:violet_matter": 1
+          }
+        },
+        {
+          "output": "projecte:violet_compressed_collector",
+          "ingredients": {
+            "projecte:violet_collector": 9
+          }
+        },
+        {
+          "output": "projecte:white_collector",
+          "ingredients": {
+            "projecte:orange_collector": 1,
+            "projecte:white_matter": 1
+          }
+        },
+        {
+          "output": "projecte:white_compressed_collector",
+          "ingredients": {
+            "projecte:white_collector": 9
+          }
+        },
+        {
+          "output": "projecte:yellow_collector",
+          "ingredients": {
+            "projecte:lime_collector": 1,
+            "projecte:yellow_matter": 1
+          }
+        },
+        {
+          "output": "projecte:yellow_compressed_collector",
+          "ingredients": {
+            "projecte:yellow_collector": 9
+          }
+        }
+      ]
+    }
+  }
+}

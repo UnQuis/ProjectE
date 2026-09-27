@@ -76,7 +76,7 @@ public class ProjectEDataGenerator {
 	public static void gatherClientData(GatherDataEvent.Client event) {
 		DataGenerator gen = event.getGenerator();
 		PackOutput output = gen.getPackOutput();
-		event.addProvider(new PELangProvider(output));
+		event.addProvider(new moze_intel.projecte.expansion.lang.ExpansionLangProvider(output));
 		event.addProvider(new PESoundProvider(output));
 		event.addProvider(new PEBlockStateProvider(output));
 		event.addProvider(new PEItemModelProvider(output));

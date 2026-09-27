@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:matter/green",
+  "ingredients": [
+    "projecte:cyan_relay",
+    "projecte:green_matter"
+  ],
+  "result": {
+    "id": "projecte:green_relay"
+  }
+}

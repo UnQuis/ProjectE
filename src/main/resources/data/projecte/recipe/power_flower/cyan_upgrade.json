@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/cyan",
+  "pattern": [
+    "CLC",
+    "RPR",
+    "RRR"
+  ],
+  "key": {
+    "L": "projecte:cyan_emc_link",
+    "C": "projecte:cyan_compressed_collector",
+    "R": "projecte:cyan_relay",
+    "P": "projecte:blue_power_flower"
+  },
+  "result": {
+    "id": "projecte:cyan_power_flower"
+  }
+}

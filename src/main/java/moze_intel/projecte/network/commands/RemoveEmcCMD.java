@@ -9,6 +9,7 @@ import com.mojang.datafixers.util.Either;
 import moze_intel.projecte.PEPermissions;
 import moze_intel.projecte.api.nss.NSSItem;
 import moze_intel.projecte.config.CustomEMCParser;
+import moze_intel.projecte.expansion.ExpansionReloadNotice;
 import moze_intel.projecte.utils.text.PELang;
 import net.minecraft.commands.CommandBuildContext;
 import net.minecraft.commands.CommandSourceStack;
@@ -46,7 +47,7 @@ public class RemoveEmcCMD {
 	private static int removeEmc(CommandContext<CommandSourceStack> ctx, NSSItem item) {
 		CustomEMCParser.addToFile(item, 0);
 		ctx.getSource().sendSuccess(() -> PELang.COMMAND_REMOVE_SUCCESS.translate(item), true);
-		ctx.getSource().sendSuccess(PELang.RELOAD_NOTICE::translate, true);
+		ctx.getSource().sendSuccess(ExpansionReloadNotice.get(), true);
 		return Command.SINGLE_SUCCESS;
 	}
 

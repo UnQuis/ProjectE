@@ -1,0 +1,280 @@
+{
+  "groups": {
+    "expansion_chests": {
+      "conversions": [
+        {
+          "output": "projecte:black_advanced_alchemical_chest",
+          "ingredients": {
+            "projecte:black_alchemical_bag": 1,
+            "projecte:dark_matter": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2
+          }
+        },
+        {
+          "output": "projecte:black_advanced_alchemical_chest",
+          "ingredients": {
+            "#projecte:advanced_alchemical_chest": 1,
+            "minecraft:black_dye": 1
+          }
+        },
+        {
+          "output": "projecte:blue_advanced_alchemical_chest",
+          "ingredients": {
+            "projecte:blue_alchemical_bag": 1,
+            "projecte:dark_matter": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2
+          }
+        },
+        {
+          "output": "projecte:blue_advanced_alchemical_chest",
+          "ingredients": {
+            "#projecte:advanced_alchemical_chest": 1,
+            "minecraft:blue_dye": 1
+          }
+        },
+        {
+          "output": "projecte:brown_advanced_alchemical_chest",
+          "ingredients": {
+            "projecte:brown_alchemical_bag": 1,
+            "projecte:dark_matter": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2
+          }
+        },
+        {
+          "output": "projecte:brown_advanced_alchemical_chest",
+          "ingredients": {
+            "#projecte:advanced_alchemical_chest": 1,
+            "minecraft:brown_dye": 1
+          }
+        },
+        {
+          "output": "projecte:cyan_advanced_alchemical_chest",
+          "ingredients": {
+            "projecte:cyan_alchemical_bag": 1,
+            "projecte:dark_matter": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2
+          }
+        },
+        {
+          "output": "projecte:cyan_advanced_alchemical_chest",
+          "ingredients": {
+            "#projecte:advanced_alchemical_chest": 1,
+            "minecraft:cyan_dye": 1
+          }
+        },
+        {
+          "output": "projecte:gray_advanced_alchemical_chest",
+          "ingredients": {
+            "projecte:dark_matter": 2,
+            "projecte:gray_alchemical_bag": 1,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2
+          }
+        },
+        {
+          "output": "projecte:gray_advanced_alchemical_chest",
+          "ingredients": {
+            "#projecte:advanced_alchemical_chest": 1,
+            "minecraft:gray_dye": 1
+          }
+        },
+        {
+          "output": "projecte:green_advanced_alchemical_chest",
+          "ingredients": {
+            "projecte:dark_matter": 2,
+            "projecte:green_alchemical_bag": 1,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2
+          }
+        },
+        {
+          "output": "projecte:green_advanced_alchemical_chest",
+          "ingredients": {
+            "#projecte:advanced_alchemical_chest": 1,
+            "minecraft:green_dye": 1
+          }
+        },
+        {
+          "output": "projecte:light_blue_advanced_alchemical_chest",
+          "ingredients": {
+            "projecte:dark_matter": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:light_blue_alchemical_bag": 1,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2
+          }
+        },
+        {
+          "output": "projecte:light_blue_advanced_alchemical_chest",
+          "ingredients": {
+            "#projecte:advanced_alchemical_chest": 1,
+            "minecraft:light_blue_dye": 1
+          }
+        },
+        {
+          "output": "projecte:light_gray_advanced_alchemical_chest",
+          "ingredients": {
+            "projecte:dark_matter": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:light_gray_alchemical_bag": 1,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2
+          }
+        },
+        {
+          "output": "projecte:light_gray_advanced_alchemical_chest",
+          "ingredients": {
+            "#projecte:advanced_alchemical_chest": 1,
+            "minecraft:light_gray_dye": 1
+          }
+        },
+        {
+          "output": "projecte:lime_advanced_alchemical_chest",
+          "ingredients": {
+            "projecte:dark_matter": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:lime_alchemical_bag": 1,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2
+          }
+        },
+        {
+          "output": "projecte:lime_advanced_alchemical_chest",
+          "ingredients": {
+            "#projecte:advanced_alchemical_chest": 1,
+            "minecraft:lime_dye": 1
+          }
+        },
+        {
+          "output": "projecte:magenta_advanced_alchemical_chest",
+          "ingredients": {
+            "projecte:dark_matter": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:magenta_alchemical_bag": 1,
+            "projecte:medium_covalence_dust": 2
+          }
+        },
+        {
+          "output": "projecte:magenta_advanced_alchemical_chest",
+          "ingredients": {
+            "#projecte:advanced_alchemical_chest": 1,
+            "minecraft:magenta_dye": 1
+          }
+        },
+        {
+          "output": "projecte:orange_advanced_alchemical_chest",
+          "ingredients": {
+            "projecte:dark_matter": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2,
+            "projecte:orange_alchemical_bag": 1
+          }
+        },
+        {
+          "output": "projecte:orange_advanced_alchemical_chest",
+          "ingredients": {
+            "#projecte:advanced_alchemical_chest": 1,
+            "minecraft:orange_dye": 1
+          }
+        },
+        {
+          "output": "projecte:pink_advanced_alchemical_chest",
+          "ingredients": {
+            "projecte:dark_matter": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2,
+            "projecte:pink_alchemical_bag": 1
+          }
+        },
+        {
+          "output": "projecte:pink_advanced_alchemical_chest",
+          "ingredients": {
+            "#projecte:advanced_alchemical_chest": 1,
+            "minecraft:pink_dye": 1
+          }
+        },
+        {
+          "output": "projecte:purple_advanced_alchemical_chest",
+          "ingredients": {
+            "projecte:dark_matter": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2,
+            "projecte:purple_alchemical_bag": 1
+          }
+        },
+        {
+          "output": "projecte:purple_advanced_alchemical_chest",
+          "ingredients": {
+            "#projecte:advanced_alchemical_chest": 1,
+            "minecraft:purple_dye": 1
+          }
+        },
+        {
+          "output": "projecte:red_advanced_alchemical_chest",
+          "ingredients": {
+            "#projecte:advanced_alchemical_chest": 1,
+            "minecraft:red_dye": 1
+          }
+        },
+        {
+          "output": "projecte:red_advanced_alchemical_chest",
+          "ingredients": {
+            "projecte:dark_matter": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2,
+            "projecte:red_alchemical_bag": 1
+          }
+        },
+        {
+          "output": "projecte:white_advanced_alchemical_chest",
+          "ingredients": {
+            "#projecte:advanced_alchemical_chest": 1,
+            "minecraft:white_dye": 1
+          }
+        },
+        {
+          "output": "projecte:white_advanced_alchemical_chest",
+          "ingredients": {
+            "projecte:dark_matter": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2,
+            "projecte:white_alchemical_bag": 1
+          }
+        },
+        {
+          "output": "projecte:yellow_advanced_alchemical_chest",
+          "ingredients": {
+            "#projecte:advanced_alchemical_chest": 1,
+            "minecraft:yellow_dye": 1
+          }
+        },
+        {
+          "output": "projecte:yellow_advanced_alchemical_chest",
+          "ingredients": {
+            "projecte:dark_matter": 2,
+            "projecte:high_covalence_dust": 2,
+            "projecte:low_covalence_dust": 2,
+            "projecte:medium_covalence_dust": 2,
+            "projecte:yellow_alchemical_bag": 1
+          }
+        }
+      ]
+    }
+  }
+}

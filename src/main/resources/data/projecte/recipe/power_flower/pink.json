@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "group": "projecte:matter/pink",
+  "pattern": [
+    "CLC",
+    "RRR",
+    "RRR"
+  ],
+  "key": {
+    "L": "projecte:pink_emc_link",
+    "C": "projecte:pink_compressed_collector",
+    "R": "projecte:pink_relay"
+  },
+  "result": {
+    "id": "projecte:pink_power_flower"
+  }
+}

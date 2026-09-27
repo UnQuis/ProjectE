@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:advanced_alchemical_chest/cyan",
+  "ingredients": [
+    "#projecte:advanced_alchemical_chest",
+    "minecraft:cyan_dye"
+  ],
+  "result": {
+    "id": "projecte:cyan_advanced_alchemical_chest"
+  }
+}

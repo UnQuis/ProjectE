@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:fuel/blue",
+  "ingredients": [
+    "projecte:blue_matter",
+    "projecte:blue_matter",
+    "projecte:blue_matter",
+    "projecte:blue_matter"
+  ],
+  "result": {
+    "id": "projecte:blue_matter_block"
+  }
+}

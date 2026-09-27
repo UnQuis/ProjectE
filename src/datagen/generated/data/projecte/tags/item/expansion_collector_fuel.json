@@ -1,0 +1,26 @@
+{
+  "values": [
+    "projecte:magenta_fuel",
+    "projecte:pink_fuel",
+    "projecte:purple_fuel",
+    "projecte:violet_fuel",
+    "projecte:blue_fuel",
+    "projecte:cyan_fuel",
+    "projecte:green_fuel",
+    "projecte:lime_fuel",
+    "projecte:yellow_fuel",
+    "projecte:orange_fuel",
+    "projecte:white_fuel",
+    "projecte:magenta_fuel_block",
+    "projecte:pink_fuel_block",
+    "projecte:purple_fuel_block",
+    "projecte:violet_fuel_block",
+    "projecte:blue_fuel_block",
+    "projecte:cyan_fuel_block",
+    "projecte:green_fuel_block",
+    "projecte:lime_fuel_block",
+    "projecte:yellow_fuel_block",
+    "projecte:orange_fuel_block",
+    "projecte:white_fuel_block"
+  ]
+}

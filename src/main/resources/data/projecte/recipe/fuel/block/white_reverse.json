@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:fuel/white",
+  "ingredients": [
+    "projecte:white_fuel_block"
+  ],
+  "result": {
+    "id": "projecte:white_fuel",
+    "count": 9
+  }
+}

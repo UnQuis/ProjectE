@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "group": "projecte:matter/yellow",
+  "ingredients": [
+    "projecte:lime_collector",
+    "projecte:yellow_matter"
+  ],
+  "result": {
+    "id": "projecte:yellow_collector"
+  }
+}

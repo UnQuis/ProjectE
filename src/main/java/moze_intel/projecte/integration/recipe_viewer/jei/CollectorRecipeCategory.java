@@ -14,6 +14,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import moze_intel.projecte.PECore;
+import moze_intel.projecte.expansion.ExpansionEmcFormat;
 import moze_intel.projecte.gameObjs.registries.PEBlocks;
 import moze_intel.projecte.integration.recipe_viewer.FuelUpgradeRecipe;
 import moze_intel.projecte.utils.text.PELang;
@@ -75,7 +76,7 @@ public class CollectorRecipeCategory implements IRecipeCategory<FuelUpgradeRecip
 	@Override
 	public void createRecipeExtras(@NotNull IRecipeExtrasBuilder builder, @NotNull FuelUpgradeRecipe recipe, @NotNull IFocusGroup focuses) {
 		builder.addRecipeArrow().setPosition(27, 16);
-		builder.addText(PELang.EMC.translate(recipe.upgradeEMC()), getWidth() - 10, 11)
+		builder.addText(ExpansionEmcFormat.formatEmc(recipe.upgradeEMC()), getWidth() - 10, 11)
 				.setPosition(5, 5)
 				.setTextAlignment(HorizontalAlignment.CENTER);
 	}

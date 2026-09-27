@@ -1,0 +1,125 @@
+package moze_intel.projecte.expansion.gui;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import moze_intel.projecte.PECore;
+import moze_intel.projecte.expansion.gui.container.ContainerCollector;
+import moze_intel.projecte.expansion.util.EMCFormat;
+import moze_intel.projecte.gameObjs.gui.PEContainerScreen;
+import moze_intel.projecte.utils.EMCHelper;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.player.Inventory;
+import org.jetbrains.annotations.NotNull;
+
+public abstract class GUICollector<T extends ContainerCollector> extends PEContainerScreen<T> {
+
+	public GUICollector(T container, Inventory invPlayer, Component title) {
+		this(container, invPlayer, title, 176, 166);
+	}
+
+	//26.3: imageWidth/imageHeight are final on AbstractContainerScreen, so the tier size has to be passed to super
+	protected GUICollector(T container, Inventory invPlayer, Component title, int imageWidth, int imageHeight) {
+		super(container, invPlayer, title, imageWidth, imageHeight);
+	}
+
+	protected abstract Identifier getTexture();
+
+	protected int getBonusXShift() {
+		return 0;
+	}
+
+	protected int getTextureBonusXShift() {
+		return 0;
+	}
+
+	@Override
+	protected void extractLabels(@NotNull GuiGraphicsExtractor graphics, int x, int y) {
+		//Don't render title or inventory as we don't have space
+		graphics.text(font, EMCFormat.format(menu.emc.get()), 60 + getBonusXShift(), 32, 0xFF404040, false);
+		long kleinCharge = menu.kleinEmc.get();
+		if (kleinCharge > 0) {
+			graphics.text(font, EMCHelper.formatEmc(kleinCharge), 60 + getBonusXShift(), 44, 0xFF404040, false);
+		}
+	}
+
+	@Override
+	public void extractBackground(@NotNull GuiGraphicsExtractor graphics, int mouseX, int mouseY, float partialTicks) {
+		graphics.blit(RenderPipelines.GUI_TEXTURED, getTexture(), leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
+
+		graphics.blit(RenderPipelines.GUI_TEXTURED, getTexture(), leftPos, topPos, 0, 0, imageWidth, imageHeight, 256, 256);
+
+		//Light Level. Max is 12
+		int progress = (int) (menu.sunLevel.get() * 12.0 / 16);
+		graphics.blit(RenderPipelines.GUI_TEXTURED, getTexture(), leftPos + 126 + getBonusXShift(), topPos + 49 - progress, 177 + getTextureBonusXShift(), 13 - progress, 12, progress, 256, 256);
+
+		//EMC storage. Max is 48
+		graphics.blit(RenderPipelines.GUI_TEXTURED, getTexture(), leftPos + 64 + getBonusXShift(), topPos + 18, 0, 166, (int) (new BigDecimal(menu.emc.get()).divide(new BigDecimal(menu.collector.getMaximumEmcBigInteger()), 3, RoundingMode.HALF_DOWN).multiply(BigDecimal.valueOf(48)).doubleValue()), 10, 256, 256);
+
+		//Klein Star Charge Progress. Max is 48
+		progress = (int) (menu.getKleinChargeProgress() * 48);
+		graphics.blit(RenderPipelines.GUI_TEXTURED, getTexture(), leftPos + 64 + getBonusXShift(), topPos + 58, 0, 166, progress, 10, 256, 256);
+
+		//Fuel Progress. Max is 24.
+		progress = (int) (menu.getFuelProgress() * 24);
+		graphics.blit(RenderPipelines.GUI_TEXTURED, getTexture(), leftPos + 138 + getBonusXShift(), topPos + 55 - progress, 176 + getTextureBonusXShift(), 38 - progress, 10, progress + 1, 256, 256);
+	}
+
+	public static class Tier1 extends GUICollector<ContainerCollector> {
+
+		public Tier1(ContainerCollector container, Inventory invPlayer, Component title) {
+			super(container, invPlayer, title);
+		}
+
+		@Override
+		protected Identifier getTexture() {
+			return PECore.rl("textures/gui/collector1.png");
+		}
+	}
+
+	public static class Tier2 extends GUICollector<ContainerCollector> {
+
+		public Tier2(ContainerCollector container, Inventory invPlayer, Component title) {
+			super(container, invPlayer, title, 200, 165);
+		}
+
+		@Override
+		protected Identifier getTexture() {
+			return PECore.rl("textures/gui/collector2.png");
+		}
+
+		@Override
+		protected int getBonusXShift() {
+			return 16;
+		}
+
+		@Override
+		protected int getTextureBonusXShift() {
+			return 25;
+		}
+	}
+
+	public static class Tier3 extends GUICollector<ContainerCollector> {
+
+		public Tier3(ContainerCollector container, Inventory invPlayer, Component title) {
+			super(container, invPlayer, title, 218, 165);
+		}
+
+		@Override
+		protected Identifier getTexture() {
+			return PECore.rl("textures/gui/collector3.png");
+		}
+
+		@Override
+		protected int getBonusXShift() {
+			return 34;
+		}
+
+		@Override
+		protected int getTextureBonusXShift() {
+			return 43;
+		}
+	}
+}
