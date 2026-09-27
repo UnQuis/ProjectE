@@ -3,119 +3,255 @@
     "expansion_stars": {
       "conversions": [
         {
-          "output": "projecte:colossal_star_drei",
-          "ingredients": {
-            "projecte:colossal_star_zwei": 4
-          }
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:colossal_star_drei"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:colossal_star_zwei",
+              "amount": 4
+            }
+          ]
         },
         {
-          "output": "projecte:colossal_star_ein",
-          "ingredients": {
-            "projecte:magnum_star_omega": 4
-          }
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:colossal_star_ein"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:magnum_star_omega",
+              "amount": 4
+            }
+          ]
         },
         {
-          "output": "projecte:colossal_star_omega",
-          "ingredients": {
-            "projecte:colossal_star_sphere": 4
-          }
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:colossal_star_omega"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:colossal_star_sphere",
+              "amount": 4
+            }
+          ]
         },
         {
-          "output": "projecte:colossal_star_sphere",
-          "ingredients": {
-            "projecte:colossal_star_vier": 4
-          }
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:colossal_star_sphere"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:colossal_star_vier",
+              "amount": 4
+            }
+          ]
         },
         {
-          "output": "projecte:colossal_star_vier",
-          "ingredients": {
-            "projecte:colossal_star_drei": 4
-          }
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:colossal_star_vier"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:colossal_star_drei",
+              "amount": 4
+            }
+          ]
         },
         {
-          "output": "projecte:colossal_star_zwei",
-          "ingredients": {
-            "projecte:colossal_star_ein": 4
-          }
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:colossal_star_zwei"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:colossal_star_ein",
+              "amount": 4
+            }
+          ]
         },
         {
-          "output": "projecte:final_star_shard",
-          "ingredients": {
-            "minecraft:nether_star": 1,
-            "projecte:colossal_star_omega": 8
-          }
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:final_star_shard"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "minecraft:nether_star"
+            },
+            {
+              "type": "projecte:item",
+              "id": "projecte:colossal_star_omega",
+              "amount": 8
+            }
+          ]
         },
         {
-          "output": "projecte:gargantuan_star_drei",
-          "ingredients": {
-            "projecte:gargantuan_star_zwei": 4
-          }
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:gargantuan_star_drei"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:gargantuan_star_zwei",
+              "amount": 4
+            }
+          ]
         },
         {
-          "output": "projecte:gargantuan_star_ein",
-          "ingredients": {
-            "projecte:colossal_star_omega": 4
-          }
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:gargantuan_star_ein"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:colossal_star_omega",
+              "amount": 4
+            }
+          ]
         },
         {
-          "output": "projecte:gargantuan_star_omega",
-          "ingredients": {
-            "projecte:gargantuan_star_sphere": 4
-          }
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:gargantuan_star_omega"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:gargantuan_star_sphere",
+              "amount": 4
+            }
+          ]
         },
         {
-          "output": "projecte:gargantuan_star_sphere",
-          "ingredients": {
-            "projecte:gargantuan_star_vier": 4
-          }
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:gargantuan_star_sphere"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:gargantuan_star_vier",
+              "amount": 4
+            }
+          ]
         },
         {
-          "output": "projecte:gargantuan_star_vier",
-          "ingredients": {
-            "projecte:gargantuan_star_drei": 4
-          }
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:gargantuan_star_vier"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:gargantuan_star_drei",
+              "amount": 4
+            }
+          ]
         },
         {
-          "output": "projecte:gargantuan_star_zwei",
-          "ingredients": {
-            "projecte:gargantuan_star_ein": 4
-          }
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:gargantuan_star_zwei"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:gargantuan_star_ein",
+              "amount": 4
+            }
+          ]
         },
         {
-          "output": "projecte:magnum_star_drei",
-          "ingredients": {
-            "projecte:magnum_star_zwei": 4
-          }
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:magnum_star_drei"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:magnum_star_zwei",
+              "amount": 4
+            }
+          ]
         },
         {
-          "output": "projecte:magnum_star_ein",
-          "ingredients": {
-            "projecte:klein_star_omega": 4
-          }
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:magnum_star_ein"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:klein_star_omega",
+              "amount": 4
+            }
+          ]
         },
         {
-          "output": "projecte:magnum_star_omega",
-          "ingredients": {
-            "projecte:magnum_star_sphere": 4
-          }
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:magnum_star_omega"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:magnum_star_sphere",
+              "amount": 4
+            }
+          ]
         },
         {
-          "output": "projecte:magnum_star_sphere",
-          "ingredients": {
-            "projecte:magnum_star_vier": 4
-          }
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:magnum_star_sphere"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:magnum_star_vier",
+              "amount": 4
+            }
+          ]
         },
         {
-          "output": "projecte:magnum_star_vier",
-          "ingredients": {
-            "projecte:magnum_star_drei": 4
-          }
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:magnum_star_vier"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:magnum_star_drei",
+              "amount": 4
+            }
+          ]
         },
         {
-          "output": "projecte:magnum_star_zwei",
-          "ingredients": {
-            "projecte:magnum_star_ein": 4
-          }
+          "output": {
+            "type": "projecte:item",
+            "id": "projecte:magnum_star_zwei"
+          },
+          "ingredients": [
+            {
+              "type": "projecte:item",
+              "id": "projecte:magnum_star_ein",
+              "amount": 4
+            }
+          ]
         }
       ]
     }
