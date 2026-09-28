@@ -115,6 +115,9 @@ public class PEBlockStateProvider extends ModelProvider {
 		ExtendedModelTemplateBuilder builder = ExtendedModelTemplateBuilder.builder()
 				.parent(Identifier.withDefaultNamespace("block/block"))
 				.requiredTextureSlot(CHEST)
+				//The template builder silently drops any mapping for a slot that is not required, and every chest item model
+				//inherits from this model, so the particle has to be requested explicitly or the slot is missing entirely.
+				.requiredTextureSlot(TextureSlot.PARTICLE)
 				//Body
 				.element(element -> element.from(1, 0, 1).to(15, 10, 15)
 						.face(Direction.NORTH, face -> face.uvs(10.5F, 10.65F, 14, 8.25F).texture(CHEST))
