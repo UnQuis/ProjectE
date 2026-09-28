@@ -116,6 +116,9 @@ public class PEBlockStateProvider extends ModelProvider {
 		ExtendedModelTemplateBuilder builder = ExtendedModelTemplateBuilder.builder()
 				.parent(Identifier.withDefaultNamespace("block/block"))
 				.requiredTextureSlot(CHEST)
+				//The template builder silently drops any mapping for a slot that is not required, and every chest item model
+				//inherits from this model, so the particle has to be requested explicitly or the slot is missing entirely.
+				.requiredTextureSlot(TextureSlot.PARTICLE)
 				//Body
 				.element(element -> element.from(1, 0, 1).to(15, 10, 15)
 						.face(Direction.NORTH, face -> face.uvs(10.5F, 10.65F, 14, 8.25F).texture(CHEST))
@@ -141,7 +144,8 @@ public class PEBlockStateProvider extends ModelProvider {
 						.face(Direction.UP, face -> face.uvs(0.25F, 0.25F, 0.75F, 0).texture(CHEST))
 						.face(Direction.DOWN, face -> face.uvs(0.75F, 0.25F, 1.25F, 0).texture(CHEST)));
 		builder.build().create(Identifier.fromNamespaceAndPath(PECore.MODID, "block/base_chest"),
-				new TextureMapping().put(CHEST, material("block/alchemical_chest")), models.modelOutput);
+				new TextureMapping().put(CHEST, material("block/alchemical_chest"))
+						.put(TextureSlot.PARTICLE, material("block/alchemical_chest")), models.modelOutput);
 	}
 
 	private void particleOnly(BlockModelGenerators models, moze_intel.projecte.gameObjs.registration.impl.BlockRegistryObject<?, ?> block) {
