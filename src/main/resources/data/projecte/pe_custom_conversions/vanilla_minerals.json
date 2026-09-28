@@ -1,0 +1,17 @@
+{
+  "comment": "EMC values for the sulfur and cinnabar blocks added in 26.2. Neither mineral has any crafting source in vanilla, so the whole building chain (polished, bricks, slabs, stairs, walls, chiseled) collapses to 0 EMC. Only the two roots are priced here and the values propagate through the recipe graph: sulfur is crafted from 4 sulfur spikes, so a block of sulfur ends up at 4x the spike value. cinnabar is mined only, and is deliberately priced above sulfur as the rarer mineral. The sulfur cube bucket and its spawn egg stay priceless, matching how vanilla treats other mob buckets and all spawn eggs.",
+  "values": {
+    "before": [
+      {
+        "type": "projecte:item",
+        "id": "minecraft:sulfur_spike",
+        "emc_value": 16
+      },
+      {
+        "type": "projecte:item",
+        "id": "minecraft:cinnabar",
+        "emc_value": 512
+      }
+    ]
+  }
+}
