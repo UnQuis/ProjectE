@@ -1,4 +1,4 @@
-// 1.21.1	2026-09-22T15:14:02.355836672	Block States: projecte
+// 1.21.1	2026-09-28T17:11:26.051858843	Block States: projecte
 9856188d04dacdca3f11ccc503b4bcbca6aa1dc4 assets/projecte/blockstates/aeternalis_fuel_block.json
 b126acd08ef7f47e841339efd8d79766dba4ff33 assets/projecte/blockstates/alchemical_barrel.json
 3020df6885e467689fd0277bf1fa83390f340eca assets/projecte/blockstates/alchemical_chest.json
@@ -28,7 +28,7 @@ df94663f370ba2129f797f0bac07e6c4c23878fd assets/projecte/models/block/alchemical
 0832af6675ac0357a42d6fb8201c47d02973897e assets/projecte/models/block/alchemical_barrel_open.json
 ecdcd31981d61e28847051fd90ca23de1454af7c assets/projecte/models/block/alchemical_chest.json
 625d98ce22cf0176c2b799ff542767e130e59270 assets/projecte/models/block/alchemical_coal_block.json
-e529e5c102d6c51f4fe844d747c468a0e5eafac8 assets/projecte/models/block/base_chest.json
+d5635a31b336d6a8889176b70322f30da8e26ab1 assets/projecte/models/block/base_chest.json
 7966f842779897cebc214cd523f9a76868917a02 assets/projecte/models/block/collector_mk1.json
 330b25b1d327ec5220db7d7e1108448729b9e16b assets/projecte/models/block/collector_mk2.json
 18e128ff921710f7b8753d154676bc4e25607dab assets/projecte/models/block/collector_mk3.json

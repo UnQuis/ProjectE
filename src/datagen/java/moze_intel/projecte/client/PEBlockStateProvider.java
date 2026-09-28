@@ -71,6 +71,7 @@ public class PEBlockStateProvider extends BlockStateProvider {
 
 	private void registerChests() {
 		models().withExistingParent("base_chest", "block/block")
+				.texture("particle", modLoc("block/alchemical_chest"))
 				//Body
 				.element()
 				.from(1, 0, 1)
