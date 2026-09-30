@@ -19,7 +19,6 @@ import moze_intel.projecte.api.event.PlayerLearnedItemEvent;
 import moze_intel.projecte.api.proxy.IEMCProxy;
 import moze_intel.projecte.gameObjs.PETags;
 import moze_intel.projecte.gameObjs.registries.PEItems;
-import moze_intel.projecte.utils.EmcGainBonus;
 import moze_intel.projecte.utils.ItemHelper;
 import moze_intel.projecte.utils.MathUtils;
 import moze_intel.projecte.utils.PlayerHelper;
@@ -442,8 +441,12 @@ public class TransmutationInventory extends CombinedResourceHandler<ItemResource
 			removeEmc(value.negate());
 			return;
 		}
-		//Apply the global gain bonus (set by optional integrations) to the gained EMC
-		value = EmcGainBonus.apply(value, player.getUUID());
+		//Note: We deliberately do NOT apply the EmcGainBonus here. Every caller of addEmc converts a physical item into
+		//EMC (throwing an item into the tablet, consuming a fuel, a crafting remainder, pulling a Klein Star's stored EMC
+		//back into the pool). The matching removeEmc path, which turns EMC back into an item, does not apply the bonus,
+		//so applying it on only one side breaks EMC conservation: taking an item out of the tablet and putting it back
+		//would net a profit equal to the bonus percent, every time, forever. The bonus is meant to reward adapting and
+		//is applied where EMC is genuinely created from nothing, in the adaptation reward itself.
 		IntList inputLocksChanged = new IntArrayList();
 		//Start by trying to add it to the EMC items on the left
 		for (int slotIndex = 0, slots = inputLocks.size(); slotIndex < slots; slotIndex++) {

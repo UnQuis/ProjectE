@@ -110,7 +110,7 @@ public enum PEConfigTranslations implements IConfigTranslation {
 	COMMON_ADAPTION_REWARD("common.adaption.reward", "EMC per Adaptation",
 			"EMC granted to the player once for every completed adaptation."),
 	COMMON_ADAPTION_INSIGHT("common.adaption.insight", "Insight per Adaptation",
-			"Percent that every adaptation permanently adds to all EMC the player gains, 0 to 1000000. There is no cap on the total."),
+			"Percent that every adaptation permanently adds to the EMC reward of each further adaptation, 0 to 1000000. There is no cap on the total. This only scales the reward above, never the EMC an item is worth, so it can never make the transmutation tablet pay out more than it charges."),
 
 	//Server Config
 	SERVER_COOLDOWN("server.cooldown", "Cooldown Settings",
